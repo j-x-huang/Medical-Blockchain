@@ -1,0 +1,112 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Write your model definitions here
+ */
+
+namespace nz.ac.auckland
+
+asset Patient identified by pid{
+  o String pid
+  o String birthDate
+  o String deathDate
+  o String ssn
+  o String drivers
+  o String passport
+  o String prefix
+  o String first
+  o String last 
+  o String suffic optional
+  o String maiden
+  o String marital
+  o String race
+  o String ethinicity
+  o String gender
+  o String birthplace
+  o String address
+}
+
+asset Encounter identified by eid {
+  o String eid
+  o String encounter_date 
+  o String encounter_code
+  o String encounter_reasonCode optional
+  o String encounter_reasonDesc optional
+  o Allergy[] allergys optional
+  o Procedure[] procedures optional
+  o Observation[] observations optional
+  o Medication[] medications optional
+  o Immunization[] immunizations optional
+  o Condition[] conditions optional
+  --> Patient patient
+}
+
+concept Allergy {
+  o String allergy_start 
+  o String allergy_stop 
+  o String allergy_code 
+  o String allergy_desc 
+}
+
+concept Procedure {
+  o String procedure_date
+  o String procedure_code
+  o String procedure_desc
+  o String procedure_reasonCode optional
+  o String procedure_reasonDesc optional
+}
+
+concept Observation {
+  o String obs_date
+  o String obs_code
+  o String obs_desc
+  o String value
+  o String units
+}
+
+concept Medication {
+  o String medication_start
+  o String medication_stop
+  o String medication_code
+  o String medication_desc
+  o String medcation_reasonCode
+  o String medication_reasonDesc
+}
+
+concept Immunization {
+  o String imm_date 
+  o String imm_code 
+  o String imm_desc 
+}
+
+concept Condition {
+  o String cond_start 
+  o String cond_stop 
+  o String cond_code 
+  o String cond_desc 
+}
+
+participant HealthProvider identified by hid {
+  o String hid
+  o String name 
+  o String phone
+  o String address
+}
+
+transaction transactionName {
+  --> Patient patient
+  --> Encounter encounter
+  --> HealthProvider heathProvider
+}
