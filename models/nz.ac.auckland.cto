@@ -36,31 +36,27 @@ asset Patient identified by pid{
   o String gender
   o String birthplace
   o String address
+  o Record[] record
+
 }
 
-asset Encounter identified by eid {
-  o String eid
-  o String encounter_date 
-  o String encounter_code
-  o String encounter_reasonCode optional
-  o String encounter_reasonDesc optional
-  o Allergy[] allergys optional
-  o Procedure[] procedures optional
-  o Observation[] observations optional
-  o Medication[] medications optional
-  o Immunization[] immunizations optional
-  o Condition[] conditions optional
-  --> Patient patient
+concept Record{
+  o String rid
+  o String record_date 
+  o String record_code
+  o String record_reasonCode optional
+  o String record_reasonDesc optional
+  --> HealthProvider heathProvider
 }
 
-concept Allergy {
+concept Allergy extends Record {
   o String allergy_start 
   o String allergy_stop 
   o String allergy_code 
-  o String allergy_desc 
+  o String allergy_desc
 }
 
-concept Procedure {
+concept Procedure extends Record{
   o String procedure_date
   o String procedure_code
   o String procedure_desc
@@ -68,7 +64,7 @@ concept Procedure {
   o String procedure_reasonDesc optional
 }
 
-concept Observation {
+concept Observation extends Record{
   o String obs_date
   o String obs_code
   o String obs_desc
@@ -76,7 +72,7 @@ concept Observation {
   o String units
 }
 
-concept Medication {
+concept Medication extends Record{
   o String medication_start
   o String medication_stop
   o String medication_code
@@ -85,13 +81,13 @@ concept Medication {
   o String medication_reasonDesc
 }
 
-concept Immunization {
+concept Immunization extends Record{
   o String imm_date 
   o String imm_code 
   o String imm_desc 
 }
 
-concept Condition {
+concept Condition extends Record{
   o String cond_start 
   o String cond_stop 
   o String cond_code 
@@ -105,8 +101,7 @@ participant HealthProvider identified by hid {
   o String address
 }
 
-transaction transactionName {
+transaction medical_encounter {
   --> Patient patient
-  --> Encounter encounter
   --> HealthProvider heathProvider
 }
