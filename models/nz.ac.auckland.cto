@@ -103,5 +103,16 @@ participant HealthProvider identified by hid {
 
 transaction medical_encounter {
   --> Patient patient
-  --> HealthProvider heathProvider
+}
+
+event MedicalEncounterNotification {
+    --> Patient patient
+}
+
+event RemoveNotification {
+    --> Patient patient
+}
+
+transaction remove_patient {
+    --> Patient patient
 }
