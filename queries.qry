@@ -1,0 +1,50 @@
+/** Sample queries for Commodity Trading business network
+*/
+
+query selectPatients {
+  description: "Select all patients"
+  statement:
+      SELECT nz.ac.auckland.Patient
+}
+
+query selectPatientByID {
+  description: "Select a patient with a specific ID"
+  statement:
+      SELECT nz.ac.auckland.Patient
+          WHERE (pid==_$pid)
+}
+
+query selectPatientByRace {
+  description: "Select all patients based on their race"
+  statement:
+      SELECT nz.ac.auckland.Patient
+          WHERE (race==_$race)
+}
+
+query selectPatientByEthinicity {
+  description: "Select all patients based on their ethinicity"
+  statement:
+      SELECT nz.ac.auckland.Patient
+          WHERE (ethinicity==_$ethinicity)
+}
+
+query selectPatientByGender {
+  description: "Select all patients based on their gender"
+  statement:
+      SELECT nz.ac.auckland.Patient
+          WHERE (gender==_$gender)
+}
+
+query selectPatientByBirthplace {
+  description: "Select all patients based on their birthplace"
+  statement:
+      SELECT nz.ac.auckland.Patient
+          WHERE (birthplace==_$birthplace)
+}
+
+query selectHealthProviderByID {
+  description: "Select a health providers with a specific ID"
+  statement:
+      SELECT nz.ac.auckland.HealthProvider
+          WHERE (hid==_$hid)
+}

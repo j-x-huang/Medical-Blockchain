@@ -21,7 +21,7 @@ namespace nz.ac.auckland
 asset Patient identified by pid{
   o String pid
   o String birthDate
-  o String deathDate
+  o String deathDate optional
   o String ssn
   o String drivers
   o String passport
@@ -102,6 +102,18 @@ participant HealthProvider identified by hid {
 }
 
 transaction medical_encounter {
+  o Record record
   --> Patient patient
-  --> HealthProvider heathProvider
+}
+
+event MedicalEncounterNotification {
+    --> Patient patient
+}
+
+event RemoveNotification {
+    --> Patient patient
+}
+
+transaction remove_patient {
+    --> Patient patient
 }
