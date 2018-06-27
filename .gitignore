@@ -1,3 +1,5 @@
 .DS_Store
 *.bna
 *.card
+
+/fabric-tools
