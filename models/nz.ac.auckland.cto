@@ -101,6 +101,11 @@ participant HealthProvider identified by hid {
   o String address
 }
 
+participant Viewer identified by vid {
+  o String vid
+  --> HealthProvider heathProvider
+}
+
 transaction medical_encounter {
   o Record record
   --> Patient patient
