@@ -96,7 +96,7 @@ concept Condition extends Record{
 
 participant HealthProvider identified by hid {
   o String hid
-  o String name 
+  o String name
   o String phone
   o String address
 }
@@ -106,7 +106,7 @@ participant Viewer identified by vid {
   --> HealthProvider heathProvider
 }
 
-transaction medical_encounter {
+transaction MedicalEncounter {
   o Record record
   --> Patient patient
 }
@@ -119,6 +119,6 @@ event RemoveNotification {
     --> Patient patient
 }
 
-transaction remove_patient {
+transaction RemovePatient {
     --> Patient patient
 }

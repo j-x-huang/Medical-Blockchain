@@ -12,18 +12,45 @@
  * limitations under the License.
  */
 
-rule Default {
-    description: "Allow all participants access to all resources"
-    participant: "ANY"
+rule NetworkUserAdminUser {
+    description: "Allow network business admins full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
     operation: ALL
-    resource: "nz.ac.auckland.*"
+    resource: "**"
     action: ALLOW
 }
 
-rule SystemACL {
-  description:  "System ACL to permit all access"
-  participant: "ANY"
-  operation: ALL
-  resource: "org.hyperledger.composer.system.**"
-  action: ALLOW
+rule NetworkAdminSystem {
+    description: "Grant business network admins full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
 }
+
+rule HealthProviderCanOnlySeeTheirOwnTransactions {
+    description: "Health providers can only see the transactions that they made"
+    participant(m): "nz.ac.auckland.HealthProvider"
+    operation: READ, DELETE, UPDATE
+    resource(v): "org.hyperledger.composer.system.HistorianRecord"
+    condition: (v.participantInvoking.getIdentifier() != m.getIdentifier)
+    action: DENY 
+}
+
+rule HealthProvidersFullAccess {
+    description: "Grand health providers full access tochaincode "
+    participant: "nz.ac.auckland.HealthProvider"
+    operation: ALL
+    resource: "nz.ac.auckland.**"
+    action: ALLOW
+}
+
+rule CanOnlyView {
+    description: "Only allow viewers to read their own data"
+    participant: "nz.ac.auckland.Viewer"
+    operation: CREATE, UPDATE, DELETE
+    resource: "nz.ac.auckland.Patient"
+    action: DENY
+}
+
+

@@ -3,3 +3,6 @@
 *.card
 
 /fabric-tools
+
+/alice
+/bob
