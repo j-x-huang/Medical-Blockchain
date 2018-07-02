@@ -16,8 +16,8 @@ rule HealthProviderSeeOwnHistoryOnly {
     participant(m): "nz.ac.auckland.HealthProvider"
     operation: READ
     resource(v): "org.hyperledger.composer.system.HistorianRecord"
-    condition: (v.participantInvoking.getIdentifier() == m.getIdentifier)
-    action: ALLOW 
+    condition: (v.participantInvoking.getIdentifier() != m.getIdentifier)
+    action: DENY
 }
 
 rule HealthProvidersFullAccessRemovePatient {
@@ -41,7 +41,7 @@ rule HealthProvidersCanUpdateThemselves {
     participant(t): "nz.ac.auckland.HealthProvider"
     operation: UPDATE
     resource(v): "nz.ac.auckland.HealthProvider"
-    condition: (v.participantInvoking.getIdentifier() == t.getIdentifier())
+    condition: (v.getIdentifier() == t.getIdentifier())
     action: ALLOW
 }
 
@@ -61,20 +61,20 @@ rule HealthProvidersFullAccessPatient {
     action: ALLOW
 }
 
-rule ViewerCanOnlyView {
-    description: "Only allow viewers to read patient data"
+rule ViewerCanOnlyViewHealthProviders {
+    description: "Viewers can only read health provider data"
+    participant: "nz.ac.auckland.Viewer"
+    operation: READ
+    resource: "nz.ac.auckland.HealthProvider"
+    action: ALLOW
+}
+
+rule ViewerCanOnlyViewPatients {
+    description: "Viewers can only read patient data"
     participant: "nz.ac.auckland.Viewer"
     operation: READ
     resource: "nz.ac.auckland.Patient"
     action: ALLOW
-}
-
-rule ViewerCannotEdit {
-    description: "Do allow viewers to read their data"
-    participant: "nz.ac.auckland.Viewer"
-    operation: CREATE, UPDATE, DELETE
-    resource: "nz.ac.auckland.Patient"
-    action: DENY
 }
 
 rule HealthProvidersFullAccess {
@@ -85,19 +85,43 @@ rule HealthProvidersFullAccess {
     action: ALLOW
 }
 
-rule StandardUser {
-    description: "Allow standard users to be able to connect to the business network as this requires read access"
-    participant: "org.hyperledger.composer.system.Participant"
-    operation: READ
-    resource: "org.hyperledger.composer.system.Network"
-    action: ALLOW
-}
-
 rule NetworkUserAdminUser {
     description: "Allow network business admins full access to user resources"
     participant: "org.hyperledger.composer.system.NetworkAdmin"
     operation: ALL
     resource: "**"
+    action: ALLOW
+}
+
+rule ViewerReadAssetAccess {
+    description: "Viewers should have only read access to the asset registry"
+    participant: "nz.ac.auckland.Viewer"
+    operation: READ
+    resource: "org.hyperledger.composer.system.AssetRegistry"
+    action: ALLOW
+}
+
+rule HealthProviderNoIdentityAccess {
+    description: "Health providers should not have access to the identities of other health providers"
+    participant: "nz.ac.auckland.HealthProvider"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.Identity"
+    action: DENY
+}
+
+rule HealthProviderFullAccess {
+    description: "Health providers should have access to other system resources"
+    participant: "nz.ac.auckland.HealthProvider"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule StandardUserNetworkAccess {
+    description: "Allow standard users to be able to connect to the business network as this requires read access"
+    participant: "org.hyperledger.composer.system.Participant"
+    operation: READ
+    resource: "org.hyperledger.composer.system.Network"
     action: ALLOW
 }
 
