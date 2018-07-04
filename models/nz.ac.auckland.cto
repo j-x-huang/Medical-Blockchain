@@ -18,19 +18,25 @@
 
 namespace nz.ac.auckland
 
+enum gender {
+o Male
+o Female
+o Other
+}
+
 asset Patient identified by pid{
   o String pid
   o String birthDate
   o String deathDate optional
-  o String ssn
-  o String drivers
-  o String passport
-  o String prefix
+  o String ird
+  o String drivers optional
+  o String passport optional
+  o String prefix optional
   o String first
   o String last 
   o String suffic optional
-  o String maiden
-  o String marital
+  o String maiden optional
+  o String marital optional
   o String race
   o String ethinicity
   o String gender
@@ -77,8 +83,8 @@ concept Medication extends Record{
   o String medication_stop
   o String medication_code
   o String medication_desc
-  o String medcation_reasonCode
-  o String medication_reasonDesc
+  o String medcation_reasonCode optional
+  o String medication_reasonDesc optional
 }
 
 concept Immunization extends Record{
