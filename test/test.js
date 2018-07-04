@@ -29,8 +29,8 @@ chai.use(require('chai-as-promised'));
 const namespace = 'nz.ac.auckland';
 const assetType = 'Patient';
 const assetNS = namespace + '.' + assetType;
-const participantType = 'HealthProvider';
-const participantNS = namespace + '.' + participantType;
+// const participantType = 'HealthProvider';
+// const participantNS = namespace + '.' + participantType;
 const healthProviderParticipantType = 'HealthProvider';
 const healthProviderParticipantNS = namespace + '.' + healthProviderParticipantType;
 const viewerParticipantType = 'Viewer';
@@ -185,9 +185,9 @@ describe('#' + namespace, () => {
         assetRegistry.addAll([patient1, patient2]);
 
         // Issue the identities.
-        let identity = await businessNetworkConnection.issueIdentity(participantNS + 'H1', 'alice1');
+        let identity = await businessNetworkConnection.issueIdentity(healthProviderParticipantNS + '#H1', 'alice1');
         await importCardForIdentity(aliceCardName, identity);
-        identity = await businessNetworkConnection.issueIdentity(participantNS + 'H2', 'bob1');
+        identity = await businessNetworkConnection.issueIdentity(healthProviderParticipantNS + '#H2', 'bob1');
         await importCardForIdentity(bobCardName, identity);
     });
 
@@ -215,19 +215,19 @@ describe('#' + namespace, () => {
         // Validate the assets.
         assets.should.have.lengthOf(2);
         const asset1 = assets[0];
-        asset1.pid.should.equal('ab6d8296-d3c7-4fef-9215-40b156db67ac');
-        asset1.first.should.equal('Emmanuel');
-        asset1.last.should.equal('Adams');
-        asset1.race.should.equal('white');
-        asset1.ethinicity.should.equal('irish');
-        asset1.gender.should.equal('Male');
+        asset1.pid.should.equal('4bb1c058-5218-42e0-b53e-07c1f5899ad1');
+        asset1.first.should.equal('Martha');
+        asset1.last.should.equal('McCullough');
+        asset1.race.should.equal('asian');
+        asset1.ethinicity.should.equal('chinese');
+        asset1.gender.should.equal('Female');
         const asset2 = assets[1];
-        asset2.pid.should.equal('4bb1c058-5218-42e0-b53e-07c1f5899ad1');
-        asset2.first.should.equal('Martha');
-        asset2.last.should.equal('McCullough');
-        asset2.race.should.equal('asian');
-        asset2.ethinicity.should.equal('chinese');
-        asset2.gender.should.equal('Female');
+        asset2.pid.should.equal('ab6d8296-d3c7-4fef-9215-40b156db67ac');
+        asset2.first.should.equal('Emmanuel');
+        asset2.last.should.equal('Adams');
+        asset2.race.should.equal('white');
+        asset2.ethinicity.should.equal('irish');
+        asset2.gender.should.equal('Male');
     });
 
     it('Bob can read all of the patients', async () => {
@@ -239,19 +239,19 @@ describe('#' + namespace, () => {
         // Validate the assets.
         assets.should.have.lengthOf(2);
         const asset1 = assets[0];
-        asset1.pid.should.equal('ab6d8296-d3c7-4fef-9215-40b156db67ac');
-        asset1.first.should.equal('Emmanuel');
-        asset1.last.should.equal('Adams');
-        asset1.race.should.equal('white');
-        asset1.ethinicity.should.equal('irish');
-        asset1.gender.should.equal('Male');
+        asset1.pid.should.equal('4bb1c058-5218-42e0-b53e-07c1f5899ad1');
+        asset1.first.should.equal('Martha');
+        asset1.last.should.equal('McCullough');
+        asset1.race.should.equal('asian');
+        asset1.ethinicity.should.equal('chinese');
+        asset1.gender.should.equal('Female');
         const asset2 = assets[1];
-        asset2.pid.should.equal('4bb1c058-5218-42e0-b53e-07c1f5899ad1');
-        asset2.first.should.equal('Martha');
-        asset2.last.should.equal('McCullough');
-        asset2.race.should.equal('asian');
-        asset2.ethinicity.should.equal('chinese');
-        asset2.gender.should.equal('Female');
+        asset2.pid.should.equal('ab6d8296-d3c7-4fef-9215-40b156db67ac');
+        asset2.first.should.equal('Emmanuel');
+        asset2.last.should.equal('Adams');
+        asset2.race.should.equal('white');
+        asset2.ethinicity.should.equal('irish');
+        asset2.gender.should.equal('Male');
     });
 
     /* it('Alice can add assets that she owns', async () => {

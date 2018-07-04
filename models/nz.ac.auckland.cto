@@ -28,7 +28,7 @@ asset Patient identified by pid{
   o String pid
   o String birthDate
   o String deathDate optional
-  o String ird optional
+  o String ird
   o String drivers optional
   o String passport optional
   o String prefix optional
