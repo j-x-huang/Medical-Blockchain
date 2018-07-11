@@ -91,11 +91,6 @@
             <path>
               <item name="web-app" type="b2602c69:ProjectViewProjectNode" />
               <item name="web-app" type="462c0819:PsiDirectoryNode" />
-              <item name="img" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="web-app" type="b2602c69:ProjectViewProjectNode" />
-              <item name="web-app" type="462c0819:PsiDirectoryNode" />
               <item name="js" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -136,12 +131,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1531293642635</updated>
-      <workItem from="1531293643760" duration="857000" />
+      <workItem from="1531293643760" duration="939000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="857000" />
+    <option name="totallyTimeSpent" value="939000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="20" y="43" width="1400" height="777" extended-state="0" />
