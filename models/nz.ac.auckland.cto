@@ -43,8 +43,8 @@ asset Patient identified by pid{
   o String birthplace
   o String address
   o String records
-  o String PkeyPass
-  o String PkeyHP
+  o String PKeyPpass
+  o String PkeyHPpass
 }
 
 concept Record{
@@ -115,7 +115,7 @@ participant Viewer identified by vid {
 }
 
 transaction MedicalEncounter {
-  o Record record
+  o String updatedRecords
   --> Patient patient
 }
 
