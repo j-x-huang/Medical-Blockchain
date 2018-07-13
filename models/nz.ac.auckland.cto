@@ -42,8 +42,9 @@ asset Patient identified by pid{
   o String gender
   o String birthplace
   o String address
-  o Record[] record
-
+  o String records
+  o String PKeyPpass
+  o String PkeyHPpass
 }
 
 concept Record{
@@ -57,7 +58,7 @@ concept Record{
 
 concept Allergy extends Record {
   o String allergy_start 
-  o String allergy_stop 
+  o String allergy_stop optional
   o String allergy_code 
   o String allergy_desc
 }
@@ -80,7 +81,7 @@ concept Observation extends Record{
 
 concept Medication extends Record{
   o String medication_start
-  o String medication_stop
+  o String medication_stop optional
   o String medication_code
   o String medication_desc
   o String medcation_reasonCode optional
@@ -95,7 +96,7 @@ concept Immunization extends Record{
 
 concept Condition extends Record{
   o String cond_start 
-  o String cond_stop 
+  o String cond_stop optional
   o String cond_code 
   o String cond_desc 
 }
@@ -105,6 +106,7 @@ participant HealthProvider identified by hid {
   o String name
   o String phone
   o String address
+  o String publicKey
 }
 
 participant Viewer identified by vid {
@@ -113,7 +115,7 @@ participant Viewer identified by vid {
 }
 
 transaction MedicalEncounter {
-  o Record record
+  o String updatedRecords
   --> Patient patient
 }
 

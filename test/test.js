@@ -161,15 +161,15 @@ describe('#' + namespace, () => {
         patient1.gender = 'Male';
         patient1.birthplace = 'Winchendon MA US';
         patient1.address = '53 Kristopher Springs Suite 264 Whitman MA 02382 US';
-        patient1.record = [];
+        patient1.record = '';
 
         // patient1.owner = factory.newRelationship(namespace, healthProviderParticipantType, 'alice@email.com');
 
         const patient2 = factory.newResource(namespace, assetType, '4bb1c058-5218-42e0-b53e-07c1f5899ad1');
         patient2.birthDate = '1/6/1985';
         patient2.ird = '999-98-8389';
-        patient1.drivers = 'S99933988';
-        patient1.prefix = 'Ms.';
+        patient2.drivers = 'S99933988';
+        patient2.prefix = 'Ms.';
         patient2.first = 'Martha';
         patient2.last = 'McCullough';
         patient2.marital = 'S';
@@ -178,7 +178,7 @@ describe('#' + namespace, () => {
         patient2.gender = 'Female';
         patient2.birthplace = 'Boston MA US';
         patient2.address = '7 Wiley Points Newburyport MA 01951 US';
-        patient2.record = [];
+        patient2.record = '';
 
         // patient2.owner = factory.newRelationship(namespace, healthProviderParticipantType, 'bob@email.com');
 
