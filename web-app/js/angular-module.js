@@ -37,21 +37,6 @@ app.controller('myCtrl', function ($filter, $scope, $http) {
     }
 
     /**
-     * Form fields corresponds to Job object. Fields show in the `Add Job` tab.
-     *
-     * @type {{supplierId: string, manualReview: boolean, jobStatus: string, lastStatusUpdate: string, jobId: string, workType: string, itemId: string}}
-     */
-    $scope.jobForm = {
-        supplierId: "JAE",
-        manualReview: true,
-        jobStatus: "started",
-        lastStatusUpdate: "2/1/18",
-        jobId: "JAE22",
-        workType: "manual",
-        itemId: "123"
-    }
-
-    /**
      * Form fields corresponds to ClaimItem object. The fields show in the `Add Items` tab.
      *
      * @type {{itemId: string, serialNumber: string, repairable: boolean, purchaseDate: string, purchaseLoc: string, purchaseNew: boolean, purchaseOrigPrice: string, warranty: number}}
