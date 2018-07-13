@@ -1,21 +1,28 @@
 function loaded() {
-    var buf = crypto.randomBytes(1024 / 8) // 128 bytes
-    buf = new Uint32Array(new Uint8Array(buf).buffer)
+    //var buf = crypto.randomBytes(1024 / 8) // 128 bytes
+    //buf = new Uint32Array(new Uint8Array(buf).buffer)
 
-    sjcl.random.addEntropy(buf, 1024, "crypto.randomBytes")
+    //sjcl.random.addEntropy(buf, 1024, "crypto.randomBytes")
 
     sjcl.random.startCollectors();
   }
 
 
   function getRandomSalt(words, paranoia) {
-    return sjcl.random.randomWords(words, paranoia);
+
+    console.log("Computing salt"); 
+    var salt = sjcl.random.randomWords(words, paranoia);
+    console.log(salt); 
+
+    return salt;
   }
 
 
   function stretchPassword(password){
 
-     var salt = getRandomSalt(4,10);
+    console.log("Password: " + password);
+
+     var salt = getRandomSalt(2,10);
 
      var iterations = 10000;
 
@@ -30,10 +37,14 @@ function loaded() {
 
      var key = sjcl.codec.hex.fromBits(keyBitArray);
 
+     console.log(key);
+
      return key;
   }
 
   function symEncrypt(data, key){
+
+    console.log("Encrypting data: Data = " + data + " Key = " + key);
 
      if (data === '') { return; }
      if (key.length == 0) {
@@ -41,28 +52,39 @@ function loaded() {
        return;
      }
 
+    key = sjcl.codec.hex.toBits(key);
+
      // Key must be in bit array
-     var encryptedData = sjcl.encrypt(key, data, {mode : "ccm || gcm || ocb2"});
+     var result = sjcl.encrypt(key, data, {mode : "ccm"});
 
-     // var encryptedDataBase64 = sjcl.codec.base64.fromBits(encryptedDataBitArray);
+     console.log(result);
 
-     return encryptedData;
+     return result;
   }
 
 
-  function symDecrypt(encryptedData, key){
+  function symDecrypt(encryptedData, key, initialisationVector){
 
      if (encryptedData.length === 0) { return; }
      if (key.length == 0) {
        error("Need a key!");
        return;
      }
+     if (initialisationVector.length === 0) {
+      error("Can't decrypt: need an IV!"); return;
+     }
 
-     // var encryptedDataBitArray = sjcl.codec.base64.toBits(encryptedDataBase64);
+     key = sjcl.codec.hex.toBits(key);
 
-     var data = sjcl.decrypt(key, encryptedData);
+     key = new sjcl.cipher.aes(key);
 
-     // var plainData = sjcl.codec.utf8String.fromBits(dataBits);
+     initialisationVector = sjcl.codec.base64.toBits(initialisationVector);
+
+     encryptedData = sjcl.codec.base64.toBits(encryptedData);
+
+     var data = sjcl.codec.utf8String.fromBits(sjcl.mode.ccm.decrypt(key, encryptedData, initialisationVector));
+
+     console.log(data);
 
      return data;
   }
