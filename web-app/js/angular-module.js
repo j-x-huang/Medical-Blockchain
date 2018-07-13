@@ -37,21 +37,6 @@ app.controller('myCtrl', function ($filter, $scope, $http) {
     }
 
     /**
-     * Form fields corresponds to Job object. Fields show in the `Add Job` tab.
-     *
-     * @type {{supplierId: string, manualReview: boolean, jobStatus: string, lastStatusUpdate: string, jobId: string, workType: string, itemId: string}}
-     */
-    $scope.jobForm = {
-        supplierId: "JAE",
-        manualReview: true,
-        jobStatus: "started",
-        lastStatusUpdate: "2/1/18",
-        jobId: "JAE22",
-        workType: "manual",
-        itemId: "123"
-    }
-
-    /**
      * Form fields corresponds to ClaimItem object. The fields show in the `Add Items` tab.
      *
      * @type {{itemId: string, serialNumber: string, repairable: boolean, purchaseDate: string, purchaseLoc: string, purchaseNew: boolean, purchaseOrigPrice: string, warranty: number}}
@@ -107,17 +92,6 @@ app.controller('myCtrl', function ($filter, $scope, $http) {
         })
     }
 
-
-
-    //filter to remove the notary node from peers list
-    function checkNotary(list) {
-        return list.search("Notary") == -1
-    }
-
-    //filter network map nodes from the peer list
-    function checkNetwork(list) {
-        return list.search("Network") == -1
-    }
 
     /**
      * Sends the ClaimForm to the node Cordapp API. If the transaction is committed,
