@@ -2,79 +2,205 @@
 <html lang="en">
 
 <head>
-    <title>CorDapp Insurance Prototype</title>
+    <title>Medical Network</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="css\style.css">
-    <link rel= "stylesheet" type="text/css" href="css\jquery.json-viewer.css">
+    <link rel="stylesheet" type="text/css" href="css\jquery.json-viewer.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.2.0/ui-bootstrap-tpls.min.js"></script>
-    <script src="https://github.com/bitwiseshiftleft/sjcl/sjcl.js"></script>
     <script src="js/angular-module.js"></script>
     <script src="js/jquery.json-viewer.js"></script>
 </head>
 
-<body ng-app="myApp" ng-controller="myCtrl" onload="loaded()">
+<body ng-app="myApp" ng-controller="myCtrl">
 
-    <nav>
+    <nav class>
         <ul>
             <li>
                 <a href="index.html">Home</a>
             </li>
-            <li>
-                <a type="button" data-toggle="modal" data-target="#myModal">Make a Claim</a>
-            </li>
         </ul>
     </nav>
-    <!--Modal Box to make claims -->
-    <div id="myModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
 
+    <!--Modal Box to add patients -->
+    <div id="patientModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Make a Claim</h4>
+                    <h4 class="modal-title">Add Patient</h4>
                 </div>
                 <div class="modal-body">
-
-                    <p>Claim number:
-                        <input type="text" ng-model="claimForm.claimNumber"> </p>
-                    <p>Loss description:
-                        <input type="text" ng-model="claimForm.lossDesc"> </p>
-                    <p>Claim Date:
-                        <input type="text" ng-model="claimForm.date"> </p>
-                    <p>Loss location:
-                        <input type="text" ng-model="claimForm.lossLoc"> </p>
-                    <p>Customer Name:
-                        <input type="text" ng-model="claimForm.cName"> </p>
-                    <p>Phone Number:
-                        <input type="text" ng-model="claimForm.phoneNum"> </p>
-
-                    <button ng-click="loadPeers()">Load Peers</button>
-                    <select ng-model="selectedPeer" ng-options="p for p in peers"></select>
+                    <p>PID:
+                        <input type="text" ng-model="patientForm.pid"> </p>
+                    <p>Birthdate:
+                        <input type="text" ng-model="patientForm.birthDate"> </p>
+                    <p>Death date:
+                        <input type="text" ng-model="patientForm.deathDate"> </p>
+                    <p>IRD Number:
+                        <input type="text" ng-model="patientForm.ird"> </p>
+                    <p>Driver Number:
+                        <input type="text" ng-model="patientForm.drivers"> </p>
+                    <p>Passport Number:
+                        <input type="text" ng-model="patientForm.passport"> </p>
+                    <p>Prefix:
+                        <input type="text" ng-model="patientForm.prefix"> </p>
+                    <p>First Name:
+                        <input type="text" ng-model="patientForm.first"> </p>
+                    <p>LastName:
+                        <input type="text" ng-model="patientForm.last"> </p>
+                    <p>Suffic:
+                        <input type="text" ng-model="patientForm.suffic"> </p>
+                    <p>Maiden Name:
+                        <input type="text" ng-model="patientForm.maiden"> </p>
+                    <p>Marital:
+                        <input type="text" ng-model="patientForm.marital"> </p>
+                    <p>Race:
+                        <input type="text" ng-model="patientForm.race"> </p>
+                    <p>Ethnicity:
+                        <input type="text" ng-model="patientForm.ethinicity"> </p>
+                    <p>Gender:
+                        <input type="text" ng-model="patientForm.gender"> </p>
+                    <p>Birthplace:
+                        <input type="text" ng-model="patientForm.birthplace"> </p>
+                    <p>Address:
+                        <input type="text" ng-model="patientForm.address"> </p>
                 </div>
                 <div class="modal-footer">
-                    <button ng-click="initialiseClaim()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
+                    <button ng-click="submitPatient()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
                 </div>
             </div>
         </div>
     </div>
     <br/>
 
+    <!--Modal Box to add health providers-->
+    <div id="hpModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Health Provider</h4>
+                </div>
+                <div class="modal-body">
+                    <p>HID:
+                        <input type="text" ng-model="healthProviderForm.hid"> </p>
+                    <p>Name:
+                        <input type="text" ng-model="healthProviderForm.name"> </p>
+                    <p>Phone:
+                        <input type="text" ng-model="healthProviderForm.phone"> </p>
+                    <p>Address:
+                        <input type="text" ng-model="healthProviderForm.address"> </p>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="submitHP()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <!--Modal Box to add viewers-->
+    <div id="viewerModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Viewer</h4>
+                </div>
+                <div class="modal-body">
+                    <p>VID:
+                        <input type="text" ng-model="viewerForm.vid"> </p>
+                    <p>Health Provider:
+                        <input type="text" ng-model="viewerForm.healthProvider"> </p>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="submitViewer()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <div class="container-fluid">
+        <h4>Info Panel</h4>
+        <p>Request URL: {{endpoint}} </p>
+        <p>Response code: {{myStatus}} </p>
+
+    </div>
+
+    <!-- Tab Nav Bar-->
     <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#activeclaims">Active Claims</a></li>
-        <li><a data-toggle="tab" href="#updateclaim">Update Claim</a></li>
-        <li><a data-toggle="tab" href="#additems">Add Items</a></li>
-        <li><a data-toggle="tab" href="#addjob">Add Job</a></li>
-        <li><a data-toggle="tab" href="#addinvoice">Add Invoice Item</a></li>
+        <li class="dropdown active">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Assets
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="#patient" data-toggle="tab">Patient</a>
+                </li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Participants
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="#healthProvider" data-toggle="tab">Health Provider</a>
+                </li>
+                <li>
+                    <a href="#viewer" data-toggle="tab">Viewer</a>
+                </li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Transactions
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="#medicalEncounter" data-toggle="tab">Medicial Encounter</a>
+                </li>
+                <li>
+                    <a href="#removePatient" data-toggle="tab">Remove Patient</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#queries">Queries</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#system">System</a>
+        </li>
     </ul>
 
+    <!-- Tab Content -->
     <div id="content" class="tab-content">
-        <div id="activeclaims" class="tab-pane fade in active">
+
+        <div id="patient" class="tab-pane fade in active">
+            <h1>Patients</h1>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#patientModal">Add Patient</button>
+            <button type="button" class="btn btn-default" ng-click="getData('Patient')">Get Patients</button>
+        </div>
+        <div id="healthProvider" class="tab-pane fade">
+            <h1>Health Providers</h1>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#hpModal">Add Health Provider</button>
+            <button type="button" class="btn btn-default" ng-click="getData('HealthProvider')">Get Health Providers</button>
+        </div>
+        <div id="viewer" class="tab-pane fade">
+            <h1>Viewers</h1>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#viewerModal">Add Viewer</button>
+            <button type="button" class="btn btn-default" ng-click="getData('Viewer')">Get Viewers</button>
+        </div>
+
+
+        <div id="activeclaims" class="tab-pane fade">
             <!--Box to select claims -->
             <div>
                 <h4>Select a Claim</h4>
@@ -83,124 +209,16 @@
                     <button ng-click="selectState(info.state)" class="list-group-item">{{info.state.data.claim.claimNumber}}</button>
                 </div>
             </div>
-                <hr>
-            <h4>Info Panel</h4>
-            <br>
-            <p>My Identity: {{me}}</p>
-            <p>Latest Endpoint: {{endpoint}} </p>
-            <p>Response: {{myResponse}} </p>
-            <p>Http Response Status: {{myStatus}} </p>
-            <!--Box to view the contents of a state in JSON format -->
-            <h4>State Data</h4>
-            <button ng-click="viewClaims()">
-                Refresh State Data
-            </button>
-            <pre id="json-renderer"></pre>
 
-        </div>
-        <!--Tab for update claim -->
-        <div id="updateclaim" class="tab-pane fade">
-            <p>Update for claim: {{updateForm.claimNumber}}</p>
-            <p>Loss description:
-                <input type="text" ng-model="updateForm.lossDesc"> </p>
-            <p>Claim Date:
-                <input type="text" ng-model="updateForm.date"> </p>
-            <p>Loss location:
-                <input type="text" ng-model="updateForm.lossLoc"> </p>
-            <p>Customer Name:
-                <input type="text" ng-model="updateForm.cName"> </p>
-            <p>Phone Number:
-                <input type="text" ng-model="updateForm.phoneNum"> </p>
-            <p>Excess:
-                <input type="text" ng-model="updateForm.excess"> </p>
-            <button ng-click="updateClaim()">Update</button>
-            <button ng-click="closeClaim()">Close</button>
 
-        </div>
-        <!--Tab to add items-->
-        <div id="additems" class="tab-pane fade">
-
-            <p>Item Id:
-                <input type="text" ng-model="itemForm.itemId">
-            </p>
-            <p>Serial number:
-                <input type="text" ng-model="itemForm.serialNumber">
-            </p>
-            <p>Repairable:
-                <input type="checkbox" ng-model="itemForm.repairable">
-            </p>
-            <p>Purchase Date:
-                <input type="text" ng-model="itemForm.purchaseDate">
-            </p>
-            <p>Purchase location:
-                <input type="text" ng-model="itemForm.purchaseLoc">
-            </p>
-            <p>Purchased New?
-                <input type="checkbox" ng-model="itemForm.purchaseNew">
-            </p>
-            <p>Original purchase price:
-                <input type="text" ng-model="itemForm.purchaseOrigPrice">
-            </p>
-            <p>Warranty Period (Months):
-                <input type="text" ng-model="itemForm.warranty">
-            </p>
-            <h5>Cached Items:</h5>
-
-            <ul>
-                <li ng-repeat="i in items" class="list-group">{{i.itemId}} : {{i.serialNumber}}</li>
-            </ul>
-
-            <button ng-click="addItemToCache()">Add Item to Cache</button>
-            <button ng-click="items=[]">Clear Cache</button>
-            <button ng-click="addItemsToNode()">Submit to Node</button>
-        </div>
-
-        <!--Tab to add jobs -->
-        <div id="addjob" class="tab-pane fade">
-            <p>Supplier Id:
-                <input type="text" ng-model="jobForm.supplierId">
-            </p>
-            <p>Manual Review:
-                <input type="checkbox" ng-model="jobForm.manualReview">
-            </p>
-            <p>Job Status:
-                <input type="text" ng-model="jobForm.jobStatus">
-            </p>
-            <p>Last Status Update:
-                <input type="text" ng-model="jobForm.lastStatusUpdate">
-            </p>
-            <p>Job Id:
-                <input type="text" ng-model="jobForm.jobId">
-            </p>
-            <p>Work Type:
-                <input type="text" ng-model="jobForm.workType">
-            </p>
-            <p>Item Id:
-                <input type="text" ng-model="jobForm.itemId">
-            </p>
-            <button ng-click="addJob()">Add Job</button>
-
-        </div>
-
-        <!--Tab to add invoice lines -->
-        <div id="addinvoice" class="tab-pane fade">
-                <p>Invoice Id:
-                    <input type="text" ng-model="invoiceForm.invoiceId">
-                </p>
-                <p>Supplier Id:
-                    <input type="text" ng-model="invoiceForm.supplierId">
-                </p>
-                <p>Job Id:
-                    <input type="text" ng-model="invoiceForm.jobId">
-                </p>
-                <p>Description:
-                    <input type="text" ng-model="invoiceForm.description">
-                </p>
-                <p>Amount:
-                    <input type="text" ng-model="invoiceForm.amount">
-                </p>
-                <button ng-click="addInvoice()">Add Invoice</button>
         </div>
     </div>
+
+    <div class="container-fluid">
+        <!--Box to view response in JSON format -->
+        <h4>Response data</h4>
+        <pre id="json-renderer"></pre>
+    </div>
 </body>
+
 </html>

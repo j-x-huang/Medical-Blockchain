@@ -1,20 +1,19 @@
-"use strict";
-
-var app = angular.module('myApp', ['ngSanitize']);
+var app = angular.module('myApp', []);
 var apiBaseURL = "http://localhost:3000/api/";
 
-app.controller('myCtrl', function ($filter, $scope, $http) {
+app.controller('myCtrl', function ($scope, $http) {
 
-    $scope.healthProvider = {
+    $scope.healthProviderForm = {
         $class: "nz.ac.auckland.HealthProvider",
         hid: "string",
         name: "string",
         phone: "string",
-        address: "string"
+        address: "string",
+        publicKey: "."
     };
 
 
-    $scope.patient = {
+    $scope.patientForm = {
         $class: "nz.ac.auckland.Patient",
         pid: "string",
         birthDate: "string",
@@ -33,15 +32,18 @@ app.controller('myCtrl', function ($filter, $scope, $http) {
         gender: "string",
         birthplace: "string",
         address: "string",
-        record: []
+        records: "",
+        PKeyPpass: ".",
+        PkeyHPpass: "."
     }
 
-    /**
-     * Form fields corresponds to ClaimItem object. The fields show in the `Add Items` tab.
-     *
-     * @type {{itemId: string, serialNumber: string, repairable: boolean, purchaseDate: string, purchaseLoc: string, purchaseNew: boolean, purchaseOrigPrice: string, warranty: number}}
-     */
-    $scope.medicalEncounter = {
+    $scope.viewerForm = {
+        $class: "nz.ac.auckland.Viewer",
+        vid: "string",
+        healthProvider: ""
+    }
+
+    $scope.medicalEncounterForm = {
         $class: "nz.ac.auckland.MedicalEncounter",
         record: {
         $class: "nz.ac.auckland.Record",
@@ -50,128 +52,67 @@ app.controller('myCtrl', function ($filter, $scope, $http) {
             record_code: "string",
             record_reasonCode: "string",
             record_reasonDesc: "string",
-            heathProvider: {},
+            healthProvider: {},
         id: "string"
     },
         patient: {}
 
     };
 
-    /**
-     * Sends InvoiceForm to the node Cordapp API
-     */
-    $scope.addInvoice = function () {
 
-        var endpoint = apiBaseURL + "addInvoice?id=" + $scope.id
+    $scope.viewData = function (data) {
+
+        $('#json-renderer').jsonViewer(data, { collapsed: true });
+
+    }
+
+    $scope.submitPatient = function () {
+        var endpoint = apiBaseURL + "Patient"
         $scope.endpoint = endpoint
 
         $http({
-            method: 'PUT',
+            method: 'POST',
             url: endpoint,
-            data: angular.toJson($scope.invoiceForm),
+            data: angular.toJson($scope.patientForm),
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then(_success, _error)
     }
 
-    /**
-     * Make box to see the contents of all unconsumed ClaimStates
-     */
-    $scope.viewClaims = function () {
-        var endpoint = apiBaseURL + "getUnconsumedStates"
+    $scope.submitHP = function () {
+        var endpoint = apiBaseURL + "HealthProvider"
+        $scope.endpoint = endpoint
 
-        $http.get(endpoint).then(function (response) {
-            var count = response.data.length
-            var claims = []
-            var linearId = []
-            $scope.unconsumedStates = response.data;
-
-            $('#json-renderer').jsonViewer($scope.unconsumedStates, { collapsed: true });
-
-        })
+        $http({
+            method: 'POST',
+            url: endpoint,
+            data: angular.toJson($scope.healthProviderForm),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(_success, _error)
     }
 
+    $scope.submitViewer = function () {
+        var endpoint = apiBaseURL + "Viewer"
+        $scope.endpoint = endpoint
 
-    function loaded() {
-      var buf = crypto.randomBytes(1024 / 8) // 128 bytes
-      buf = new Uint32Array(new Uint8Array(buf).buffer)
-
-      sjcl.random.addEntropy(buf, 1024, "crypto.randomBytes")
-
-      sjcl.random.startCollectors();
+        $http({
+            method: 'POST',
+            url: endpoint,
+            data: angular.toJson($scope.viewerForm),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(_success, _error)
     }
 
+    $scope.getData = function (tag) {
+        var endpoint = apiBaseURL + tag
+        $scope.endpoint = endpoint
 
-    //filter to remove the notary node from peers list
-    function checkNotary(list) {
-        return list.search("Notary") == -1
-    }
-
-
-    //filter network map nodes from the peer list
-    function checkNetwork(list) {
-        return list.search("Network") == -1
-    }
-
-
-    function getRandomSalt(words, paranoia) {
-      return sjcl.random.randomWords(words, paranoia);
-    }
-
-
-    function stretchPassword(password){
-
-       var salt = getRandomSalt(4,10);
-
-       var iterations = 10000;
-
-       var keyLength = 256;
-
-       if (password.length == 0) {
-          error("Need a password!");
-          return;
-       }
-
-       var keyBitArray = sjcl.misc.pbkdf2(password, salt, iterations, keyLength);
-
-       var key = sjcl.codec.hex.fromBits(keyBitArray);
-
-       return key;
-    }
-
-    function symEncrypt(data, key){
-
-       if (data === '') { return; }
-       if (key.length == 0) {
-         error("Need a key!");
-         return;
-       }
-
-       // Key must be in bit array
-       var encryptedData = sjcl.encrypt(key, data, {mode : "ccm || gcm || ocb2"});
-
-       // var encryptedDataBase64 = sjcl.codec.base64.fromBits(encryptedDataBitArray);
-
-       return encryptedData;
-    }
-
-
-    function symDecrypt(encryptedData, key){
-
-       if (encryptedData.length === 0) { return; }
-       if (key.length == 0) {
-         error("Need a key!");
-         return;
-       }
-
-       // var encryptedDataBitArray = sjcl.codec.base64.toBits(encryptedDataBase64);
-
-       var data = sjcl.decrypt(key, encryptedData);
-
-       // var plainData = sjcl.codec.utf8String.fromBits(dataBits);
-
-       return data;
+        $http.get(endpoint).then(_success, _error)
     }
 
     /**
@@ -179,6 +120,7 @@ app.controller('myCtrl', function ($filter, $scope, $http) {
      * show the ClaimState in the `Active Claims` box.
      */
     $scope.initialiseClaim = function () {
+
 
         //retrieving a list of peers
         var endpoint = apiBaseURL + "me"
@@ -208,26 +150,6 @@ app.controller('myCtrl', function ($filter, $scope, $http) {
     }
 
     /**
-     * This obtains the linear Id of the state selected in the `Active Claims` box. It also changes the fields
-     * of UpdateForm to correspond with the Claim selected.
-     *
-     * @param state
-     */
-    $scope.selectState = function (state) {
-        $scope.id = state.data.linearId.id
-        $scope.selectedState = state;
-
-        $scope.updateForm.claimNumber = state.data.claim.claimNumber
-        $scope.updateForm.lossDesc = state.data.claim.lossDesc
-        $scope.updateForm.date = state.data.claim.date
-        $scope.updateForm.lossLoc = state.data.claim.lossLoc
-        $scope.updateForm.phoneNum = state.data.claim.phoneNum
-        $scope.updateForm.excess = state.data.claim.excess
-        $scope.updateForm.cName = state.data.claim.cname
-
-    }
-
-    /**
      * Invokes the CloseClaim function at the Cordapp API for the specified claim.
      */
     $scope.closeClaim = function () {
@@ -239,46 +161,6 @@ app.controller('myCtrl', function ($filter, $scope, $http) {
             $scope.myStatus = response.status
             $scope.myResponse = response.data
         }, _error)
-    }
-
-    /**
-     * Sends contents of UpdateForm to the node Cordapp API.
-     */
-    $scope.updateClaim = function () {
-        $scope.myResponse = "clicked"
-        console.log($scope.updateForm);
-        var endpoint = apiBaseURL + "updateClaim?id=" + $scope.id;
-        $scope.endpoint = endpoint;
-
-        $scope.updateForm.parties = $scope.selectedState.data.parties;
-
-        $http({
-            method: 'PUT',
-            url: endpoint,
-            data: angular.toJson($scope.updateForm),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(_success, _error)
-    }
-
-    /**
-     * Sends the contents of JobForm to the node Cordapp API
-     */
-    $scope.addJob = function () {
-        $scope.myResponse = "clicked"
-
-        var endpoint = apiBaseURL + "addJob?id=" + $scope.id
-        $scope.endpoint = endpoint
-
-        $http({
-            method: 'PUT',
-            url: endpoint,
-            data: angular.toJson($scope.jobForm),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(_success, _error)
     }
 
     /**
@@ -319,10 +201,8 @@ app.controller('myCtrl', function ($filter, $scope, $http) {
      */
     function _success(response) {
         console.log(response);
-        $scope.viewClaims();
+        $scope.viewData(response.data);
         $scope.myStatus = response.status
-        $scope.myResponse = response.data
-        alert("Success: " + response.data);
     }
 
     /**
@@ -332,10 +212,8 @@ app.controller('myCtrl', function ($filter, $scope, $http) {
      * @private
      */
     function _error(response) {
-        $scope.myResponse = response.statusText
+        console.log(response)
         $scope.myStatus = response.status
-        alert("The Corda Node returned an error: " + response.data)
+        alert("Error: " + response.data)
     }
-
-    init(); // run the init function
 })
