@@ -4,6 +4,8 @@ var namespace = "nz.ac.auckland"
 
 app.controller('myCtrl', function ($scope, $http) {
 
+    $scope.update= false;
+
     $scope.healthProviderForm = {
         $class: "nz.ac.auckland.HealthProvider",
         hid: "string",
@@ -133,7 +135,7 @@ app.controller('myCtrl', function ($scope, $http) {
         console.log($scope.healthProviderForm)
 
     }
-    
+
     /**
      * Store the current state of the ItemForm in web cache
      */
