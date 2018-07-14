@@ -53,7 +53,7 @@ concept Record{
   o String record_code
   o String record_reasonCode optional
   o String record_reasonDesc optional
-  --> HealthProvider heathProvider
+  --> HealthProvider healthProvider
 }
 
 concept Allergy extends Record {

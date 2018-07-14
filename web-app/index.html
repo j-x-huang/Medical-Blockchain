@@ -119,7 +119,7 @@
                 <div class="modal-body">
                     <p>VID:
                         <input type="text" ng-model="viewerForm.vid"> </p>
-                    <p>Health Provider:
+                    <p>Health Provider ID:
                         <input type="text" ng-model="viewerForm.healthProvider"> </p>
                 </div>
                 <div class="modal-footer">
@@ -159,19 +159,6 @@
                 </li>
                 <li>
                     <a href="#viewer" data-toggle="tab">Viewer</a>
-                </li>
-            </ul>
-        </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Transactions
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="#medicalEncounter" data-toggle="tab">Medicial Encounter</a>
-                </li>
-                <li>
-                    <a href="#removePatient" data-toggle="tab">Remove Patient</a>
                 </li>
             </ul>
         </li>
@@ -218,6 +205,19 @@
     </div>
 
     <div class="container-fluid">
+        <table class="table table-striped">
+            <tr>
+                <th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>
+                <th>Options</th>
+            </tr>
+            <tr ng-repeat="row in myArray">
+                <td ng-repeat="column in row ">
+                    {{ column }}
+                </td>
+                <td><button type="button" class="btn btn-default" ng-click="getDetails($index)">Details</button></td>
+            </tr>
+        </table>
+
         <!--Box to view response in JSON format -->
         <h4>Response data</h4>
         <pre id="json-renderer"></pre>
