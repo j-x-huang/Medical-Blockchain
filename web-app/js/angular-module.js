@@ -1,5 +1,6 @@
 var app = angular.module('myApp', []);
 var apiBaseURL = "http://localhost:3000/api/";
+var namespace = "nz.ac.auckland"
 
 app.controller('myCtrl', function ($scope, $http) {
 
@@ -46,18 +47,20 @@ app.controller('myCtrl', function ($scope, $http) {
     $scope.medicalEncounterForm = {
         $class: "nz.ac.auckland.MedicalEncounter",
         record: {
-        $class: "nz.ac.auckland.Record",
+            $class: "nz.ac.auckland.Record",
             rid: "string",
             record_date: "string",
             record_code: "string",
             record_reasonCode: "string",
             record_reasonDesc: "string",
             healthProvider: {},
-        id: "string"
-    },
+            id: "string"
+        },
         patient: {}
 
     };
+
+    $scope.myArray = []
 
 
     $scope.viewData = function (data) {
@@ -98,6 +101,8 @@ app.controller('myCtrl', function ($scope, $http) {
         var endpoint = apiBaseURL + "Viewer"
         $scope.endpoint = endpoint
 
+        $scope.viewerForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + $scope.viewerForm.healthProvider
+
         $http({
             method: 'POST',
             url: endpoint,
@@ -115,54 +120,20 @@ app.controller('myCtrl', function ($scope, $http) {
         $http.get(endpoint).then(_success, _error)
     }
 
-    /**
-     * Sends the ClaimForm to the node Cordapp API. If the transaction is committed,
-     * show the ClaimState in the `Active Claims` box.
-     */
-    $scope.initialiseClaim = function () {
+    $scope.getDetails = function (index) {
+        console.log($scope.healthProviderForm)
 
+        let details = $scope.myArray[index]
+        for (var key in details) {
+            if ($scope.healthProviderForm.hasOwnProperty(key)) {
+                $scope.healthProviderForm[key] = details[key]
+            }
 
-        //retrieving a list of peers
-        var endpoint = apiBaseURL + "me"
-        $scope.endpoint = endpoint
-        $http.get(endpoint).then(function (response) {
-            var parties = [];
-            parties.push(response.data.me);
-            parties.push($scope.selectedPeer);
-            $scope.claimForm.parties = parties;
+        }
+        console.log($scope.healthProviderForm)
 
-            var endpoint = apiBaseURL + "createClaim"
-            $scope.endpoint = endpoint
-
-            $http({
-                method: 'PUT',
-                url: endpoint,
-                data: angular.toJson($scope.claimForm),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(function success(response) {
-                $scope.viewClaims()
-                $scope.myResponse = response.data
-                $scope.myStatus = response.status
-            }, _error)
-        })
     }
-
-    /**
-     * Invokes the CloseClaim function at the Cordapp API for the specified claim.
-     */
-    $scope.closeClaim = function () {
-        $scope.myResponse = "clicked"
-        var endpoint = apiBaseURL + "closeClaim?id=" + $scope.id
-        $scope.endpoint = endpoint
-
-        $http.get(endpoint).then(function (response) {
-            $scope.myStatus = response.status
-            $scope.myResponse = response.data
-        }, _error)
-    }
-
+    
     /**
      * Store the current state of the ItemForm in web cache
      */
@@ -188,7 +159,7 @@ app.controller('myCtrl', function ($scope, $http) {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(function (response) {$scope.items = []; _success(response)}, _error)
+        }).then(function (response) { $scope.items = []; _success(response) }, _error)
 
 
     }
@@ -201,6 +172,7 @@ app.controller('myCtrl', function ($scope, $http) {
      */
     function _success(response) {
         console.log(response);
+        $scope.myArray = response.data
         $scope.viewData(response.data);
         $scope.myStatus = response.status
     }
