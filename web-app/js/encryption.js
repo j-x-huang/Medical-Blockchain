@@ -55,7 +55,7 @@ function loaded() {
     key = sjcl.codec.hex.toBits(key);
 
      // Key must be in bit array
-     var result = sjcl.encrypt(key, data, {mode : "ccm"});
+     var result = sjcl.encrypt(key, data, {iv : "Jhs8/MFOrBhevTzoE6t0IQ==", mode : "ccm"});
 
      console.log(result);
 
@@ -88,3 +88,4 @@ function loaded() {
 
      return data;
   }
+

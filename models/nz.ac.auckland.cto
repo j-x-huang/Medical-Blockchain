@@ -60,7 +60,7 @@ concept Allergy extends Record {
   o String allergy_start 
   o String allergy_stop optional
   o String allergy_code 
-  o String allergy_desc
+  o String allergy_desc optional
 }
 
 concept Procedure extends Record{
@@ -74,7 +74,7 @@ concept Procedure extends Record{
 concept Observation extends Record{
   o String obs_date
   o String obs_code
-  o String obs_desc
+  o String obs_desc optional
   o String value
   o String units
 }
@@ -91,14 +91,14 @@ concept Medication extends Record{
 concept Immunization extends Record{
   o String imm_date 
   o String imm_code 
-  o String imm_desc 
+  o String imm_desc optional
 }
 
 concept Condition extends Record{
   o String cond_start 
   o String cond_stop optional
   o String cond_code 
-  o String cond_desc 
+  o String cond_desc optional
 }
 
 participant HealthProvider identified by id {

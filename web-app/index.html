@@ -132,6 +132,119 @@
     </div>
     <br/>
 
+    <!-- Record Modal-->
+    <div id="recordModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Record</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <p>ID:
+                            <input type="text" ng-model="recordForm.id"> </p>
+                        <p>Date:
+                            <input type="text" ng-model="recordForm.record_date"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="recordForm.record_code"> </p>
+                        <p>Reason Code:
+                            <input type="text" ng-model="recordForm.record_reasonCode"> </p>
+                        <p>Reason Description:
+                            <input type="text" ng-model="recordForm.record_reasonDesc"> </p>
+                        <p>Health Provider ID:
+                            <input type="text" ng-model="recordForm.healthProvider"> </p>
+                        <hr>
+                        <p>Record type: 
+                        <select ng-model="selectedRecord.type" ng-options="type for type in types">
+                        </select> </p>
+                    </div>
+
+                    <!-- ALLERGIES -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Allergy'">
+                        <p>Start Date:
+                            <input type="text" ng-model="allergyForm.allergy_start"> </p>
+                        <p>End Date:
+                            <input type="text" ng-model="allergyForm.allergy_end"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="allergyForm.allergy_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="allergyForm.allergy_desc"> </p>
+                    </div>
+
+                    <!-- PROCEDURE -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Procedure'">
+                        <p>Date:
+                            <input type="text" ng-model="procedureForm.procedure_date"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="procedureForm.procedure_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="procedureForm.procedure_desc"> </p>
+                        <p>Reason Code:
+                            <input type="text" ng-model="procedureForm.procedure_reasonCode"> </p>
+                        <p>Reason Description:
+                            <input type="text" ng-model="procedureForm.procedure_reasonDesc"> </p>
+                    </div>
+                    <!-- OBSERVATION -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Observation'">
+                        <p>Date:
+                            <input type="text" ng-model="observationForm.observation_date"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="observationForm.observation_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="observationForm.observation_desc"> </p>
+                        <p>Value:
+                            <input type="text" ng-model="observationForm.observation_value"> </p>
+                        <p>Unit:
+                            <input type="text" ng-model="observationForm.observation_unit"> </p>
+                    </div>
+
+                    <!-- MEDICATION -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Medication'">
+                        <p>Start Date:
+                            <input type="text" ng-model="medicationForm.medication_start"> </p>
+                        <p>End Date:
+                            <input type="text" ng-model="medicationForm.medication_end"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="medicationForm.medication_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="medicationForm.medication_desc"> </p>
+                        <p>Reason Code:
+                            <input type="text" ng-model="medicationForm.medication_code"> </p>
+                        <p>Reason Description:
+                            <input type="text" ng-model="medicationForm.medication_desc"> </p>
+                    </div>
+
+                    <!-- IMMUNIZATION -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Immunization'">
+                        <p>Date:
+                            <input type="text" ng-model="immunizationForm.immunization_date"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="immunizationForm.immunization_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="immunizationForm.immunization_desc"> </p>
+                    </div>
+
+                    <!-- CONDITION -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Condition'">
+                        <p>Start Date:
+                            <input type="text" ng-model="conditionForm.condition_start"> </p>
+                        <p>End Date:
+                            <input type="text" ng-model="conditionForm.condition_end"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="conditionForm.condition_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="conditionForm.condition_desc"> </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                        <button ng-click="submitRecord()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
+                </div>
+                </br>
+            </div>
+        </div>
+    </div>
+
     <div class="container-fluid">
         <h4>Info Panel</h4>
         <p>Request URL: {{endpoint}} </p>
@@ -217,6 +330,8 @@
                     {{ column }}
                 </td>
                 <td><button type="button" class="btn btn-default" ng-click="getDetails($index)">Details</button></td>
+                <td><button type="button" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button></td>
+                <td><button type="button" class="btn btn-default" ng-click="delete($index)">-</button></td>
             </tr>
         </table>
 

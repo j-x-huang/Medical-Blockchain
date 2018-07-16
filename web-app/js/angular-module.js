@@ -1,3 +1,4 @@
+
 var app = angular.module('myApp', []);
 var apiBaseURL = "http://localhost:3000/api/";
 var namespace = "nz.ac.auckland"
@@ -46,21 +47,26 @@ app.controller('myCtrl', function ($scope, $http) {
         healthProvider: ""
     }
 
-    $scope.medicalEncounterForm = {
-        $class: "nz.ac.auckland.MedicalEncounter",
-        record: {
-            $class: "nz.ac.auckland.Record",
-            rid: "string",
-            record_date: "string",
-            record_code: "string",
-            record_reasonCode: "string",
-            record_reasonDesc: "string",
-            healthProvider: {},
-            id: "string"
-        },
-        patient: {}
+    $scope.recordForm = {
+        $class: "nz.ac.auckland.Record",
+        id: "string",
+        record_date: "string",
+        record_code: "string",
+        record_reasonCode: "string",
+        record_reasonDesc: "string",
+        healthProvider:""
+    }
 
-    };
+    $scope.selectedRecord = {}
+    $scope.types = ["Allergy", "Procedure", "Observation", "Medication", "Immunization", "Condition"]
+
+    $scope.allergyForm = {}
+    $scope.procedureForm = {}
+    $scope.observationForm = {}
+    $scope.medicationForm = {}
+    $scope.immunizationForm = {}
+    $scope.conditionForm = {}
+
 
     $scope.myArray = []
 
@@ -115,6 +121,49 @@ app.controller('myCtrl', function ($scope, $http) {
         }).then(_success, _error)
     }
 
+    $scope.submitRecord = function () {
+        var recordForm = {}
+
+        switch ($scope.selectedRecord.type) {
+            case 'Allergy':
+                recordForm = $scope.allergyForm
+                break
+            case 'Procedure':
+                recordForm = $scope.procedureForm
+                break
+            case 'Observation':
+                recordForm = $scope.observationForm
+                break
+            case 'Immunization':
+                recordForm = $scope.immunizationForm
+                break
+            case 'Condition':
+                recordForm = $scope.conditionForm
+                break
+            case 'Medication':
+                recordForm = $scope.medicationForm
+                break;
+        }
+        $scope.recordForm = Object.assign($scope.recordForm, recordForm)
+        var encryptedRecord = symEncrypt(JSON.stringify($scope.recordForm),'5266556A586E3272357538782F413F442A472D4B6150645367566B5970337336')
+        encryptedRecord = JSON.parse(encryptedRecord)
+        console.log(encryptedRecord)
+        console.log(encryptedRecord.ct)
+        let decryptedRecord = symDecrypt(encryptedRecord.ct, '5266556A586E3272357538782F413F442A472D4B6150645367566B5970337336', encryptedRecord.iv)
+        console.log(decryptedRecord)
+    }
+
+    $scope.delete = function (index) {
+        var tag = $scope.myArray[index].$class
+        var id = $scope.myArray[index].id
+        tag = tag.replace(namespace + '.', '')
+
+        var endpoint = apiBaseURL + tag + "/" + id
+        $scope.endpoint = endpoint
+
+        $http.delete(endpoint).then(_success, _error)
+    }
+
     $scope.getData = function (tag) {
         var endpoint = apiBaseURL + tag
         $scope.endpoint = endpoint
@@ -143,27 +192,6 @@ app.controller('myCtrl', function ($scope, $http) {
         const item = Object.assign({}, $scope.itemForm)
         $scope.items.push(item)
         $scope.myResponse = "Item added (locally, not to node)"
-    }
-
-    /**
-     * Send all ItemForms in cache to the node Cordapp API
-     */
-    $scope.addItemsToNode = function () {
-        $scope.myResponse = "clicked"
-        var endpoint = apiBaseURL + "addItems?id=" + $scope.id
-        $scope.endpoint = endpoint
-
-        console.log($scope.items)
-        $http({
-            method: 'PUT',
-            url: endpoint,
-            data: angular.toJson($scope.items),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(function (response) { $scope.items = []; _success(response) }, _error)
-
-
     }
 
     /**
