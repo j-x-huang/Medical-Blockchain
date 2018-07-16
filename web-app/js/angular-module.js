@@ -8,7 +8,7 @@ app.controller('myCtrl', function ($scope, $http) {
 
     $scope.healthProviderForm = {
         $class: "nz.ac.auckland.HealthProvider",
-        hid: "string",
+        id: "string",
         name: "string",
         phone: "string",
         address: "string",
@@ -18,7 +18,7 @@ app.controller('myCtrl', function ($scope, $http) {
 
     $scope.patientForm = {
         $class: "nz.ac.auckland.Patient",
-        pid: "string",
+        id: "string",
         birthDate: "string",
         deathDate: "string",
         ird: "string",
@@ -35,14 +35,14 @@ app.controller('myCtrl', function ($scope, $http) {
         gender: "string",
         birthplace: "string",
         address: "string",
-        records: "",
-        PKeyPpass: ".",
+        records: ".",
+        PkeyPpass: ".",
         PkeyHPpass: "."
     }
 
     $scope.viewerForm = {
         $class: "nz.ac.auckland.Viewer",
-        vid: "string",
+        id: "string",
         healthProvider: ""
     }
 

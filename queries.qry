@@ -11,7 +11,7 @@ query selectPatientByID {
   description: "Select a patient with a specific ID"
   statement:
       SELECT nz.ac.auckland.Patient
-          WHERE (pid==_$pid)
+          WHERE (id==_$id)
 }
 
 query selectPatientByRace {
@@ -46,5 +46,5 @@ query selectHealthProviderByID {
   description: "Select a health providers with a specific ID"
   statement:
       SELECT nz.ac.auckland.HealthProvider
-          WHERE (hid==_$hid)
+          WHERE (id==_$id)
 }

@@ -24,8 +24,8 @@ o Female
 o Other
 }
 
-asset Patient identified by pid{
-  o String pid
+asset Patient identified by id{
+  o String id
   o String birthDate
   o String deathDate optional
   o String ird
@@ -42,13 +42,13 @@ asset Patient identified by pid{
   o String gender
   o String birthplace
   o String address
-  o String records
+  o String records optional
   o String PkeyPpass
   o String PkeyHPpass
 }
 
 concept Record{
-  o String rid
+  o String id
   o String record_date 
   o String record_code
   o String record_reasonCode optional
@@ -101,17 +101,17 @@ concept Condition extends Record{
   o String cond_desc 
 }
 
-participant HealthProvider identified by hid {
-  o String hid
+participant HealthProvider identified by id {
+  o String id
   o String name
   o String phone
   o String address
   o String publicKey
 }
 
-participant Viewer identified by vid {
-  o String vid
-  --> HealthProvider heathProvider
+participant Viewer identified by id {
+  o String id
+  --> HealthProvider healthProvider
 }
 
 transaction MedicalEncounter {
