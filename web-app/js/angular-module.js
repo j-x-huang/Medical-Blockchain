@@ -16,7 +16,6 @@ app.controller('myCtrl', function ($scope, $http) {
         publicKey: "."
     };
 
-
     $scope.patientForm = {
         $class: "nz.ac.auckland.Patient",
         id: "string",
@@ -36,7 +35,7 @@ app.controller('myCtrl', function ($scope, $http) {
         gender: "string",
         birthplace: "string",
         address: "string",
-        records: ".",
+        records: "[]",
         PkeyPpass: ".",
         PkeyHPpass: "."
     }
@@ -68,6 +67,7 @@ app.controller('myCtrl', function ($scope, $http) {
     $scope.conditionForm = {}
 
     let _id;
+    let _records;
     $scope.myArray = []
 
 
@@ -80,12 +80,12 @@ app.controller('myCtrl', function ($scope, $http) {
     $scope.submitPatient = function () {
         var endpoint = apiBaseURL + "Patient"
         $scope.endpoint = endpoint
-
-        encryptForm($scope.patientForm)
+        patientForm = Object.assign({}, $scope.patientForm)
+        encryptForm(patientForm)
         $http({
             method: 'POST',
             url: endpoint,
-            data: angular.toJson($scope.patientForm),
+            data: angular.toJson(patientForm),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -122,7 +122,7 @@ app.controller('myCtrl', function ($scope, $http) {
         }).then(_success, _error)
     }
 
-    $scope.submitRecord = function (index) {
+    $scope.submitRecord = function () {
         var recordForm = {}
 
         switch ($scope.selectedRecord.type) {
@@ -145,8 +145,13 @@ app.controller('myCtrl', function ($scope, $http) {
                 recordForm = $scope.medicationForm
                 break;
         }
-        $scope.recordForm = Object.assign($scope.recordForm, recordForm)
-        var encryptedRecord = symEncrypt(JSON.stringify($scope.recordForm))
+        recordForm = Object.assign({}, $scope.recordForm, recordForm)
+        console.log(recordForm)
+        var records = JSON.parse(_records)
+        records.push(recordForm )
+        
+
+        var encryptedRecord = symEncrypt(JSON.stringify(records))
         encryptedRecord = JSON.parse(encryptedRecord)
 
         let updatedRecords = {
@@ -166,6 +171,31 @@ app.controller('myCtrl', function ($scope, $http) {
                 'Content-Type': 'application/json'
             }
         }).then(_success, _error)
+    }
+
+    $scope.getPatients = function () {
+        var endpoint = apiBaseURL + 'Patient'
+        $scope.endpoint = endpoint
+
+        $http.get(endpoint).then(function(response) {
+            $scope.viewData(response.data)
+            $scope.myStatus = response.status
+            
+            var tempRecords = response.data
+
+            var keys = Object.keys(tempRecords)
+
+            console.log(keys)
+
+            keys.forEach(function(key) {
+                decryptForm(tempRecords[key])
+            })
+
+            $scope.myArray = tempRecords
+            
+        }, _error)
+
+
     }
 
     $scope.delete = function (index) {
@@ -201,6 +231,7 @@ app.controller('myCtrl', function ($scope, $http) {
 
     $scope.getId = function (index) {
         _id = $scope.myArray[index].id
+        _records = $scope.myArray[index].records
     }
 
     function encryptForm (form) {
@@ -209,13 +240,23 @@ app.controller('myCtrl', function ($scope, $http) {
         keys.forEach(function(key) {
             if (!(key == "$class" || key == "id")) {
                 var encryptedData = symEncrypt(form[key])
-                console.log()
                 encryptedData = JSON.parse(encryptedData)
                 form[key] = encryptedData.ct
             }
             
         })
         console.log(form)
+    }
+
+    function decryptForm (form) {
+        var keys = Object.keys(form)
+
+        keys.forEach(function (key){
+            if (!(key == "$class" || key == "id")) {
+                var decryptedData = symDecrypt(form[key])
+                form[key] = decryptedData
+            }
+        })
     }
 
     /**
