@@ -330,7 +330,7 @@
                     {{ column }}
                 </td>
                 <td><button type="button" class="btn btn-default" ng-click="getDetails($index)">Details</button></td>
-                <td><button type="button" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button></td>
+                <td><button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button></td>
                 <td><button type="button" class="btn btn-default" ng-click="delete($index)">-</button></td>
             </tr>
         </table>
