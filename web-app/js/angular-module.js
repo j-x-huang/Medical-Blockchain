@@ -199,14 +199,20 @@ app.controller('myCtrl', function ($scope, $http) {
     }
 
     $scope.delete = function (index) {
-        var tag = $scope.myArray[index].$class
-        var id = $scope.myArray[index].id
-        tag = tag.replace(namespace + '.', '')
+        var isConfirmed = confirm("Are you sure you want to delete this patient?")
 
-        var endpoint = apiBaseURL + tag + "/" + id
-        $scope.endpoint = endpoint
+        if (isConfirmed) {
+            var tag = $scope.myArray[index].$class
+            var id = $scope.myArray[index].id
+            tag = tag.replace(namespace + '.', '')
 
-        $http.delete(endpoint).then(_success, _error)
+            var endpoint = apiBaseURL + tag + "/" + id
+            $scope.endpoint = endpoint
+
+            $http.delete(endpoint).then(_success, _error)
+        } else {
+            alert("Deletion averted")
+        }
     }
 
     $scope.getData = function (tag) {
