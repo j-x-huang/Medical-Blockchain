@@ -260,7 +260,7 @@
             </a>
             <ul class="dropdown-menu">
                 <li>
-                    <a href="#patient" data-toggle="tab">Patient</a>
+                    <a href="#patient" data-toggle="tab" ng-click="getPatients()">Patient</a>
                 </li>
             </ul>
         </li>
@@ -270,10 +270,10 @@
             </a>
             <ul class="dropdown-menu">
                 <li>
-                    <a href="#healthProvider" data-toggle="tab">Health Provider</a>
+                    <a href="#healthProvider" data-toggle="tab" ng-click="getData('HealthProvider')">Health Provider</a>
                 </li>
                 <li>
-                    <a href="#viewer" data-toggle="tab">Viewer</a>
+                    <a href="#viewer" data-toggle="tab" ng-click="getData('Viewer')">Viewer</a>
                 </li>
             </ul>
         </li>
@@ -320,7 +320,7 @@
     </div>
 
     <div class="container-fluid">
-        <table class="table table-striped">
+        <table class="table table-striped" style="width: 100%;">
             <tr>
                 <th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>
                 <th>Options</th>
@@ -329,11 +329,14 @@
                 <td ng-repeat="column in row ">
                     {{ column }}
                 </td>
-                <td><button type="button" class="btn btn-default" ng-click="getDetails($index)">Details</button></td>
-                <td><button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button></td>
-                <td><button type="button" class="btn btn-default" ng-click="delete($index)">-</button></td>
+                <td><button type="button" class="btn btn-default" ng-click="getDetails($index)">Edit</button>
+                <button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button>
+                <button type="button" class="btn btn-default" ng-click="delete($index)">-</button></td>
             </tr>
         </table>
+    </div>
+
+    <div class="container-fluid">
 
         <!--Box to view response in JSON format -->
         <h4>Response data</h4>

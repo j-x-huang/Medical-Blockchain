@@ -219,7 +219,11 @@ app.controller('myCtrl', function ($scope, $http) {
         var endpoint = apiBaseURL + tag
         $scope.endpoint = endpoint
 
-        $http.get(endpoint).then(_success, _error)
+        $http.get(endpoint).then(function (response) {
+            $scope.myArray = response.data
+            $scope.viewData(response.data);
+            $scope.myStatus = response.status
+        }, _error)
     }
 
     $scope.getDetails = function (index) {
@@ -272,10 +276,9 @@ app.controller('myCtrl', function ($scope, $http) {
      * @private
      */
     function _success(response) {
-        console.log(response);
-        $scope.myArray = response.data
         $scope.viewData(response.data);
         $scope.myStatus = response.status
+        alert("Operation successful")
     }
 
     /**

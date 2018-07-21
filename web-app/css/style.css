@@ -32,3 +32,9 @@ nav li a:hover {
     text-decoration: none;
     color: rgb(255, 255, 255);
 }
+/*
+table {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+*/
