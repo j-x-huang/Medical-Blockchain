@@ -30,8 +30,7 @@ app.controller('PatientController', [
             PkeyPpass: ".",
             PkeyHPpass: "."
         }
-        var deepCopy = Object.assign({}, $scope.patientForm)
-
+        
         if (patient != null) {
             for (var key in patient) {
                 if ($scope.patientForm.hasOwnProperty(key)) {

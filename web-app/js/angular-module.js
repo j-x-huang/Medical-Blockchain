@@ -30,6 +30,8 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         healthProvider: ""
     }
 
+    $scope.patientTab = true
+
     $scope.selectedRecord = {}
     $scope.types = ["Allergy", "Procedure", "Observation", "Medication", "Immunization", "Condition"]
 
@@ -181,6 +183,16 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             $scope.viewData(response.data);
             $scope.myStatus = response.status
         }, _error)
+    }
+
+    $scope.setTab = function (tag) {
+        if (tag === 'Patient') {
+            $scope.patientTab = true;
+            $scope.getPatients()
+        } else {
+            $scope.patientTab = false;
+            $scope.getData(tag)
+        }
     }
 
     $scope.getId = function (index) {

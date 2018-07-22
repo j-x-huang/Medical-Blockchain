@@ -208,7 +208,7 @@
             </a>
             <ul class="dropdown-menu">
                 <li>
-                    <a href="#patient" data-toggle="tab" ng-click="getPatients()">Patient</a>
+                    <a href="#patient" data-toggle="tab" ng-click="setTab('Patient')">Patient</a>
                 </li>
             </ul>
         </li>
@@ -218,10 +218,10 @@
             </a>
             <ul class="dropdown-menu">
                 <li>
-                    <a href="#healthProvider" data-toggle="tab" ng-click="getData('HealthProvider')">Health Provider</a>
+                    <a href="#healthProvider" data-toggle="tab" ng-click="setTab('HealthProvider')">Health Provider</a>
                 </li>
                 <li>
-                    <a href="#viewer" data-toggle="tab" ng-click="getData('Viewer')">Viewer</a>
+                    <a href="#viewer" data-toggle="tab" ng-click="setTab('Viewer')">Viewer</a>
                 </li>
             </ul>
         </li>
@@ -277,7 +277,7 @@
                 <td ng-repeat="column in row ">
                     {{ column }}
                 </td>
-                <td><button type="button" class="btn btn-default" ng-click="editPatient($index)">Edit</button>
+                <td><button type="button" class="btn btn-default" ng-click="editPatient($index)" ng-show="patientTab">Edit</button>
                 <button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button>
                 <button type="button" class="btn btn-default" ng-click="delete($index)">-</button></td>
             </tr>
