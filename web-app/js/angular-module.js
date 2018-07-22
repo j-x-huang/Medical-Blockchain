@@ -1,11 +1,9 @@
 
-var app = angular.module('myApp', []);
+var app = angular.module('myApp', ['angularModalService']);
 var apiBaseURL = "http://localhost:3000/api/";
 var namespace = "nz.ac.auckland"
 
-app.controller('myCtrl', function ($scope, $http) {
-
-    $scope.update= false;
+app.controller('myCtrl', function ($scope, $http, ModalService) {
 
     $scope.healthProviderForm = {
         $class: "nz.ac.auckland.HealthProvider",
@@ -15,30 +13,6 @@ app.controller('myCtrl', function ($scope, $http) {
         address: "string",
         publicKey: "."
     };
-
-    $scope.patientForm = {
-        $class: "nz.ac.auckland.Patient",
-        id: "string",
-        birthDate: "string",
-        deathDate: "string",
-        ird: "string",
-        drivers: "string",
-        passport: "string",
-        prefix: "string",
-        first: "string",
-        last: "string",
-        suffic: "string",
-        maiden: "string",
-        marital: "string",
-        race: "string",
-        ethinicity: "string",
-        gender: "string",
-        birthplace: "string",
-        address: "string",
-        records: "[]",
-        PkeyPpass: ".",
-        PkeyHPpass: "."
-    }
 
     $scope.viewerForm = {
         $class: "nz.ac.auckland.Viewer",
@@ -53,7 +27,7 @@ app.controller('myCtrl', function ($scope, $http) {
         record_code: "string",
         record_reasonCode: "string",
         record_reasonDesc: "string",
-        healthProvider:""
+        healthProvider: ""
     }
 
     $scope.selectedRecord = {}
@@ -75,21 +49,6 @@ app.controller('myCtrl', function ($scope, $http) {
 
         $('#json-renderer').jsonViewer(data, { collapsed: true });
 
-    }
-
-    $scope.submitPatient = function () {
-        var endpoint = apiBaseURL + "Patient"
-        $scope.endpoint = endpoint
-        patientForm = Object.assign({}, $scope.patientForm)
-        encryptForm(patientForm)
-        $http({
-            method: 'POST',
-            url: endpoint,
-            data: angular.toJson(patientForm),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(_success, _error)
     }
 
     $scope.submitHP = function () {
@@ -148,8 +107,8 @@ app.controller('myCtrl', function ($scope, $http) {
         recordForm = Object.assign({}, $scope.recordForm, recordForm)
         console.log(recordForm)
         var records = JSON.parse(_records)
-        records.push(recordForm )
-        
+        records.push(recordForm)
+
 
         var encryptedRecord = symEncrypt(JSON.stringify(records))
         encryptedRecord = JSON.parse(encryptedRecord)
@@ -177,22 +136,20 @@ app.controller('myCtrl', function ($scope, $http) {
         var endpoint = apiBaseURL + 'Patient'
         $scope.endpoint = endpoint
 
-        $http.get(endpoint).then(function(response) {
+        $http.get(endpoint).then(function (response) {
             $scope.viewData(response.data)
             $scope.myStatus = response.status
-            
+
             var tempRecords = response.data
 
             var keys = Object.keys(tempRecords)
 
-            console.log(keys)
-
-            keys.forEach(function(key) {
+            keys.forEach(function (key) {
                 decryptForm(tempRecords[key])
             })
 
             $scope.myArray = tempRecords
-            
+
         }, _error)
 
 
@@ -226,42 +183,15 @@ app.controller('myCtrl', function ($scope, $http) {
         }, _error)
     }
 
-    $scope.getDetails = function (index) {
-        console.log($scope.healthProviderForm)
-
-        let details = $scope.myArray[index]
-        for (var key in details) {
-            if ($scope.healthProviderForm.hasOwnProperty(key)) {
-                $scope.healthProviderForm[key] = details[key]
-            }
-
-        }
-        console.log($scope.healthProviderForm)
-    }
-
     $scope.getId = function (index) {
         _id = $scope.myArray[index].id
         _records = $scope.myArray[index].records
     }
 
-    function encryptForm (form) {
+    function decryptForm(form) {
         var keys = Object.keys(form)
 
-        keys.forEach(function(key) {
-            if (!(key == "$class" || key == "id")) {
-                var encryptedData = symEncrypt(form[key])
-                encryptedData = JSON.parse(encryptedData)
-                form[key] = encryptedData.ct
-            }
-            
-        })
-        console.log(form)
-    }
-
-    function decryptForm (form) {
-        var keys = Object.keys(form)
-
-        keys.forEach(function (key){
+        keys.forEach(function (key) {
             if (!(key == "$class" || key == "id")) {
                 var decryptedData = symDecrypt(form[key])
                 form[key] = decryptedData
@@ -292,4 +222,38 @@ app.controller('myCtrl', function ($scope, $http) {
         $scope.myStatus = response.status
         alert("Error: " + response.data)
     }
+
+    $scope.addPatient = function () {
+        ModalService.showModal({
+            templateUrl: "./patientModal.html",
+            controller: "PatientController",
+            preClose: (modal) => { modal.element.modal('hide'); },
+            inputs: {
+                title: "A More Complex Example",
+                patient: null,
+                update: false
+            }
+        }).then(function (modal) {
+            modal.element.modal();
+        });
+    }
+
+    $scope.editPatient = function (index) {
+
+        var patientDetails = $scope.myArray[index]
+        ModalService.showModal({
+            templateUrl: "./patientModal.html",
+            controller: "PatientController",
+            preClose: (modal) => { modal.element.modal('hide'); },
+            inputs: {
+                title: "A More Complex Example",
+                patient: patientDetails,
+                update: true
+            }
+        }).then(function (modal) {
+            modal.element.modal();
+
+        });
+
+    };
 })

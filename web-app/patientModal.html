@@ -1,0 +1,52 @@
+<div id="patientModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!--<button type="button" class="stretchPassword" onclick="symDecrypt('qpqUP/mwsKLTyzwdXP/Xtg==', 'd0c61d3c7279c9d7db06a4a44162f95a03925201ff23d1662f336d34c40790fa', 'Q+7/K+0I2XjBSgRA/oc1jQ==')" >&loz;</button> -->
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Patient</h4>
+            </div>
+            <div class="modal-body">
+                <p>PID:
+                    <input type="text" ng-model="patientForm.id" ng-disabled="update"> </p>
+                <p>Birthdate:
+                    <input type="text" ng-model="patientForm.birthDate"> </p>
+                <p>Death date:
+                    <input type="text" ng-model="patientForm.deathDate"> </p>
+                <p>IRD Number:
+                    <input type="text" ng-model="patientForm.ird"> </p>
+                <p>Driver Number:
+                    <input type="text" ng-model="patientForm.drivers"> </p>
+                <p>Passport Number:
+                    <input type="text" ng-model="patientForm.passport"> </p>
+                <p>Prefix:
+                    <input type="text" ng-model="patientForm.prefix"> </p>
+                <p>First Name:
+                    <input type="text" ng-model="patientForm.first"> </p>
+                <p>LastName:
+                    <input type="text" ng-model="patientForm.last"> </p>
+                <p>Suffic:
+                    <input type="text" ng-model="patientForm.suffic"> </p>
+                <p>Maiden Name:
+                    <input type="text" ng-model="patientForm.maiden"> </p>
+                <p>Marital:
+                    <input type="text" ng-model="patientForm.marital"> </p>
+                <p>Race:
+                    <input type="text" ng-model="patientForm.race"> </p>
+                <p>Ethnicity:
+                    <input type="text" ng-model="patientForm.ethinicity"> </p>
+                <p>Gender:
+                    <input type="text" ng-model="patientForm.gender"> </p>
+                <p>Birthplace:
+                    <input type="text" ng-model="patientForm.birthplace"> </p>
+                <p>Address:
+                    <input type="text" ng-model="patientForm.address"> </p>
+            </div>
+            <div class="modal-footer">
+                <button ng-click="submitPatient()" type="button" class="btn btn-default" data-dismiss="modal" ng-hide="update">Submit</button>
+                <button ng-click="updatePatient()" type="button" class="btn btn-default" data-dismiss="modal" ng-show="update">Update</button>
+
+            </div>
+        </div>
+    </div>
+</div>

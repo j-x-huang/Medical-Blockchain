@@ -32,5 +32,8 @@
     "nyc": "latest",
     "mkdirp": "latest",
     "mocha": "latest"
+  },
+  "dependencies": {
+    "angular-modal-service": "^0.13.0"
   }
 }
