@@ -28,14 +28,6 @@ rule HealthProvidersFullAccessRemovePatient {
     action: ALLOW
 }
 
-rule HealthProvidersFullAccessMedicalEncounter {
-    description: "Grand health providers full access to medical encounter transactions"
-    participant: "nz.ac.auckland.HealthProvider"
-    operation: ALL
-    resource: "nz.ac.auckland.MedicalEncounter"
-    action: ALLOW
-}
-
 rule HealthProvidersCanUpdateThemselves {
     description: "Only allow health providers to update themselves"
     participant(t): "nz.ac.auckland.HealthProvider"
@@ -61,22 +53,6 @@ rule HealthProvidersFullAccessPatient {
     action: ALLOW
 }
 
-rule ViewerCanOnlyViewHealthProviders {
-    description: "Viewers can only read health provider data"
-    participant: "nz.ac.auckland.Viewer"
-    operation: READ
-    resource: "nz.ac.auckland.HealthProvider"
-    action: ALLOW
-}
-
-rule ViewerCanOnlyViewPatients {
-    description: "Viewers can only read patient data"
-    participant: "nz.ac.auckland.Viewer"
-    operation: READ
-    resource: "nz.ac.auckland.Patient"
-    action: ALLOW
-}
-
 rule HealthProvidersFullAccess {
     description: "Grand health providers full access to patients"
     participant: "nz.ac.auckland.HealthProvider"
@@ -90,14 +66,6 @@ rule NetworkUserAdminUser {
     participant: "org.hyperledger.composer.system.NetworkAdmin"
     operation: ALL
     resource: "**"
-    action: ALLOW
-}
-
-rule ViewerReadAssetAccess {
-    description: "Viewers should have only read access to the asset registry"
-    participant: "nz.ac.auckland.Viewer"
-    operation: READ
-    resource: "org.hyperledger.composer.system.AssetRegistry"
     action: ALLOW
 }
 

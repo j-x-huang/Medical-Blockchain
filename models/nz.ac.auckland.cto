@@ -24,7 +24,7 @@ o Female
 o Other
 }
 
-asset Patient identified by id{
+participant Patient identified by id{
   o String id
   o String birthDate
   o String deathDate optional
@@ -42,28 +42,28 @@ asset Patient identified by id{
   o String gender
   o String birthplace
   o String address
-  o String records optional
-  o String PkeyPpass
-  o String PkeyHPpass
+  o String publicKey
+  o HealthProvider[] consentedHPs
 }
 
-concept Record{
+asset Record identified by id{
   o String id
   o String record_date 
   o String record_code
   o String record_reasonCode optional
   o String record_reasonDesc optional
   --> HealthProvider healthProvider
+  --> Patient patient
 }
 
-concept Allergy extends Record {
+asset Allergy extends Record {
   o String allergy_start 
   o String allergy_stop optional
   o String allergy_code 
   o String allergy_desc optional
 }
 
-concept Procedure extends Record{
+asset Procedure extends Record{
   o String procedure_date
   o String procedure_code
   o String procedure_desc
@@ -71,7 +71,7 @@ concept Procedure extends Record{
   o String procedure_reasonDesc optional
 }
 
-concept Observation extends Record{
+asset Observation extends Record{
   o String obs_date
   o String obs_code
   o String obs_desc optional
@@ -79,7 +79,7 @@ concept Observation extends Record{
   o String units
 }
 
-concept Medication extends Record{
+asset Medication extends Record{
   o String medication_start
   o String medication_stop optional
   o String medication_code
@@ -88,13 +88,13 @@ concept Medication extends Record{
   o String medication_reasonDesc optional
 }
 
-concept Immunization extends Record{
+asset Immunization extends Record{
   o String imm_date 
   o String imm_code 
   o String imm_desc optional
 }
 
-concept Condition extends Record{
+asset Condition extends Record{
   o String cond_start 
   o String cond_stop optional
   o String cond_code 
@@ -109,14 +109,14 @@ participant HealthProvider identified by id {
   o String publicKey
 }
 
-participant Viewer identified by id {
-  o String id
-  --> HealthProvider healthProvider
+concept Key {
+  o  String PkeyHPpub
+  --> Patient patient
 }
 
-transaction MedicalEncounter {
-  o String updatedRecords
-  --> Patient patient
+transaction ShareKey {
+  o Key key
+  --> HealthProvider healthProvider
 }
 
 event MedicalEncounterNotification {
