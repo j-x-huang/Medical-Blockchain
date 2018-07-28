@@ -20,14 +20,6 @@ rule HealthProviderSeeOwnHistoryOnly {
     action: DENY
 }
 
-rule HealthProvidersFullAccessRemovePatient {
-    description: "Grand health providers full access to remove patient transactions"
-    participant: "nz.ac.auckland.HealthProvider"
-    operation: ALL
-    resource: "nz.ac.auckland.RemovePatient"
-    action: ALLOW
-}
-
 rule HealthProvidersCanUpdateThemselves {
     description: "Only allow health providers to update themselves"
     participant(t): "nz.ac.auckland.HealthProvider"

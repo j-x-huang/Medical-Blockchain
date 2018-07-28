@@ -115,18 +115,10 @@ concept Key {
 }
 
 transaction ShareKey {
-  o Key key
+    o  String PkeyHPpub
   --> HealthProvider healthProvider
 }
 
 event MedicalEncounterNotification {
-    --> Patient patient
-}
-
-event RemoveNotification {
-    --> Patient patient
-}
-
-transaction RemovePatient {
     --> Patient patient
 }
