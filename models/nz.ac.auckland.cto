@@ -109,16 +109,19 @@ participant HealthProvider identified by id {
   o String publicKey
 }
 
-concept Key {
-  o  String PkeyHPpub
+asset PatientKey identified by id{
+  o String id
   --> Patient patient
+  --> HealthProvider healthProvider
+  o String encryptedPatientKeyHPPublic
 }
 
 transaction ShareKey {
-    o  String PkeyHPpub
+  --> Patient patient
   --> HealthProvider healthProvider
+  o String encryptedPatientKeyHPPublic
 }
 
-event MedicalEncounterNotification {
-    --> Patient patient
+event ShareKeyNotification {
+  --> PatientKey key
 }
