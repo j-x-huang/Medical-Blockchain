@@ -1,94 +1,134 @@
-const _key = '5266556A586E3272357538782F413F442A472D4B6150645367566B5970337336';
-const _initialisationVector = 'Jhs8/MFOrBhevTzoE6t0IQ==';
+
+const_publicKey = '';
+
+const_privateKey = '';
 
 function loaded() {
-    //var buf = crypto.randomBytes(1024 / 8) // 128 bytes
-    //buf = new Uint32Array(new Uint8Array(buf).buffer)
+  //var buf = crypto.randomBytes(1024 / 8) // 128 bytes
+  //buf = new Uint32Array(new Uint8Array(buf).buffer)
 
-    //sjcl.random.addEntropy(buf, 1024, "crypto.randomBytes")
+  //sjcl.random.addEntropy(buf, 1024, "crypto.randomBytes")
 
-    sjcl.random.startCollectors();
-  }
-
-
-  function getRandomSalt(words, paranoia) {
-
-    console.log("Computing salt"); 
-    var salt = sjcl.random.randomWords(words, paranoia);
-    console.log(salt); 
-
-    return salt;
-  }
+  sjcl.random.startCollectors();
+}
 
 
-  function stretchPassword(password){
+function getRandomSalt(words, paranoia) {
 
-    console.log("Password: " + password);
+  console.log("Computing salt"); 
+  var salt = sjcl.random.randomWords(words, paranoia);
+  console.log(salt); 
 
-     var salt = getRandomSalt(2,10);
+  return salt;
+}
 
-     var iterations = 10000;
+function kdf(password, salt){
 
-     var keyLength = 256;
+   console.log("Password: " + password);
 
-     if (password.length == 0) {
-        error("Need a password!");
-        return;
-     }
+   var iterations = 10000;
 
-     var keyBitArray = sjcl.misc.pbkdf2(password, salt, iterations, keyLength);
+   var keyLength = 256;
 
-     var key = sjcl.codec.hex.fromBits(keyBitArray);
+   if (password.length == 0) {
+      error("Need a password!");
+      return;
+   }
 
-     console.log(key);
+   var keyBitArray = sjcl.misc.pbkdf2(password, salt, iterations, keyLength);
 
-     return key;
-  }
+   var key = sjcl.codec.hex.fromBits(keyBitArray);
 
-  function symEncrypt(data){
+   console.log(key);
 
-    console.log("Encrypting data: Data = " + data + " Key = " + _key);
+   return key;
+}
 
-     if (data === '') { return ''; }
-     if (_key.length == 0) {
-       error("Need a key!");
-       return;
-     }
+function symEncrypt(data, key, iv){
 
-    key = sjcl.codec.hex.toBits(_key);
+  console.log("Encrypting data: Data = " + data + " Key = " + key);
 
-     // Key must be in bit array
-     var result = sjcl.encrypt(key, data, {iv : "Jhs8/MFOrBhevTzoE6t0IQ==", mode : "ccm"});
+   if (data === '') { return ''; }
+   if (key.length == 0) {
+     error("Need a key!");
+     return;
+   }
 
-     console.log(result);
+  key = sjcl.codec.hex.toBits(key);
 
-     return result;
-  }
+   // Key must be in bit array
+   var result = sjcl.encrypt(key, data, {iv : iv, mode : "ccm"});
+
+   console.log(result);
+
+   return result;
+}
 
 
-  function symDecrypt(encryptedData){
+function symDecrypt(encryptedData, key, iv){
 
-     if (encryptedData.length === 0) { return ''; }
-     if (_key.length == 0) {
-       error("Need a key!");
-       return;
-     }
-     if (_initialisationVector.length === 0) {
-      error("Can't decrypt: need an IV!"); return;
-     }
+   if (encryptedData.length === 0) { return ''; }
+   if (key.length == 0) {
+     error("Need a key!");
+     return;
+   }
+   if (iv.length === 0) {
+    error("Can't decrypt: need an IV!"); return;
+   }
 
-     key = sjcl.codec.hex.toBits(_key);
+   key = sjcl.codec.hex.toBits(key);
 
-     key = new sjcl.cipher.aes(key);
+   key = new sjcl.cipher.aes(key);
 
-     initialisationVector = sjcl.codec.base64.toBits(_initialisationVector);
+   initialisationVector = sjcl.codec.base64.toBits(iv);
 
-     encryptedData = sjcl.codec.base64.toBits(encryptedData);
+   encryptedData = sjcl.codec.base64.toBits(encryptedData);
 
-     var data = sjcl.codec.utf8String.fromBits(sjcl.mode.ccm.decrypt(key, encryptedData, initialisationVector));
+   var data = sjcl.codec.utf8String.fromBits(sjcl.mode.ccm.decrypt(key, encryptedData, initialisationVector));
 
-     console.log(data);
+   console.log(data);
 
-     return data;
-  }
+   return data;
+}
+
+
+function generateRSAkeys(keySize) {
+  var crypt = new JSEncrypt({default_key_size: keySize});
+  crypt.getKey();
+
+  var keys = {
+    privatekey: crypt.getPrivateKey(),
+    pubkey: crypt.getPublicKey()
+  };
+
+  return keys;
+}
+
+function asymEncrypt(data, publicKey){
+
+  var encrypt = new JSEncrypt();
+  encrypt.setKey(publicKey);
+
+  console.log("Content: " + data);
+  var encoded = encrypt.encrypt(data);
+
+  console.log("Encoded: " + encoded);
+
+  return encoded;
+}
+
+function asymDecrypt(encryptedData, privateKey){
+
+  var decrypt = new JSEncrypt();
+  decrypt.setPrivateKey(privateKey);
+
+  console.log("Encoded: " + encryptedData);
+  var uncrypted = decrypt.decrypt(encryptedData);
+
+  console.log("Decoded: " + uncrypted);
+
+  return uncrypted;
+}
+
+
 

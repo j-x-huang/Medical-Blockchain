@@ -37,7 +37,31 @@ rule HealthProvidersReadAccess {
     action: ALLOW
 }
 
-rule HealthProvidersFullAccessPatient {
+rule HealthProvidersCanOnlyViewSharedPatientKeys {
+    description: "Only allow health providers to view the encrypted patient keys that are shared with them"
+    participant(t): "nz.ac.auckland.HealthProvider"
+    operation: READ
+    resource(v): "nz.ac.auckland.PatientKey"
+    condition: (v.healthProvider.getIdentifier() == t.getIdentifier())
+    action: ALLOW
+}
+
+/* rule HealthProvidersCanAccessPatientsThatSharedKey {
+    description: "Grand health providers access to patients that shared their key"
+    participant(hp): "nz.ac.auckland.HealthProvider"
+    operation: ALL
+    resource(p): "nz.ac.auckland.Patient"
+    condition: ( let assetRegistry = await getAssetRegistry('nz.ac.auckland.PatientKey');
+      if(){
+
+      }
+
+
+    )
+    action: ALLOW
+} */
+
+rule HealthProvidersFullAccess {
     description: "Grand health providers full access to patients"
     participant: "nz.ac.auckland.HealthProvider"
     operation: ALL
@@ -45,11 +69,37 @@ rule HealthProvidersFullAccessPatient {
     action: ALLOW
 }
 
-rule HealthProvidersFullAccess {
-    description: "Grand health providers full access to patients"
-    participant: "nz.ac.auckland.HealthProvider"
+rule PatientsEnableShareTheirKey {
+    description: "Enable patients to share their patient key"
+    participant: "nz.ac.auckland.Patient"
     operation: ALL
-    resource: "nz.ac.auckland.Patient"
+    resource: "nz.ac.auckland.ShareKey"
+    action: ALLOW
+}
+
+rule PatientsCanOnlyViewTheirOwnRecords {
+    description: "Patients can only read their own medical records"
+    participant(p): "nz.ac.auckland.Patient"
+    operation: READ
+    resource(r): "nz.ac.auckland.Record"
+    condition: (r.patient.getIdentifier() == p.getIdentifier())
+    action: ALLOW
+}
+
+rule PatientsCanOnlyViewHealthProviders {
+    description: "Patients can only read health provider data"
+    participant: "nz.ac.auckland.Patient"
+    operation: READ
+    resource: "nz.ac.auckland.HealthProvider"
+    action: ALLOW
+}
+
+rule PatientsCanOnlyViewThemselves {
+    description: "Patients can only read their own patient data"
+    participant(p1): "nz.ac.auckland.Patient"
+    operation: READ
+    resource(p2): "nz.ac.auckland.Patient"
+    condition: (p2.getIdentifier() == p1.getIdentifier())
     action: ALLOW
 }
 
