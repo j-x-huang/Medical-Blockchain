@@ -116,6 +116,16 @@ asset PatientKey identified by id{
   o String encryptedPatientKeyHPPublic
 }
 
+transaction RequestRecordSharing {
+  --> Patient patient
+  --> HealthProvider healthProvider
+}
+
+event RequestRecordSharingNotification {
+  --> Patient patient
+  --> HealthProvider healthProvider
+}
+
 transaction ShareKey {
   --> Patient patient
   --> HealthProvider healthProvider
@@ -124,4 +134,14 @@ transaction ShareKey {
 
 event ShareKeyNotification {
   --> PatientKey key
+}
+
+transaction RevokeMedicalRecordsSharing {
+  --> Patient patient
+  --> HealthProvider healthProvider
+}
+
+event RevokeMedicalRecordsSharingNotification {
+  --> Patient patient
+  --> HealthProvider healthProvider
 }
