@@ -26,9 +26,8 @@ app.controller('PatientController', [
             gender: "string",
             birthplace: "string",
             address: "string",
-            records: "[]",
-            PkeyPpass: ".",
-            PkeyHPpass: "."
+            publicKey: "string",
+            consentedHPs: []
         }
         
         if (patient != null) {
@@ -73,17 +72,17 @@ app.controller('PatientController', [
         }
 
         function encryptForm(form) {
-            var keys = Object.keys(form)
+            // var keys = Object.keys(form)
     
-            keys.forEach(function (key) {
-                if (!(key == "$class" || key == "id")) {
-                    var encryptedData = symEncrypt(form[key])
-                    encryptedData = JSON.parse(encryptedData)
-                    form[key] = encryptedData.ct
-                }
+            // keys.forEach(function (key) {
+            //     if (!(key == "$class" || key == "id")) {
+            //         var encryptedData = symEncrypt(form[key])
+            //         encryptedData = JSON.parse(encryptedData)
+            //         form[key] = encryptedData.ct
+            //     }
     
-            })
-            console.log(form)
+            // })
+            // console.log(form)
         }
 
         //  This close function doesn't need to use jQuery or bootstrap, because

@@ -46,7 +46,7 @@ participant Patient identified by id{
   o HealthProvider[] consentedHPs
 }
 
-asset Record identified by id{
+abstract asset Record identified by id{
   o String id
   o String record_date 
   o String record_code

@@ -14,12 +14,6 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         publicKey: "."
     };
 
-    $scope.viewerForm = {
-        $class: "nz.ac.auckland.Viewer",
-        id: "string",
-        healthProvider: ""
-    }
-
     $scope.recordForm = {
         $class: "nz.ac.auckland.Record",
         id: "string",
@@ -27,13 +21,16 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         record_code: "string",
         record_reasonCode: "string",
         record_reasonDesc: "string",
-        healthProvider: ""
+        healthProvider: "",
+        patient: ""
     }
 
     $scope.patientTab = true
 
     $scope.selectedRecord = {}
     $scope.types = ["Allergy", "Procedure", "Observation", "Medication", "Immunization", "Condition"]
+
+    $scope.shareForm= {}
 
     $scope.allergyForm = {}
     $scope.procedureForm = {}
@@ -67,25 +64,8 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         }).then(_success, _error)
     }
 
-    $scope.submitViewer = function () {
-        var endpoint = apiBaseURL + "Viewer"
-        $scope.endpoint = endpoint
-
-        $scope.viewerForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + $scope.viewerForm.healthProvider
-
-        $http({
-            method: 'POST',
-            url: endpoint,
-            data: angular.toJson($scope.viewerForm),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(_success, _error)
-    }
-
     $scope.submitRecord = function () {
         var recordForm = {}
-
         switch ($scope.selectedRecord.type) {
             case 'Allergy':
                 recordForm = $scope.allergyForm
@@ -107,27 +87,31 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
                 break;
         }
         recordForm = Object.assign({}, $scope.recordForm, recordForm)
+        recordForm.$class = namespace + '.' + $scope.selectedRecord.type
+        recordForm.patient = "resource:" + namespace + ".Patient#" + _id
+        recordForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + recordForm.healthProvider
         console.log(recordForm)
-        var records = JSON.parse(_records)
-        records.push(recordForm)
+
+        // var records = JSON.parse(_records)
+        // records.push(recordForm)
 
 
-        var encryptedRecord = symEncrypt(JSON.stringify(records))
-        encryptedRecord = JSON.parse(encryptedRecord)
+        // var encryptedRecord = symEncrypt(JSON.stringify(records))
+        // encryptedRecord = JSON.parse(encryptedRecord)
 
-        let updatedRecords = {
-            updatedRecords: encryptedRecord.ct,
-            patient: "resource:" + namespace + ".Patient#" + _id
-        }
-        console.log("ID: " + _id)
+        // let updatedRecords = {
+        //     updatedRecords: encryptedRecord.ct,
+        //     patient: "resource:" + namespace + ".Patient#" + _id
+        // }
+        // console.log("ID: " + _id)
 
-        var endpoint = apiBaseURL + "MedicalEncounter"
+        var endpoint = apiBaseURL + $scope.selectedRecord.type
         $scope.endpoint = endpoint
 
         $http({
             method: 'POST',
             url: endpoint,
-            data: angular.toJson(updatedRecords),
+            data: angular.toJson(recordForm),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -140,23 +124,31 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
 
         $http.get(endpoint).then(function (response) {
             $scope.viewData(response.data)
+            $scope.myArray = response.data
             $scope.myStatus = response.status
-
-            var tempRecords = response.data
-
-            var keys = Object.keys(tempRecords)
-
-            keys.forEach(function (key) {
-                decryptForm(tempRecords[key])
-            })
-
-            $scope.myArray = tempRecords
-
+            alert("Operation successful")
         }, _error)
-
-
     }
 
+    $scope.shareKey = function (){
+        var endpoint = apiBaseURL + "ShareKey"
+        $scope.endpoint = endpoint
+
+        $scope.shareForm.$class = "nz.ac.auckland.ShareKey"
+        $scope.shareForm.patient = "resource:" + namespace + ".Patient#" + $scope.shareForm.patient
+        $scope.shareForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + $scope.shareForm.healthProvider
+
+        $http({
+            method: 'POST',
+            url: endpoint,
+            data: angular.toJson($scope.shareForm),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(_success, _error)
+
+        
+    }
     $scope.delete = function (index) {
         var isConfirmed = confirm("Are you sure you want to delete this patient?")
 
@@ -268,4 +260,18 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         });
 
     };
+
+    $scope.download = function () {
+        var text = "sample"
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', "private.pem");
+      
+        element.style.display = 'none';
+        document.body.appendChild(element);
+      
+        element.click();
+      
+        document.body.removeChild(element);
+    }
 })
