@@ -28,6 +28,15 @@ rule PatientCanCreateTransactions {
     action: ALLOW
 }
 
+rule HealthProvidersCanOnlyViewSharedPatientKeys {
+    description: "Only allow health providers to view the encrypted patient keys that are shared with them"
+    participant(hp): "nz.ac.auckland.HealthProvider"
+    operation: READ
+    resource(pk): "nz.ac.auckland.PatientKey"
+    condition: (pk.healthProvider.getIdentifier() == hp.getIdentifier())
+    action: ALLOW
+}
+
 rule HealthProvidersCanUpdateThemselves {
     description: "Only allow health providers to update themselves"
     participant(t): "nz.ac.auckland.HealthProvider"
@@ -45,37 +54,29 @@ rule HealthProvidersReadAccess {
     action: ALLOW
 }
 
-rule HealthProvidersCanOnlyViewSharedPatientKeys {
-    description: "Only allow health providers to view the encrypted patient keys that are shared with them"
-    participant(hp): "nz.ac.auckland.HealthProvider"
-    operation: READ
-    resource(pk): "nz.ac.auckland.PatientKey"
-    condition: (pk.healthProvider.getIdentifier() == hp.getIdentifier())
+rule HealthProvidersCanCreatePatients {
+    description: "Grand health providers access to patients that shared their key"
+    participant: "nz.ac.auckland.HealthProvider"
+    operation: CREATE
+    resource: "nz.ac.auckland.Patient"
     action: ALLOW
 }
 
 rule HealthProvidersCanAccessPatientsThatSharedKey {
     description: "Grand health providers access to patients that shared their key"
     participant(hp): "nz.ac.auckland.HealthProvider"
-    operation: ALL
+    operation: READ, UPDATE
     resource(p): "nz.ac.auckland.Patient"
     condition: (checkAccessToPatient(p,hp))
     action: ALLOW
 }
 
-/*rule HealthProvidersFullAccessPatients {
-    description: "Grand health providers full access to patients"
-    participant: "nz.ac.auckland.HealthProvider"
-    operation: ALL
-    resource: "nz.ac.auckland.Patient"
-    action: ALLOW
-} */
-
-rule HealthProvidersFullAccessPatientRecords {
+rule HealthProvidersCanOnlyAccessSharedPatientRecords {
     description: "Grand health providers full access to patient records"
-    participant: "nz.ac.auckland.HealthProvider"
+    participant(hp): "nz.ac.auckland.HealthProvider"
     operation: ALL
-    resource: "nz.ac.auckland.Record"
+    resource(r) : "nz.ac.auckland.Record"
+    condition: ((checkAccessToPatient(r.patient,hp) && (r.healthProvider.getIdentifier() == hp.getIdentifier())))
     action: ALLOW
 }
 

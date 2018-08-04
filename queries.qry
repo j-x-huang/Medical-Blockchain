@@ -1,5 +1,11 @@
 /** Sample queries for Commodity Trading business network
 */
+query selectPatientKey {
+  description: "Select a specific patient key"
+  statement:
+      SELECT nz.ac.auckland.PatientKey
+          WHERE ((patient == _$p) AND (healthProvider == _$hp))
+}
 
 query selectPatients {
   description: "Select all patients"

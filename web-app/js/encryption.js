@@ -44,9 +44,9 @@ function kdf(password, salt){
    return key;
 }
 
-function symEncrypt(data, key, iv){
+function symEncrypt(data, key){
 
-  console.log("Encrypting data: Data = " + data + " Key = " + key);
+  /* console.log("Encrypting data: Data = " + data + " Key = " + key);
 
    if (data === '') { return ''; }
    if (key.length == 0) {
@@ -59,15 +59,17 @@ function symEncrypt(data, key, iv){
    // Key must be in bit array
    var result = sjcl.encrypt(key, data, {iv : iv, mode : "ccm"});
 
-   console.log(result);
+   console.log(result);*/
+
+
 
    return result;
 }
 
 
-function symDecrypt(encryptedData, key, iv){
+function symDecrypt(encryptedData, key){
 
-   if (encryptedData.length === 0) { return ''; }
+   /* if (encryptedData.length === 0) { return ''; }
    if (key.length == 0) {
      error("Need a key!");
      return;
@@ -86,7 +88,9 @@ function symDecrypt(encryptedData, key, iv){
 
    var data = sjcl.codec.utf8String.fromBits(sjcl.mode.ccm.decrypt(key, encryptedData, initialisationVector));
 
-   console.log(data);
+   console.log(data); */
+
+   
 
    return data;
 }
