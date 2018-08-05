@@ -63,20 +63,30 @@ rule HealthProvidersCanAccessPatientsThatSharedKey {
     action: ALLOW
 }
 
-rule HealthProvidersCanOnlyAccessSharedPatientRecords {
+rule HealthProvidersCanOnlyAccessSharedPatients {
     description: "Grand health providers full access to patient records"
     participant(hp): "nz.ac.auckland.HealthProvider"
-    operation: ALL
+    operation: READ,UPDATE,DELETE
+    resource(r) : "nz.ac.auckland.Record"
+    condition: (checkAccessToPatient(r.patient,hp))
+    action: ALLOW
+}
+
+rule HealthProvidersCanOnlyCreateRecordsForSharedPatients {
+    description: "Grand health providers full access to patient records"
+    participant(hp): "nz.ac.auckland.HealthProvider"
+    operation: CREATE
     resource(r) : "nz.ac.auckland.Record"
     condition: ((checkAccessToPatient(r.patient,hp) && (r.healthProvider.getIdentifier() == hp.getIdentifier())))
     action: ALLOW
 }
 
-rule PatientsCanRevokeSharedKeys {
+rule PatientsCanRevokeTheirSharedKeys {
     description: "Patients should only be able to access their own shared patient keys"
-    participant: "nz.ac.auckland.Patient"
+    participant(p) : "nz.ac.auckland.Patient"
     operation: ALL
-    resource: "nz.ac.auckland.RevokeMedicalRecordsSharing"
+    resource(rmrs) : "nz.ac.auckland.RevokeMedicalRecordsSharing"
+  	condition: (rmrs.patient.getIdentifier() == p.getIdentifier())
     action: ALLOW
 }
 
@@ -91,9 +101,10 @@ rule PatientsCanAccessOnlyTheirSharedKey {
 
 rule PatientsEnableShareTheirKey {
     description: "Enable patients to share their patient key"
-    participant: "nz.ac.auckland.Patient"
+    participant(p) : "nz.ac.auckland.Patient"
     operation: ALL
-    resource: "nz.ac.auckland.ShareKey"
+    resource(sk) : "nz.ac.auckland.ShareKey"
+  	condition: (sk.patient.getIdentifier() == p.getIdentifier())
     action: ALLOW
 }
 
