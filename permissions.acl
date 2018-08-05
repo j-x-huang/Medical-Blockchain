@@ -16,7 +16,7 @@ rule HealthProviderSeeOwnHistoryOnly {
     participant(m): "nz.ac.auckland.HealthProvider"
     operation: READ
     resource(v): "org.hyperledger.composer.system.HistorianRecord"
-    condition: (v.participantInvoking.getIdentifier() != m.getIdentifier)
+    condition: (v.participantInvoking.getIdentifier() != m.getIdentifier())
     action: DENY
 }
 
@@ -54,14 +54,6 @@ rule HealthProvidersReadAccess {
     action: ALLOW
 }
 
-rule HealthProvidersCanCreatePatients {
-    description: "Grand health providers access to patients that shared their key"
-    participant: "nz.ac.auckland.HealthProvider"
-    operation: CREATE
-    resource: "nz.ac.auckland.Patient"
-    action: ALLOW
-}
-
 rule HealthProvidersCanAccessPatientsThatSharedKey {
     description: "Grand health providers access to patients that shared their key"
     participant(hp): "nz.ac.auckland.HealthProvider"
@@ -80,20 +72,20 @@ rule HealthProvidersCanOnlyAccessSharedPatientRecords {
     action: ALLOW
 }
 
-rule PatientsCanAccessOnlyTheirSharedKey {
+rule PatientsCanRevokeSharedKeys {
     description: "Patients should only be able to access their own shared patient keys"
-    participant(p): "nz.ac.auckland.Patient"
-    operation: READ,UPDATE,DELETE
-    resource(pk): "nz.ac.auckland.PatientKey"
-    condition: (pk.patient.getIdentifier() == p.getIdentifier())
+    participant: "nz.ac.auckland.Patient"
+    operation: ALL
+    resource: "nz.ac.auckland.RevokeMedicalRecordsSharing"
     action: ALLOW
 }
 
-rule PatientsCanCreatePatientKey {
-    description: "Enable patients to create patient key assests"
-    participant: "nz.ac.auckland.Patient"
-    operation: CREATE
-    resource: "nz.ac.auckland.PatientKey"
+rule PatientsCanAccessOnlyTheirSharedKey {
+    description: "Patients should only be able to access their own shared patient keys"
+    participant(p): "nz.ac.auckland.Patient"
+    operation: ALL
+    resource(pk): "nz.ac.auckland.PatientKey"
+    condition: (pk.patient.getIdentifier() == p.getIdentifier())
     action: ALLOW
 }
 

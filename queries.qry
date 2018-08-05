@@ -4,7 +4,20 @@ query selectPatientKey {
   description: "Select a specific patient key"
   statement:
       SELECT nz.ac.auckland.PatientKey
-          WHERE ((patient == _$p) AND (healthProvider == _$hp))
+          WHERE ((patient==_$p) AND (healthProvider==_$hp))
+}
+
+query selectPatientKeyByPatient {
+  description: "Select a specific patient key for a specific patient"
+  statement:
+      SELECT nz.ac.auckland.PatientKey
+          WHERE (patient==_$p)
+}
+
+query selectAllPatientKeys {
+  description: "Select a specific patient key for a specific patient"
+  statement:
+      SELECT nz.ac.auckland.PatientKey
 }
 
 query selectPatients {

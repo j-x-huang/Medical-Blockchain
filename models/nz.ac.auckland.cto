@@ -145,3 +145,11 @@ event RevokeMedicalRecordsSharingNotification {
   --> Patient patient
   --> HealthProvider healthProvider
 }
+
+transaction CreateNewPatient {
+  --> Patient patient
+}
+
+event CreateNewPatientNotification {
+  --> Patient patient
+}
