@@ -20,6 +20,8 @@
     <script src="js/jsencrypt/bin/jsencrypt.js"></script>
     <script src="js/encryption.js"></script>
     <script src="patientController.js"></script>
+    <script src="cryptoController.js"></script>
+
     <script src="https://dwmkerr.github.io/angular-modal-service/angular-modal-service.js"></script>
 
 </head>
@@ -177,6 +179,8 @@
         <h4>Info Panel</h4>
         <p>Request URL: {{endpoint}} </p>
         <p>Response code: {{myStatus}} </p>
+        <p>Patient Key: <input type="text" ng-model="patientKey"></p>
+        <p>Private Key: <input type="text" ng-model="privateKey"></p>
 
     </div>
 

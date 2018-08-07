@@ -29,6 +29,9 @@ app.controller('PatientController', [
             publicKey: "string",
             consentedHPs: []
         }
+
+        $scope.privateKey
+        $scope.patientKey
         
         if (patient != null) {
             for (var key in patient) {
@@ -59,8 +62,12 @@ app.controller('PatientController', [
         $scope.submitPatient = function () {
             var endpoint = apiBaseURL + "Patient"
             $scope.endpoint = endpoint
+
+            keys = generateRSAkeys()
+
             patientForm = Object.assign({}, $scope.patientForm)
-            encryptForm(patientForm)
+            patientForm.publicKey = keys.publicKey
+            $scope.privateKey = keys.privateKey
             $http({
                 method: 'POST',
                 url: endpoint,
@@ -68,7 +75,13 @@ app.controller('PatientController', [
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then(_success, _error)
+            }).then(function(response) {
+                $scope.patientKey = generateRandomKey()
+                $scope.viewData(response.data);
+                console.log("patient0: " + $scope.patientKey)
+                console.log("priv0: " + $scope.privateKey)
+                $scope.close()
+            }, _error)
         }
 
         function encryptForm(form) {
@@ -88,7 +101,10 @@ app.controller('PatientController', [
         //  This close function doesn't need to use jQuery or bootstrap, because
         //  the button has the 'data-dismiss' attribute.
         $scope.close = function () {
-            close({}, 500); // close, but give 500ms for bootstrap to animate
+            close({
+                patientKey: $scope.patientKey,
+                privateKey: $scope.privateKey
+            }, 500); // close, but give 500ms for bootstrap to animate
         };
 
 
@@ -100,6 +116,7 @@ app.controller('PatientController', [
          */
         function _success(response) {
             $scope.viewData(response.data);
+            $scope.close()
             alert("Operation successful")
         }
 
