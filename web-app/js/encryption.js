@@ -19,6 +19,10 @@ function getRandomSalt(words, paranoia) {
   var salt = sjcl.random.randomWords(words, paranoia);
   console.log(salt); 
 
+  salt = sjcl.codec.base64.fromBits(salt);
+
+  console.log(salt);
+
   return salt;
 }
 
