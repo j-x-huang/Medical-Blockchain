@@ -67,7 +67,7 @@ function symEncrypt(data, key){
 
    var encrypted = CryptoJS.AES.encrypt(data, key);
 
-   console.log("Encrypted: " + encrypted);
+   console.log(encrypted);
 
    return encrypted;
 }
