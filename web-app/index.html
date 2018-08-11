@@ -21,6 +21,7 @@
     <script src="js/encryption.js"></script>
     <script src="patientController.js"></script>
     <script src="cryptoController.js"></script>
+    <script src="recordsController.js"></script>
 
     <script src="https://dwmkerr.github.io/angular-modal-service/angular-modal-service.js"></script>
 
@@ -220,11 +221,53 @@
             <h1>Patients</h1>
             <button type="button" class="btn btn-default" ng-click="addPatient()">Add Patient</button>
             <button type="button" class="btn btn-default" ng-click="getPatients()">Get Patients</button>
+            <div class="container-fluid" id="patientTable">
+                    <table class="table table-striped" style="width: 100%;">
+                        <tr>
+                            <th>ID</th>
+                            <th>IRD</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Options</th>
+                        </tr>
+                        <tr ng-repeat="row in myArray">
+                            <td>{{row.id}}</td>
+                            <td>{{row.ird}}</td>
+                            <td>{{row.first}}</td>
+                            <td>{{row.last}}</td>
+                            <td><button type="button" class="btn btn-default" ng-click="viewRecords($index)">View Records</button>
+                            <button type="button" class="btn btn-default" ng-click="editPatient($index)" ng-show="patientTab">Edit</button>
+                            <button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button>
+                            <button type="button" class="btn btn-default" ng-click="delete($index)">-</button></td>
+                        </tr>
+                    </table>
+            </div>
         </div>
         <div id="healthProvider" class="tab-pane fade">
             <h1>Health Providers</h1>
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#hpModal">Add Health Provider</button>
             <button type="button" class="btn btn-default" ng-click="getData('HealthProvider')">Get Health Providers</button>
+
+            <div class="container-fluid" id="hpTable">
+                    <table class="table table-striped" style="width: 100%;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Options</th>
+                        </tr>
+                        <tr ng-repeat="row in myArray">
+                            <td>{{row.id}}</td>
+                            <td>{{row.name}}</td>
+                            <td>{{row.phone}}</td>
+                            <td>{{row.address}}</td>
+                            <td><button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button>
+                            <button type="button" class="btn btn-default" ng-click="delete($index)">-</button></td>
+                        </tr>
+                    </table>
+            </div>
+        </div>
         </div>
         <div id="transactions" class="tab-pane fade">
             <h1>Share Key</h1> 
@@ -241,23 +284,6 @@
             <button type="button" class="btn btn-default" ng-click="shareKey()">Submit</button>
 
         </div>
-    </div>
-
-    <div class="container-fluid">
-        <table class="table table-striped" style="width: 100%;">
-            <tr>
-                <th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>
-                <th>Options</th>
-            </tr>
-            <tr ng-repeat="row in myArray">
-                <td ng-repeat="column in row ">
-                    {{ column }}
-                </td>
-                <td><button type="button" class="btn btn-default" ng-click="editPatient($index)" ng-show="patientTab">Edit</button>
-                <button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button>
-                <button type="button" class="btn btn-default" ng-click="delete($index)">-</button></td>
-            </tr>
-        </table>
     </div>
 
     <div class="container-fluid">

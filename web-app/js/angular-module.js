@@ -287,6 +287,23 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
 
     };
 
+    $scope.viewRecords = function (index) {
+        var patient = $scope.myArray[index]
+
+        ModalService.showModal({
+            templateUrl: "./recordsModal.html",
+            controller: "recordsController",
+            preClose: (modal) => { modal.element.modal('hide'); },
+            inputs: {
+                title: "Patient Details",
+                patient: patient
+            }
+        }).then(function (modal) {
+            modal.element.modal();
+        });
+
+    }
+
     $scope.handleFiles = function (files) {
         var file = files[0]
         var reader = new FileReader();
