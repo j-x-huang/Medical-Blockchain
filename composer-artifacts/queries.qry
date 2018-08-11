@@ -7,10 +7,52 @@ query selectPatientKey {
           WHERE ((patient==_$p) AND (healthProvider==_$hp))
 }
 
-query selectPatientKeyByPatient {
-  description: "Select a specific patient key for a specific patient"
+query selectAllRecords {
+  description: "Select all records of a patient"
   statement:
-      SELECT nz.ac.auckland.PatientKey
+      SELECT nz.ac.auckland.Record
+          WHERE (patient==_$p)
+}
+
+query selectAllAllergyRecords {
+  description: "Select all allergy records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Allergy
+          WHERE (patient==_$p)
+}
+
+query selectAllProcedureRecords {
+  description: "Select all procedure records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Procedure
+          WHERE (patient==_$p)
+}
+
+query selectAllObservationRecords {
+  description: "Select all observation records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Observation
+          WHERE (patient==_$p)
+}
+
+query selectAllMedicationRecords {
+  description: "Select all medication records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Medication
+          WHERE (patient==_$p)
+}
+
+query selectAllImmunizationRecords {
+  description: "Select all immunization records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Immunization
+          WHERE (patient==_$p)
+}
+
+query selectAllConditionRecords {
+  description: "Select all condition records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Condition
           WHERE (patient==_$p)
 }
 
