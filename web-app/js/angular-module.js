@@ -1,4 +1,3 @@
-
 var app = angular.module('myApp', ['angularModalService']);
 var apiBaseURL = "http://localhost:3000/api/";
 var namespace = "nz.ac.auckland"
@@ -27,10 +26,13 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
 
     $scope.patientTab = true
 
+    $scope.patientKey
+    $scope.privateKey
+
     $scope.selectedRecord = {}
     $scope.types = ["Allergy", "Procedure", "Observation", "Medication", "Immunization", "Condition"]
 
-    $scope.shareForm= {}
+    $scope.shareForm = {}
 
     $scope.allergyForm = {}
     $scope.procedureForm = {}
@@ -40,7 +42,6 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
     $scope.conditionForm = {}
 
     let _id;
-    let _records;
     $scope.myArray = []
 
 
@@ -92,18 +93,7 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         recordForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + recordForm.healthProvider
         console.log(recordForm)
 
-        // var records = JSON.parse(_records)
-        // records.push(recordForm)
-
-
-        // var encryptedRecord = symEncrypt(JSON.stringify(records))
-        // encryptedRecord = JSON.parse(encryptedRecord)
-
-        // let updatedRecords = {
-        //     updatedRecords: encryptedRecord.ct,
-        //     patient: "resource:" + namespace + ".Patient#" + _id
-        // }
-        // console.log("ID: " + _id)
+        encryptForm(recordForm)
 
         var endpoint = apiBaseURL + $scope.selectedRecord.type
         $scope.endpoint = endpoint
@@ -126,11 +116,10 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             $scope.viewData(response.data)
             $scope.myArray = response.data
             $scope.myStatus = response.status
-            alert("Operation successful")
         }, _error)
     }
 
-    $scope.shareKey = function (){
+    $scope.shareKey = function () {
         var endpoint = apiBaseURL + "ShareKey"
         $scope.endpoint = endpoint
 
@@ -147,7 +136,7 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             }
         }).then(_success, _error)
 
-        
+
     }
     $scope.delete = function (index) {
         var isConfirmed = confirm("Are you sure you want to delete this patient?")
@@ -192,12 +181,26 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         _records = $scope.myArray[index].records
     }
 
+    function encryptForm(form) {
+        var keys = Object.keys(form)
+
+        keys.forEach(function (key) {
+            if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
+                var encryptedData = symEncrypt(form[key], $scope.patientKey)
+                form[key] = encryptedData.toString()
+            }
+
+        })
+
+        console.log(form)
+    }
+
     function decryptForm(form) {
         var keys = Object.keys(form)
 
         keys.forEach(function (key) {
-            if (!(key == "$class" || key == "id")) {
-                var decryptedData = symDecrypt(form[key])
+            if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
+                var decryptedData = symDecrypt(form[key], $scope.patientKey)
                 form[key] = decryptedData
             }
         })
@@ -233,12 +236,35 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             controller: "PatientController",
             preClose: (modal) => { modal.element.modal('hide'); },
             inputs: {
-                title: "A More Complex Example",
+                title: "Register",
                 patient: null,
                 update: false
             }
         }).then(function (modal) {
             modal.element.modal();
+            modal.close.then(function (result) {
+                $scope.patientKey = result.patientKey
+                $scope.privateKey = result.privateKey
+
+                showCryptoModal(result.patientKey, result.privateKey)
+            })
+
+
+        });
+    }
+
+    function showCryptoModal(patientKey, privateKey) {
+        ModalService.showModal({
+            templateUrl: "./cryptoModal.html",
+            controller: "cryptoController",
+            preClose: (modal) => { modal.element.modal('hide'); },
+            inputs: {
+                patientKey: patientKey,
+                privateKey: privateKey
+            }
+        }).then(function (modal) {
+            modal.element.modal();
+
         });
     }
 
@@ -261,17 +287,23 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
 
     };
 
-    $scope.download = function () {
-        var text = "sample"
-        var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        element.setAttribute('download', "private.pem");
-      
-        element.style.display = 'none';
-        document.body.appendChild(element);
-      
-        element.click();
-      
-        document.body.removeChild(element);
+    $scope.handleFiles = function (files) {
+        var file = files[0]
+        var reader = new FileReader();
+        reader.readAsBinaryString(file);
+
+        reader.onload=function(){
+            var str = reader.result
+
+            if (file.type == "text/plain") {
+                $scope.patientKey = str
+            } else if (file.type == "application/x-x509-ca-cert") {
+                $scope.privateKey = str
+            } else {
+                error("Unable to read file")
+            }
+        }
+
+
     }
 })

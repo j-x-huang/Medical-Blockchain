@@ -67,7 +67,7 @@ function symEncrypt(data, key){
 
    var encrypted = CryptoJS.AES.encrypt(data, key);
 
-   console.log("Encrypted: " + encrypted);
+   console.log(encrypted);
 
    return encrypted;
 }
@@ -109,14 +109,19 @@ function symDecrypt(encryptedData, key){
    return decrypted;
 }
 
+function generateRandomKey() {
+  var salt = CryptoJS.lib.WordArray.random(128 / 8);
+  return salt.toString(CryptoJS.enc.Base64)
+}
+
 
 function generateRSAkeys(keySize) {
   var crypt = new JSEncrypt({default_key_size: keySize});
   crypt.getKey();
 
   var keys = {
-    privatekey: crypt.getPrivateKey(),
-    pubkey: crypt.getPublicKey()
+    privateKey: crypt.getPrivateKey(),
+    publicKey: crypt.getPublicKey()
   };
 
   return keys;

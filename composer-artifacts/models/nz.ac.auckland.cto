@@ -75,8 +75,8 @@ asset Observation extends Record{
   o String obs_date
   o String obs_code
   o String obs_desc optional
-  o String value
-  o String units
+  o String obs_value
+  o String obs_units
 }
 
 asset Medication extends Record{
@@ -84,7 +84,7 @@ asset Medication extends Record{
   o String medication_stop optional
   o String medication_code
   o String medication_desc
-  o String medcation_reasonCode optional
+  o String medication_reasonCode optional
   o String medication_reasonDesc optional
 }
 
