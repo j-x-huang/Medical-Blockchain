@@ -8,8 +8,10 @@
             <div class="modal-body">
                 <h2>Patient Key</h2>
                 <p>{{patientKey}}</p>
+                <input type="button" ng-click="downloadSecret()" value="Download">
                 <h2>Private Key</h2>
                 <p>{{privateKey}}</p>
+                <input type="button" ng-click="downloadPrivate()" value="Download">
             </div>
         </div>
     </div>

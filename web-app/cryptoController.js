@@ -7,8 +7,31 @@ app.controller('cryptoController', [
   $scope.patientKey = patientKey;
   $scope.privateKey = privateKey;
 
-  console.log($scope.patientKey)
-  console.log($scope.privatekey)
+  $scope.downloadSecret = function () {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent($scope.patientKey));
+    element.setAttribute('download', "PatientKey.txt");
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
+$scope.downloadPrivate = function () {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent($scope.privateKey));
+    element.setAttribute('download', "PrivateKey.pem");
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
   
   //  This close function doesn't need to use jQuery or bootstrap, because
   //  the button has the 'data-dismiss' attribute.

@@ -53,6 +53,8 @@
                         <input type="text" ng-model="healthProviderForm.phone"> </p>
                     <p>Address:
                         <input type="text" ng-model="healthProviderForm.address"> </p>
+                    <p>Address:
+                        <input type="text" ng-model="healthProviderForm.publicKey"> </p>
                 </div>
                 <div class="modal-footer">
                     <button ng-click="submitHP()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
@@ -118,15 +120,15 @@
                     <!-- OBSERVATION -->
                     <div class="form-group" ng-show="selectedRecord.type=='Observation'">
                         <p>Date:
-                            <input type="text" ng-model="observationForm.observation_date"> </p>
+                            <input type="text" ng-model="observationForm.obs_date"> </p>
                         <p>Code:
-                            <input type="text" ng-model="observationForm.observation_code"> </p>
+                            <input type="text" ng-model="observationForm.obs_code"> </p>
                         <p>Description:
-                            <input type="text" ng-model="observationForm.observation_desc"> </p>
+                            <input type="text" ng-model="observationForm.obs_desc"> </p>
                         <p>Value:
-                            <input type="text" ng-model="observationForm.observation_value"> </p>
+                            <input type="text" ng-model="observationForm.obs_value"> </p>
                         <p>Unit:
-                            <input type="text" ng-model="observationForm.observation_unit"> </p>
+                            <input type="text" ng-model="observationForm.obs_units"> </p>
                     </div>
 
                     <!-- MEDICATION -->
@@ -140,31 +142,31 @@
                         <p>Description:
                             <input type="text" ng-model="medicationForm.medication_desc"> </p>
                         <p>Reason Code:
-                            <input type="text" ng-model="medicationForm.medication_code"> </p>
+                            <input type="text" ng-model="medicationForm.medication_reasonCode"> </p>
                         <p>Reason Description:
-                            <input type="text" ng-model="medicationForm.medication_desc"> </p>
+                            <input type="text" ng-model="medicationForm.medication_reasonDesc"> </p>
                     </div>
 
                     <!-- IMMUNIZATION -->
                     <div class="form-group" ng-show="selectedRecord.type=='Immunization'">
                         <p>Date:
-                            <input type="text" ng-model="immunizationForm.immunization_date"> </p>
+                            <input type="text" ng-model="immunizationForm.imm_date"> </p>
                         <p>Code:
-                            <input type="text" ng-model="immunizationForm.immunization_code"> </p>
+                            <input type="text" ng-model="immunizationForm.imm_code"> </p>
                         <p>Description:
-                            <input type="text" ng-model="immunizationForm.immunization_desc"> </p>
+                            <input type="text" ng-model="immunizationForm.imm_desc"> </p>
                     </div>
 
                     <!-- CONDITION -->
                     <div class="form-group" ng-show="selectedRecord.type=='Condition'">
                         <p>Start Date:
-                            <input type="text" ng-model="conditionForm.condition_start"> </p>
+                            <input type="text" ng-model="conditionForm.cond_start"> </p>
                         <p>End Date:
-                            <input type="text" ng-model="conditionForm.condition_stop"> </p>
+                            <input type="text" ng-model="conditionForm.cond_stop"> </p>
                         <p>Code:
-                            <input type="text" ng-model="conditionForm.condition_code"> </p>
+                            <input type="text" ng-model="conditionForm.cond_code"> </p>
                         <p>Description:
-                            <input type="text" ng-model="conditionForm.condition_desc"> </p>
+                            <input type="text" ng-model="conditionForm.cond_desc"> </p>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -179,30 +181,24 @@
         <h4>Info Panel</h4>
         <p>Request URL: {{endpoint}} </p>
         <p>Response code: {{myStatus}} </p>
-        <p>Patient Key: <input type="text" ng-model="patientKey"></p>
-        <p>Private Key: <input type="text" ng-model="privateKey"></p>
+        <p>Patient Key: {{patientKey}}</p> 
+        <p>Private Key: {{privateKey}}</p>
+        <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
 
     </div>
 
     <!-- Tab Nav Bar-->
     <ul class="nav nav-tabs">
         <li class="dropdown active">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Assets
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Participants
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
                 <li>
                     <a href="#patient" data-toggle="tab" ng-click="setTab('Patient')">Patient</a>
                 </li>
-            </ul>
-        </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Participants
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
                 <li>
-                    <a href="#healthProvider" data-toggle="tab" ng-click="setTab('HealthProvider')">Health Provider</a>
+                        <a href="#healthProvider" data-toggle="tab" ng-click="setTab('HealthProvider')">Health Provider</a>
                 </li>
             </ul>
         </li>
@@ -269,10 +265,6 @@
         <!--Box to view response in JSON format -->
         <h4>Response data</h4>
         <pre id="json-renderer"></pre>
-    </div>
-
-    <div class="container-fluid">
-            <input type="button" ng-click="download()" value="Download">
     </div>
 </body>
 

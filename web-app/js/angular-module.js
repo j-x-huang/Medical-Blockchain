@@ -1,4 +1,3 @@
-
 var app = angular.module('myApp', ['angularModalService']);
 var apiBaseURL = "http://localhost:3000/api/";
 var namespace = "nz.ac.auckland"
@@ -95,30 +94,18 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         console.log(recordForm)
 
         encryptForm(recordForm)
-        // var records = JSON.parse(_records)
-        // records.push(recordForm)
 
+        var endpoint = apiBaseURL + $scope.selectedRecord.type
+        $scope.endpoint = endpoint
 
-        // var encryptedRecord = symEncrypt(JSON.stringify(records))
-        // encryptedRecord = JSON.parse(encryptedRecord)
-
-        // let updatedRecords = {
-        //     updatedRecords: encryptedRecord.ct,
-        //     patient: "resource:" + namespace + ".Patient#" + _id
-        // }
-        // console.log("ID: " + _id)
-
-        // var endpoint = apiBaseURL + $scope.selectedRecord.type
-        // $scope.endpoint = endpoint
-
-        // $http({
-        //     method: 'POST',
-        //     url: endpoint,
-        //     data: angular.toJson(recordForm),
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // }).then(_success, _error)
+        $http({
+            method: 'POST',
+            url: endpoint,
+            data: angular.toJson(recordForm),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(_success, _error)
     }
 
     $scope.getPatients = function () {
@@ -129,7 +116,6 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             $scope.viewData(response.data)
             $scope.myArray = response.data
             $scope.myStatus = response.status
-            alert("Operation successful")
         }, _error)
     }
 
@@ -201,8 +187,7 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         keys.forEach(function (key) {
             if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
                 var encryptedData = symEncrypt(form[key], $scope.patientKey)
-                //encryptedData = JSON.parse(encryptedData)
-                form[key] = encryptedData
+                form[key] = encryptedData.toString()
             }
 
         })
@@ -214,8 +199,8 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         var keys = Object.keys(form)
 
         keys.forEach(function (key) {
-            if (!(key == "$class" || key == "id")) {
-                var decryptedData = symDecrypt(form[key])
+            if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
+                var decryptedData = symDecrypt(form[key], $scope.patientKey)
                 form[key] = decryptedData
             }
         })
@@ -302,17 +287,23 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
 
     };
 
-    $scope.download = function () {
-        var text = "sample"
-        var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        element.setAttribute('download', "private.pem");
+    $scope.handleFiles = function (files) {
+        var file = files[0]
+        var reader = new FileReader();
+        reader.readAsBinaryString(file);
 
-        element.style.display = 'none';
-        document.body.appendChild(element);
+        reader.onload=function(){
+            var str = reader.result
 
-        element.click();
+            if (file.type == "text/plain") {
+                $scope.patientKey = str
+            } else if (file.type == "application/x-x509-ca-cert") {
+                $scope.privateKey = str
+            } else {
+                error("Unable to read file")
+            }
+        }
 
-        document.body.removeChild(element);
+
     }
 })
