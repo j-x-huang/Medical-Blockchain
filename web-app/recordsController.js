@@ -1,29 +1,64 @@
 var app = angular.module('myApp');
+var endpoint = "http://localhost:3000/api/queries/"
 
 app.controller('recordsController', [
-  '$scope', '$element', 'patient', 
-  function($scope, $element, patient) {
+    '$scope', '$element', '$http', 'patient',
+    function ($scope, $element, $http, patient) {
 
-    $scope.records = patient.records
-  
-  //  This close function doesn't need to use jQuery or bootstrap, because
-  //  the button has the 'data-dismiss' attribute.
-  $scope.close = function() {
- 	  close({
-    }, 500); // close, but give 500ms for bootstrap to animate
-  };
+        $scope.allergy=[]
+        $scope.cond=[]
+        $scope.imm=[]
+        $scope.med=[]
+        $scope.obs=[]
+        $scope.proc=[]
 
-  //  This cancel function must use the bootstrap, 'modal' function because
-  //  the doesn't have the 'data-dismiss' attribute.
-  $scope.cancel = function() {
 
-    //  Manually hide the modal.
-    $element.modal('hide');
-    
-    //  Now call close, returning control to the caller.
-    close({
+        getRecords(endpoint + "selectAllAllergyRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.allergy)
+        getRecords(endpoint + "selectAllConditionRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.cond)
+        getRecords(endpoint + "selectAllImmunizationRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.imm)
+        getRecords(endpoint + "selectAllMedicationRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.med)
+        getRecords(endpoint + "selectAllObservationRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.obs)
+        getRecords(endpoint + "selectAllProcedureRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.proc)
 
-    }, 500); // close, but give 500ms for bootstrap to animate
-  };
 
-}]);
+        function getRecords(query, array) {
+            $http.get(query).then(function(response) {
+                array.push.apply(array,response.data)
+                console.log(array)
+            }, _error);
+        }
+
+        function _error(response) {
+            console.log(response)
+        }
+
+        $scope.refresh = function () {
+            console.log($scope.allergy);
+            console.log($scope.cond);
+            console.log($scope.imm);
+            console.log($scope.med);
+            console.log($scope.obs);
+            console.log($scope.proc);
+        }
+
+        //  This close function doesn't need to use jQuery or bootstrap, because
+        //  the button has the 'data-dismiss' attribute.
+        $scope.close = function () {
+            close({
+            }, 500); // close, but give 500ms for bootstrap to animate
+        };
+
+        //  This cancel function must use the bootstrap, 'modal' function because
+        //  the doesn't have the 'data-dismiss' attribute.
+        $scope.cancel = function () {
+
+            //  Manually hide the modal.
+            $element.modal('hide');
+
+            //  Now call close, returning control to the caller.
+            close({
+
+            }, 500); // close, but give 500ms for bootstrap to animate
+        };
+
+    }]);
