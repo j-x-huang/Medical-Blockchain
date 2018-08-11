@@ -20,6 +20,22 @@ rule HealthProviderSeeOwnHistoryOnly {
     action: DENY
 }
 
+rule HealthPro {
+    description: "Health providers should be able to see the history of their own transactions only"
+    participant(m): "nz.ac.auckland.HealthProvider"
+    operation: READ
+    resource(v): "org.hyperledger.composer.system.HistorianRecord"
+    condition: ((v.transactionType == "org.hyperledger.composer.system.SetLogLevel") || 
+                (v.transactionType == "org.hyperledger.composer.system.AddParticipant") || 
+                (v.transactionType == "org.hyperledger.composer.system.IssueIdentity") || 
+                (v.transactionType == "org.hyperledger.composer.system.BindIdentity") || 
+                (v.transactionType == "org.hyperledger.composer.system.ActivateCurrentIdentity") || 
+                (v.transactionType == "org.hyperledger.composer.system.RevokeIdentity") || 
+                (v.transactionType == "org.hyperledger.composer.system.StartBusinessNetwork") || 
+                (v.transactionType == "org.hyperledger.composer.system.ResetBusinessNetwork"))
+    action: DENY
+}
+
 rule PatientCanCreateTransactions {
     description: "Patient can create transactions"
     participant: "nz.ac.auckland.Patient"
@@ -63,8 +79,8 @@ rule HealthProvidersCanAccessPatientsThatSharedKey {
     action: ALLOW
 }
 
-rule HealthProvidersCanOnlyAccessSharedPatients {
-    description: "Grand health providers full access to patient records"
+rule HealthProvidersCanOnlyAccessSharedPatientsRecords {
+    description: ""
     participant(hp): "nz.ac.auckland.HealthProvider"
     operation: READ,UPDATE,DELETE
     resource(r) : "nz.ac.auckland.Record"
@@ -78,6 +94,24 @@ rule HealthProvidersCanOnlyCreateRecordsForSharedPatients {
     operation: CREATE
     resource(r) : "nz.ac.auckland.Record"
     condition: ((checkAccessToPatient(r.patient,hp) && (r.healthProvider.getIdentifier() == hp.getIdentifier())))
+    action: ALLOW
+}
+
+rule HealthProvidersCanCreateRecordSharingRequests {
+    description: ""
+    participant(hp): "nz.ac.auckland.HealthProvider"
+    operation: ALL
+    resource(rrs) : "nz.ac.auckland.RequestRecordSharing"
+    condition: (rrs.healthProvider.getIdentifier() == hp.getIdentifier())
+    action: ALLOW
+}
+
+rule PatientsCanOnlyViewRecordSharingRequestedToThemselves {
+    description: ""
+    participant(p) : "nz.ac.auckland.Patient"
+    operation: READ
+    resource(rrs) : "nz.ac.auckland.RequestRecordSharing"
+  	condition: (rrs.patient.getIdentifier() == p.getIdentifier())
     action: ALLOW
 }
 

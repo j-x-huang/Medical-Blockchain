@@ -96,7 +96,7 @@ function symDecrypt(encryptedData, key){
 
    console.log(data); */
 
-   console.log("Encrypted: " + encryptedData);
+   console.log(encryptedData);
 
    var decrypted = CryptoJS.AES.decrypt(encryptedData, key);
 
