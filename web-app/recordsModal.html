@@ -6,15 +6,111 @@
                 <h4 class="modal-title">Records</h4>
             </div>
             <div class="modal-body">
-                <p>{{allergy}}</p>
-                <p>{{cond}}</p>
-                <p>{{imm}}</p>
-                <p>{{med}}</p>
-                <p>{{obs}}</p>
-                <p>{{proc}}</p>
-                <button ng-click="refresh()" type="button" class="btn btn-default">Refresh</button>
+                <div class="container-fluid">
+                    <!-- <p>Show Allergies <input type="checkbox" ng-model="showAllergy"></p>
+                    <p>Show Procedures<input type="checkbox" ng-model="showProc"></p>
+                    <p>Show Conditions<input type="checkbox" ng-model="showCond"></p>
+                    <p>Show Immunizations<input type="checkbox" ng-model="showImm"></p>
+                    <p>Show Observations<input type="checkbox" ng-model="showObs"></p>
+                    <p>Show Medications<input type="checkbox" ng-model="showMed"></p> -->
 
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            Allergies
+                            <div class="material-switch pull-right">
+                                <input id="allergy" type="checkbox" ng-model="showAllergy" />
+                                <label for="allergy" class="label-danger"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Procedures
+                            <div class="material-switch pull-right">
+                                <input id="proc" type="checkbox" ng-model="showProc" />
+                                <label for="proc" class="label-warning"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Conditions
+                            <div class="material-switch pull-right">
+                                <input id="cond" type="checkbox" ng-model="showCond" />
+                                <label for="cond" class="label-info"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Immunizations
+                            <div class="material-switch pull-right">
+                                <input id="imm" type="checkbox" ng-model="showImm" />
+                                <label for="imm" class="label-success"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Observations
+                            <div class="material-switch pull-right">
+                                <input id="obs" type="checkbox" ng-model="showObs" />
+                                <label for="obs" class="label-primary"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Medications
+                            <div class="material-switch pull-right">
+                                <input id="med" type="checkbox" ng-model="showMed" />
+                                <label for="med" class="label-default"></label>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+
+                <div class="container-fluid">
+
+                    <md-card ng-repeat="records in allergy" ng-show="showAllergy" style="background-color: #f3cbca">
+                        <md-card-content>
+                            <div ng-repeat="(key, val) in records">
+                                <p>{{key}}: {{val}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+
+                    <md-card ng-repeat="records in proc" ng-show="showProc" style="background-color: #fae6c9">
+                        <md-card-content>
+                            <div ng-repeat="(key, val) in records">
+                                <p>{{key}}: {{val}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+
+                    <md-card ng-repeat="records in imm" ng-show="showImm" style="background-color: #bee4c7">
+                        <md-card-content>
+                            <div ng-repeat="(key, val) in records">
+                                <p>{{key}}: {{val}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+
+                    <md-card ng-repeat="records in cond" ng-show="showCond" style="background-color: #cdecf5">
+                        <md-card-content>
+                            <div ng-repeat="(key, val) in records">
+                                <p>{{key}}: {{val}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+
+                    <md-card ng-repeat="records in obs" ng-show="showObs" style="background-color: #c6dcef">
+                        <md-card-content>
+                            <div ng-repeat="(key, val) in records">
+                                <p>{{key}}: {{val}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+
+                    <md-card ng-repeat="records in med" ng-show "showMed" style="background-color: lightgray">
+                        <md-card-content>
+                            <div ng-repeat="(key, val) in records">
+                                <p>{{key}}: {{val}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
             </div>
         </div>
     </div>
-</div>

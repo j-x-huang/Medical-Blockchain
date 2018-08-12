@@ -1,9 +1,9 @@
-var app = angular.module('myApp');
+var app = angular.module('myApp')
 var endpoint = "http://localhost:3000/api/queries/"
 
 app.controller('recordsController', [
-    '$scope', '$element', '$http', 'patient',
-    function ($scope, $element, $http, patient) {
+    '$scope', '$element', '$http', 'patient', 'patientKey',
+    function ($scope, $element, $http, patient, patientKey) {
 
         $scope.allergy=[]
         $scope.cond=[]
@@ -23,13 +23,33 @@ app.controller('recordsController', [
 
         function getRecords(query, array) {
             $http.get(query).then(function(response) {
-                array.push.apply(array,response.data)
+
+                var tempArray= response.data
+
+                tempArray.forEach(function (form) {
+                    decryptForm(form)
+                })
+
+                console.log(tempArray)
+
+                array.push.apply(array,tempArray)
                 console.log(array)
             }, _error);
         }
 
         function _error(response) {
             console.log(response)
+        }
+
+        function decryptForm(form) {
+            var keys = Object.keys(form)
+    
+            keys.forEach(function (key) {
+                if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
+                    var decryptedData = symDecrypt(form[key], patientKey)
+                    form[key] = decryptedData
+                }
+            })
         }
 
         $scope.refresh = function () {

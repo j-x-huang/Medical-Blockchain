@@ -1,4 +1,4 @@
-var app = angular.module('myApp', ['angularModalService']);
+var app = angular.module('myApp', ['angularModalService', 'ngMaterial', 'ngMessages']);
 var apiBaseURL = "http://localhost:3000/api/";
 var namespace = "nz.ac.auckland"
 
@@ -195,17 +195,6 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         console.log(form)
     }
 
-    function decryptForm(form) {
-        var keys = Object.keys(form)
-
-        keys.forEach(function (key) {
-            if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
-                var decryptedData = symDecrypt(form[key], $scope.patientKey)
-                form[key] = decryptedData
-            }
-        })
-    }
-
     /**
      * Show response message in a pop-up dialog box
      *
@@ -296,7 +285,8 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             preClose: (modal) => { modal.element.modal('hide'); },
             inputs: {
                 title: "Patient Details",
-                patient: patient
+                patient: patient,
+                patientKey: $scope.patientKey
             }
         }).then(function (modal) {
             modal.element.modal();
