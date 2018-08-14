@@ -78,8 +78,6 @@ app.controller('PatientController', [
             }).then(function(response) {
                 $scope.patientKey = generateRandomKey()
                 $scope.viewData(response.data);
-                console.log("patient0: " + $scope.patientKey)
-                console.log("priv0: " + $scope.privateKey)
                 $scope.close()
             }, _error)
         }

@@ -117,6 +117,8 @@ function generateRandomKey() {
 
 function generateRSAkeys(keySize) {
   var crypt = new JSEncrypt({default_key_size: keySize});
+
+  console.log(keySize)
   crypt.getKey();
 
   var keys = {
