@@ -32,7 +32,10 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
     $scope.selectedRecord = {}
     $scope.types = ["Allergy", "Procedure", "Observation", "Medication", "Immunization", "Condition"]
 
-    $scope.shareForm = {}
+    $scope.shareForm = {
+        patient: "",
+        healthProvider: ""
+    }
 
     $scope.allergyForm = {}
     $scope.procedureForm = {}
@@ -55,6 +58,13 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         var endpoint = apiBaseURL + "HealthProvider"
         $scope.endpoint = endpoint
 
+        keys = generateRSAkeys()
+
+        console.log(keys)
+
+        $scope.healthProviderForm.publicKey = keys.publicKey
+        $scope.privateKey = keys.privateKey
+
         $http({
             method: 'POST',
             url: endpoint,
@@ -62,7 +72,11 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(_success, _error)
+        }).then(function (response) {
+            $scope.viewData(response.data);
+
+            showCryptoModal("N/A", $scope.privateKey)
+        }, _error)
     }
 
     $scope.submitRecord = function () {
@@ -120,23 +134,37 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
     }
 
     $scope.shareKey = function () {
-        var endpoint = apiBaseURL + "ShareKey"
-        $scope.endpoint = endpoint
+
+
+        var hid = $scope.shareForm.healthProvider
 
         $scope.shareForm.$class = "nz.ac.auckland.ShareKey"
         $scope.shareForm.patient = "resource:" + namespace + ".Patient#" + $scope.shareForm.patient
         $scope.shareForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + $scope.shareForm.healthProvider
 
-        $http({
-            method: 'POST',
-            url: endpoint,
-            data: angular.toJson($scope.shareForm),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(_success, _error)
+        $http.get(apiBaseURL + "HealthProvider/" + hid)
+            .then(function (response) {
+                console.log(response.data)
 
+                var hp = response.data
 
+                encryptedPatientKeyHPPublic = asymEncrypt($scope.patientKey, hp.publicKey)
+
+                $scope.shareForm.encryptedPatientKeyHPPublic = encryptedPatientKeyHPPublic
+
+                var endpoint = apiBaseURL + "ShareKey"
+                $scope.endpoint = endpoint
+
+                $http({
+                    method: 'POST',
+                    url: endpoint,
+                    data: angular.toJson($scope.shareForm),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(_success, _error)
+
+            }, _error)
     }
     $scope.delete = function (index) {
         var isConfirmed = confirm("Are you sure you want to delete this patient?")
@@ -310,7 +338,15 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
                 error("Unable to read file")
             }
         }
+    }
 
+    $scope.encryptedPkey
+    $scope.decryptedKey
+
+    $scope.testDecrypt = function() {
+        console.log($scope.encryptedPkey)
+        console.log($scope.privateKey)
+        $scope.decryptedKey = asymDecrypt($scope.encryptedPkey, $scope.privateKey)
 
     }
 })

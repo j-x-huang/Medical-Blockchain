@@ -279,22 +279,30 @@
                 </table>
             </div>
         </div>
-    </div>
-    <div id="transactions" class="tab-pane fade">
-        <h1>Share Key</h1>
-        <div class="form-group">
-            <p>Your ID
-                <input type="text" ng-model="shareForm.patient">
-            </p>
-            <p>Health Provider's ID
-                <input type="text" ng-model="shareForm.healthProvider">
-            </p>
-            <p>Your Secret Key</p>
-            <input type="text" ng-model="shareForm.encryptedPatientKeyHPPublic">
-        </div>
-        <button type="button" class="btn btn-default" ng-click="shareKey()">Submit</button>
 
+        <div id="transactions" class="tab-pane fade">
+            <h1>Share Key</h1>
+            <div class="form-group">
+                <p>Your ID
+                    <input type="text" ng-model="shareForm.patient">
+                </p>
+                <p>Health Provider's ID
+                    <input type="text" ng-model="shareForm.healthProvider">
+                </p>
+            </div>
+            <button type="button" class="btn btn-default" ng-click="shareKey()">Submit</button>
+
+            <div class="form-group">
+                <p>encryptedKey
+                    <input type="text" ng-model="encryptedPkey">
+                </p>
+                <button type="button" class="btn btn-default" ng-click="testDecrypt()">Decrypt</button>
+                {{decryptedKey}}
+            </div>
+
+        </div>
     </div>
+
     </div>
 
     <div class="container-fluid">
