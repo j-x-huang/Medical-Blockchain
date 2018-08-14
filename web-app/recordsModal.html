@@ -64,50 +64,351 @@
                 <div class="container-fluid">
 
                     <md-card ng-repeat="records in allergy" ng-show="showAllergy" style="background-color: #f3cbca">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
                         <md-card-content>
-                            <div ng-repeat="(key, val) in records">
-                                <p>{{key}}: {{val}}</p>
-                            </div>
+                            <table>
+                                <tr>
+                                    <td>
+                                        Record date:
+                                    </td>
+                                    <td>{{records.record_date}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record type:
+                                    </td>
+                                    <td>Allergy</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record reason:
+                                    </td>
+                                    <td>{{records.record_reasonDesc}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Health provider:
+                                    </td>
+                                    <td>{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Start date:
+                                    </td>
+                                    <td>{{records.allergy_start}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Stop date:
+                                    </td>
+                                    <td>{{records.allergy_stop}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Description:
+                                    </td>
+                                    <td>{{records.allergy_desc}}</td>
+                                </tr>
+                            </table>
                         </md-card-content>
                     </md-card>
 
                     <md-card ng-repeat="records in proc" ng-show="showProc" style="background-color: #fae6c9">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
                         <md-card-content>
-                            <div ng-repeat="(key, val) in records">
-                                <p>{{key}}: {{val}}</p>
-                            </div>
+                            <table>
+                                <tr>
+                                    <td>
+                                        Record date:
+                                    </td>
+                                    <td>{{records.record_date}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record type:
+                                    </td>
+                                    <td>Procedure</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record reason:
+                                    </td>
+                                    <td>{{records.record_reasonDesc}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Health provider:
+                                    </td>
+                                    <td>{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Procedure date:
+                                    </td>
+                                    <td>{{records.procedure_date}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Description:
+                                    </td>
+                                    <td>{{records.procedure_desc}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Reason:
+                                    </td>
+                                    <td>{{records.procedure_reasonDesc}}</td>
+                                </tr>
+                            </table>
                         </md-card-content>
                     </md-card>
 
                     <md-card ng-repeat="records in imm" ng-show="showImm" style="background-color: #bee4c7">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
                         <md-card-content>
-                            <div ng-repeat="(key, val) in records">
-                                <p>{{key}}: {{val}}</p>
-                            </div>
+                            <table>
+                                <tr>
+                                    <td>
+                                        Record date:
+                                    </td>
+                                    <td>{{records.record_date}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record type:
+                                    </td>
+                                    <td>Immunization</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record reason:
+                                    </td>
+                                    <td>{{records.record_reasonDesc}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Health provider:
+                                    </td>
+                                    <td>{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Immunization date:
+                                    </td>
+                                    <td>{{records.imm_date}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Description:
+                                    </td>
+                                    <td>{{records.imm_desc}}</td>
+                                </tr>
+                            </table>
                         </md-card-content>
                     </md-card>
 
                     <md-card ng-repeat="records in cond" ng-show="showCond" style="background-color: #cdecf5">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
                         <md-card-content>
-                            <div ng-repeat="(key, val) in records">
-                                <p>{{key}}: {{val}}</p>
-                            </div>
+                            <table>
+                                <tr>
+                                    <td>
+                                        Record date:
+                                    </td>
+                                    <td>{{records.record_date}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record type:
+                                    </td>
+                                    <td>Condition</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record reason:
+                                    </td>
+                                    <td>{{records.record_reasonDesc}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Health provider:
+                                    </td>
+                                    <td>{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Start date:
+                                    </td>
+                                    <td>{{records.cond_start}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Stop date:
+                                    </td>
+                                    <td>{{records.cond_stop}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Reason:
+                                    </td>
+                                    <td>{{records.cond_desc}}</td>
+                                </tr>
+                            </table>
                         </md-card-content>
                     </md-card>
 
                     <md-card ng-repeat="records in obs" ng-show="showObs" style="background-color: #c6dcef">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
                         <md-card-content>
-                            <div ng-repeat="(key, val) in records">
-                                <p>{{key}}: {{val}}</p>
-                            </div>
+                            <table>
+                                <tr>
+                                    <td>
+                                        Record date:
+                                    </td>
+                                    <td>{{records.record_date}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record type:
+                                    </td>
+                                    <td>Observation</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record reason:
+                                    </td>
+                                    <td>{{records.record_reasonDesc}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Health provider:
+                                    </td>
+                                    <td>{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Observation date:
+                                    </td>
+                                    <td>{{records.obs_date}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Description:
+                                    </td>
+                                    <td>{{records.obs_desc}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Value:
+                                    </td>
+                                    <td>{{records.obs_value}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Units:
+                                    </td>
+                                    <td>{{records.obs_units}}</td>
+                                </tr>
+                            </table>
                         </md-card-content>
                     </md-card>
 
                     <md-card ng-repeat="records in med" ng-show "showMed" style="background-color: lightgray">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
                         <md-card-content>
-                            <div ng-repeat="(key, val) in records">
-                                <p>{{key}}: {{val}}</p>
-                            </div>
+
+                            <table>
+                                <tr>
+                                    <td>
+                                        Record date:
+                                    </td>
+                                    <td>{{records.record_date}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record type:
+                                    </td>
+                                    <td>Medication</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Record reason:
+                                    </td>
+                                    <td>{{records.record_reasonDesc}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Health provider:
+                                    </td>
+                                    <td>{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Start date:
+                                    </td>
+                                    <td>{{records.medication_start}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Stop date:
+                                    </td>
+                                    <td>{{records.medication_stop}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Description:
+                                    </td>
+                                    <td>{{records.medication_desc}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Reason:
+                                    </td>
+                                    <td>{{records.medication_reasonDesc}}</td>
+                                </tr>
+                            </table>
                         </md-card-content>
                     </md-card>
                 </div>

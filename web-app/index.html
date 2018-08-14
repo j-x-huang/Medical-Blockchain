@@ -48,7 +48,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" onclick = "var decrypted = symDecrypt('U2FsdGVkX1+7BOGI6SODxf0aQjzypAk9gPRjmisMB1M=','598veczqUe9A/12Ighb9AQ==')">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal" onclick="var decrypted = symDecrypt('U2FsdGVkX1+7BOGI6SODxf0aQjzypAk9gPRjmisMB1M=','598veczqUe9A/12Ighb9AQ==')">&times;</button>
                     <h4 class="modal-title">Add Health Provider</h4>
                 </div>
                 <div class="modal-body">
@@ -94,9 +94,10 @@
                         <p>Health Provider ID:
                             <input type="text" ng-model="recordForm.healthProvider"> </p>
                         <hr>
-                        <p>Record type: 
-                        <select ng-model="selectedRecord.type" ng-options="type for type in types">
-                        </select> </p>
+                        <p>Record type:
+                            <select ng-model="selectedRecord.type" ng-options="type for type in types">
+                            </select>
+                        </p>
                     </div>
 
                     <!-- ALLERGIES -->
@@ -177,7 +178,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                        <button ng-click="submitRecord()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
+                    <button ng-click="submitRecord()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
                 </div>
                 </br>
             </div>
@@ -188,7 +189,7 @@
         <h4>Info Panel</h4>
         <p>Request URL: {{endpoint}} </p>
         <p>Response code: {{myStatus}} </p>
-        <p>Patient Key: {{patientKey}}</p> 
+        <p>Patient Key: {{patientKey}}</p>
         <p>Private Key: {{privateKey}}</p>
         <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
 
@@ -205,7 +206,7 @@
                     <a href="#patient" data-toggle="tab" ng-click="setTab('Patient')">Patient</a>
                 </li>
                 <li>
-                        <a href="#healthProvider" data-toggle="tab" ng-click="setTab('HealthProvider')">Health Provider</a>
+                    <a href="#healthProvider" data-toggle="tab" ng-click="setTab('HealthProvider')">Health Provider</a>
                 </li>
             </ul>
         </li>
@@ -228,25 +229,27 @@
             <button type="button" class="btn btn-default" ng-click="addPatient()">Add Patient</button>
             <button type="button" class="btn btn-default" ng-click="getPatients()">Get Patients</button>
             <div class="container-fluid" id="patientTable">
-                    <table class="table table-striped" style="width: 100%;">
-                        <tr>
-                            <th>ID</th>
-                            <th>IRD</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Options</th>
-                        </tr>
-                        <tr ng-repeat="row in myArray">
-                            <td>{{row.id}}</td>
-                            <td>{{row.ird}}</td>
-                            <td>{{row.first}}</td>
-                            <td>{{row.last}}</td>
-                            <td><button type="button" class="btn btn-default" ng-click="viewRecords($index)">View Records</button>
+                <table class="table table-striped" style="width: 100%;">
+                    <tr>
+                        <th>ID</th>
+                        <th>IRD</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Options</th>
+                    </tr>
+                    <tr ng-repeat="row in myArray">
+                        <td>{{row.id}}</td>
+                        <td>{{row.ird}}</td>
+                        <td>{{row.first}}</td>
+                        <td>{{row.last}}</td>
+                        <td>
+                            <button type="button" class="btn btn-default" ng-click="viewRecords($index)">View Records</button>
                             <button type="button" class="btn btn-default" ng-click="editPatient($index)" ng-show="patientTab">Edit</button>
                             <button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button>
-                            <button type="button" class="btn btn-default" ng-click="delete($index)">-</button></td>
-                        </tr>
-                    </table>
+                            <button type="button" class="btn btn-default" ng-click="delete($index)">-</button>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
         <div id="healthProvider" class="tab-pane fade">
@@ -255,41 +258,43 @@
             <button type="button" class="btn btn-default" ng-click="getData('HealthProvider')">Get Health Providers</button>
 
             <div class="container-fluid" id="hpTable">
-                    <table class="table table-striped" style="width: 100%;">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Address</th>
-                            <th>Options</th>
-                        </tr>
-                        <tr ng-repeat="row in myArray">
-                            <td>{{row.id}}</td>
-                            <td>{{row.name}}</td>
-                            <td>{{row.phone}}</td>
-                            <td>{{row.address}}</td>
-                            <td><button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button>
-                            <button type="button" class="btn btn-default" ng-click="delete($index)">-</button></td>
-                        </tr>
-                    </table>
+                <table class="table table-striped" style="width: 100%;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Options</th>
+                    </tr>
+                    <tr ng-repeat="row in myArray">
+                        <td>{{row.id}}</td>
+                        <td>{{row.name}}</td>
+                        <td>{{row.phone}}</td>
+                        <td>{{row.address}}</td>
+                        <td>
+                            <button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button>
+                            <button type="button" class="btn btn-default" ng-click="delete($index)">-</button>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
+    </div>
+    <div id="transactions" class="tab-pane fade">
+        <h1>Share Key</h1>
+        <div class="form-group">
+            <p>Your ID
+                <input type="text" ng-model="shareForm.patient">
+            </p>
+            <p>Health Provider's ID
+                <input type="text" ng-model="shareForm.healthProvider">
+            </p>
+            <p>Your Secret Key</p>
+            <input type="text" ng-model="shareForm.encryptedPatientKeyHPPublic">
         </div>
-        <div id="transactions" class="tab-pane fade">
-            <h1>Share Key</h1> 
-            <div class="form-group">
-                <p>Your ID 
-                    <input type="text" ng-model="shareForm.patient">
-                </p>
-                <p>Health Provider's ID
-                    <input type="text" ng-model="shareForm.healthProvider">
-                </p>
-                <p>Your Secret Key</p>
-                    <input type="text" ng-model="shareForm.encryptedPatientKeyHPPublic">
-            </div>
-            <button type="button" class="btn btn-default" ng-click="shareKey()">Submit</button>
+        <button type="button" class="btn btn-default" ng-click="shareKey()">Submit</button>
 
-        </div>
+    </div>
     </div>
 
     <div class="container-fluid">
