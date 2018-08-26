@@ -1,5 +1,5 @@
 var app = angular.module('myApp')
-var endpoint = "http://localhost:3000/api/queries/"
+var endpoint = "http://168.1.148.62:31090/api/queries/"
 
 app.controller('recordsController', [
     '$scope', '$element', '$http', 'patient', 'patientKey',
