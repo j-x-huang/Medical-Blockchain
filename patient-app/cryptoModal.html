@@ -1,0 +1,18 @@
+<div class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Your Keys</h4>
+            </div>
+            <div class="modal-body">
+                <h2>Patient Key</h2>
+                <p>{{patientKey}}</p>
+                <input type="button" ng-click="downloadSecret()" value="Download">
+                <h2>Private Key</h2>
+                <p>{{privateKey}}</p>
+                <input type="button" ng-click="downloadPrivate()" value="Download">
+            </div>
+        </div>
+    </div>
+</div>
