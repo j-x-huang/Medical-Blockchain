@@ -1,8 +1,8 @@
-var app = angular.module('myApp', ['angularModalService', 'ngMaterial', 'ngMessages']);
-var apiBaseURL = "http://168.1.148.62:31090/api/";
+var app = angular.module('myApp', ['angularModalService', 'ngMaterial', 'ngMessages', 'ngWebsocket']);
+var apiBaseURL = "http://localhost:3000/api/";
 var namespace = "nz.ac.auckland"
 
-app.controller('myCtrl', function ($scope, $http, ModalService) {
+app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
     $scope.healthProviderForm = {
         $class: "nz.ac.auckland.HealthProvider",
@@ -339,6 +339,18 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             }
         }
     }
+
+
+    var ws = $websocket.$new('ws://localhost:3000');
+
+    ws.$on('$open', function () { // it listents for 'incoming event'
+      console.log("WS Open");
+    })
+    .$on('$message', function (data) {
+        console.log(data)
+    });
+    
+
 
     $scope.encryptedPkey
     $scope.decryptedKey
