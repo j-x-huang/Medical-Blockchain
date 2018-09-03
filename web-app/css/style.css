@@ -82,9 +82,25 @@ td {
   background: inherit;
   left: 20px;
 }
-/*
+
 table {
-    table-layout: fixed;
-    word-wrap: break-word;
+  table-layout: fixed;
+  word-wrap: break-word;
 }
-*/
+
+whiteText {
+  color: rgb(255, 255, 255);
+}
+
+/* table {
+  border-collapse: separate;
+  border-spacing: 50px 0;
+} */
+
+hr {
+  display: inline-block;
+  width: 15%;
+  text-align: left;
+  margin-top: 0px;
+  /* border-top: 4px solid #f3cbca; */
+}

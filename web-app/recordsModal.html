@@ -1,3 +1,7 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="css\style.css">
+</head>
+
 <div class="modal fade">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -63,13 +67,14 @@
 
                 <div class="container-fluid">
 
-                    <md-card ng-repeat="records in allergy" ng-show="showAllergy" style="background-color: #f3cbca">
+                    <md-card ng-repeat="records in allergy" ng-show="showAllergy">
                         <md-card-title>
                             <md-card-title-text>
                                 <span class="md-headline">Record - {{records.id}}</span>
                             </md-card-title-text>
                         </md-card-title>
                         <md-card-content>
+                            <hr style="border-top: 8px solid #f3cbca;">
                             <table>
                                 <tr>
                                     <td>
@@ -93,7 +98,8 @@
                                     <td>
                                         Health provider:
                                     </td>
-                                    <td>{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}</td>
+                                    <td>{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>&nbsp;</td>
@@ -120,13 +126,14 @@
                         </md-card-content>
                     </md-card>
 
-                    <md-card ng-repeat="records in proc" ng-show="showProc" style="background-color: #fae6c9">
+                    <md-card ng-repeat="records in proc" ng-show="showProc">
                         <md-card-title>
                             <md-card-title-text>
                                 <span class="md-headline">Record - {{records.id}}</span>
                             </md-card-title-text>
                         </md-card-title>
                         <md-card-content>
+                            <hr style="border-top: 8px solid #fae6c9;">
                             <table>
                                 <tr>
                                     <td>
@@ -177,13 +184,14 @@
                         </md-card-content>
                     </md-card>
 
-                    <md-card ng-repeat="records in imm" ng-show="showImm" style="background-color: #bee4c7">
+                    <md-card ng-repeat="records in imm" ng-show="showImm">
                         <md-card-title>
                             <md-card-title-text>
                                 <span class="md-headline">Record - {{records.id}}</span>
                             </md-card-title-text>
                         </md-card-title>
                         <md-card-content>
+                            <hr style="border-top: 8px solid #bee4c7;">
                             <table>
                                 <tr>
                                     <td>
@@ -228,13 +236,14 @@
                         </md-card-content>
                     </md-card>
 
-                    <md-card ng-repeat="records in cond" ng-show="showCond" style="background-color: #cdecf5">
+                    <md-card ng-repeat="records in cond" ng-show="showCond">
                         <md-card-title>
                             <md-card-title-text>
                                 <span class="md-headline">Record - {{records.id}}</span>
                             </md-card-title-text>
                         </md-card-title>
                         <md-card-content>
+                            <hr style="border-top: 8px solid #cdecf5;">
                             <table>
                                 <tr>
                                     <td>
@@ -285,13 +294,14 @@
                         </md-card-content>
                     </md-card>
 
-                    <md-card ng-repeat="records in obs" ng-show="showObs" style="background-color: #c6dcef">
+                    <md-card ng-repeat="records in obs" ng-show="showObs">
                         <md-card-title>
                             <md-card-title-text>
                                 <span class="md-headline">Record - {{records.id}}</span>
                             </md-card-title-text>
                         </md-card-title>
                         <md-card-content>
+                            <hr style="border-top: 8px solid #c6dcef;">
                             <table>
                                 <tr>
                                     <td>
@@ -348,14 +358,14 @@
                         </md-card-content>
                     </md-card>
 
-                    <md-card ng-repeat="records in med" ng-show "showMed" style="background-color: lightgray">
+                    <md-card ng-repeat="records in med" ng-show="showMed">
                         <md-card-title>
                             <md-card-title-text>
                                 <span class="md-headline">Record - {{records.id}}</span>
                             </md-card-title-text>
                         </md-card-title>
                         <md-card-content>
-
+                            <hr style="border-top: 8px solid lightgray;">
                             <table>
                                 <tr>
                                     <td>
