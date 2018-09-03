@@ -129,7 +129,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         var revokeForm = {
             $class: "nz.ac.auckland.RevokeMedicalRecordsSharing",
             patient: "resource:" + namespace + ".Patient#" + $scope.pid,
-            healthProvider: $scope.shareForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + hid
+            healthProvider: "resource:" + namespace + ".HealthProvider#" + hid
         }
 
         $http({
@@ -298,7 +298,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
                     Description: "Healthcare provider #" + hpId + " would like to view your records"
                 }
 
-                $scope.notiTable.push(notification)
+                $scope.notiTable.unshift(notification)
                 console.log($scope.notiTable)
             }
         }
