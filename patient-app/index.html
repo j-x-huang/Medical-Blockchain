@@ -532,6 +532,10 @@
         <div id="sharedKeys" class="tab-pane fade">
             <h1>My Shared Keys</h1>
             <div class="container-fluid" id="notificationsTable">
+                <p>Share your patient key with:
+                    <input type="text" ng-model="hid" />
+                    <button type="button" class="btn btn-default" ng-click="shareKey()">Share</button>
+                </p>
                 <button type="button" class="btn btn-default" ng-click="viewKeys()">Refresh</button>
                 <table class="table table-striped" style="width: 100%;">
                     <tr>

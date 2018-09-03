@@ -14,6 +14,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     $scope.proc=[]
 
     $scope.pid
+    $scope.hid
 
     $scope.patientTab = true
 
@@ -55,8 +56,12 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
             alert("You have not entered your patient key")
             return
         }
-
-        var hid = $scope.notiTable[index].hid
+        var hid = ''
+        if (index === undefined || index === null || index === '') {
+            hid = $scope.hid
+        } else {
+            hid = $scope.notiTable[index].hid
+        }
 
         $scope.shareForm.$class = "nz.ac.auckland.ShareKey"
         $scope.shareForm.patient = "resource:" + namespace + ".Patient#" + $scope.pid
@@ -124,7 +129,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         var revokeForm = {
             $class: "nz.ac.auckland.RevokeMedicalRecordsSharing",
             patient: "resource:" + namespace + ".Patient#" + $scope.pid,
-            healthProvider: $scope.shareForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + hid
+            healthProvider: "resource:" + namespace + ".HealthProvider#" + hid
         }
 
         $http({
@@ -293,7 +298,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
                     Description: "Healthcare provider #" + hpId + " would like to view your records"
                 }
 
-                $scope.notiTable.push(notification)
+                $scope.notiTable.unshift(notification)
                 console.log($scope.notiTable)
             }
         }

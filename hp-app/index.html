@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Medical Network</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css\style.css">
+    <link rel="stylesheet" type="text/css" href="css\jquery.json-viewer.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-sanitize.js"></script>
+    <script src="bower_components/ng-websocket/ng-websocket.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.2.0/ui-bootstrap-tpls.min.js"></script>
+    <script src="http://bitwiseshiftleft.github.io/sjcl/sjcl.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <script src="js/angular-module.js"></script>
+    <script src="js/jquery.json-viewer.js"></script>
+    <script src="js/jsencrypt/bin/jsencrypt.js"></script>
+    <script src="js/encryption.js"></script>
+    <script src="patientController.js"></script>
+    <script src="cryptoController.js"></script>
+    <script src="recordsController.js"></script>
+
+    <script src="https://dwmkerr.github.io/angular-modal-service/angular-modal-service.js"></script>
+
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.js"></script>
+
+</head>
+
+<body ng-app="myApp" ng-controller="myCtrl" onload="loaded()">
+
+    <nav class>
+        <ul>
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Record Modal-->
+    <div id="recordModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Record</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <p>ID:
+                            <input type="text" ng-model="recordForm.id"> </p>
+                        <p>Date:
+                            <input type="text" ng-model="recordForm.record_date"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="recordForm.record_code"> </p>
+                        <p>Reason Code:
+                            <input type="text" ng-model="recordForm.record_reasonCode"> </p>
+                        <p>Reason Description:
+                            <input type="text" ng-model="recordForm.record_reasonDesc"> </p>
+                        <p>Health Provider ID:
+                            <input type="text" ng-model="recordForm.healthProvider"> </p>
+                        <hr>
+                        <p>Record type:
+                            <select ng-model="selectedRecord.type" ng-options="type for type in types">
+                            </select>
+                        </p>
+                    </div>
+
+                    <!-- ALLERGIES -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Allergy'">
+                        <p>Start Date:
+                            <input type="text" ng-model="allergyForm.allergy_start"> </p>
+                        <p>End Date:
+                            <input type="text" ng-model="allergyForm.allergy_stop"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="allergyForm.allergy_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="allergyForm.allergy_desc"> </p>
+                    </div>
+
+                    <!-- PROCEDURE -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Procedure'">
+                        <p>Date:
+                            <input type="text" ng-model="procedureForm.procedure_date"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="procedureForm.procedure_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="procedureForm.procedure_desc"> </p>
+                        <p>Reason Code:
+                            <input type="text" ng-model="procedureForm.procedure_reasonCode"> </p>
+                        <p>Reason Description:
+                            <input type="text" ng-model="procedureForm.procedure_reasonDesc"> </p>
+                    </div>
+                    <!-- OBSERVATION -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Observation'">
+                        <p>Date:
+                            <input type="text" ng-model="observationForm.obs_date"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="observationForm.obs_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="observationForm.obs_desc"> </p>
+                        <p>Value:
+                            <input type="text" ng-model="observationForm.obs_value"> </p>
+                        <p>Unit:
+                            <input type="text" ng-model="observationForm.obs_units"> </p>
+                    </div>
+
+                    <!-- MEDICATION -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Medication'">
+                        <p>Start Date:
+                            <input type="text" ng-model="medicationForm.medication_start"> </p>
+                        <p>End Date:
+                            <input type="text" ng-model="medicationForm.medication_stop"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="medicationForm.medication_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="medicationForm.medication_desc"> </p>
+                        <p>Reason Code:
+                            <input type="text" ng-model="medicationForm.medication_reasonCode"> </p>
+                        <p>Reason Description:
+                            <input type="text" ng-model="medicationForm.medication_reasonDesc"> </p>
+                    </div>
+
+                    <!-- IMMUNIZATION -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Immunization'">
+                        <p>Date:
+                            <input type="text" ng-model="immunizationForm.imm_date"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="immunizationForm.imm_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="immunizationForm.imm_desc"> </p>
+                    </div>
+
+                    <!-- CONDITION -->
+                    <div class="form-group" ng-show="selectedRecord.type=='Condition'">
+                        <p>Start Date:
+                            <input type="text" ng-model="conditionForm.cond_start"> </p>
+                        <p>End Date:
+                            <input type="text" ng-model="conditionForm.cond_stop"> </p>
+                        <p>Code:
+                            <input type="text" ng-model="conditionForm.cond_code"> </p>
+                        <p>Description:
+                            <input type="text" ng-model="conditionForm.cond_desc"> </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="submitRecord()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
+                </div>
+                </br>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Nav Bar-->
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#home">Home</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#patients">Patients</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#req">Request Sharing</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#pk">Patient Keys</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#notifications">Notifications</a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div id="content" class="tab-content">
+
+        <div id="home" class="tab-pane fade in active">
+            <h1>My Identity</h1>
+
+            <div class="container-fluid">
+                <p>Upload your Private key</p>
+                <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
+                <p>Enter your id:</p>
+                <input type="text" ng-model="hid">
+                <button type="button" class="btn btn-default" ng-click="getMe()">Show My Details</button>
+            </div>
+
+            <div class="container-fluid" id="hpTable">
+                <table class="table table-striped" style="width: 100%;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                    </tr>
+                    <tr ng-repeat="row in hpArray">
+                        <td>{{row.id}}</td>
+                        <td>{{row.name}}</td>
+                        <td>{{row.phone}}</td>
+                        <td>{{row.address}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="patients" class="tab-pane fade">
+            <h1>Patients</h1>
+            <button type="button" class="btn btn-default" ng-click="getPatients()">Get Patients</button>
+            <div class="container-fluid" id="patientTable">
+                <table class="table table-striped" style="width: 100%;">
+                    <tr>
+                        <th>ID</th>
+                        <th>IRD</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Options</th>
+                    </tr>
+                    <tr ng-repeat="row in myArray">
+                        <td>{{row.id}}</td>
+                        <td>{{row.ird}}</td>
+                        <td>{{row.first}}</td>
+                        <td>{{row.last}}</td>
+                        <td>
+                            <button type="button" class="btn btn-default" ng-click="viewRecords($index)">View Records</button>
+                            <button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="req" class="tab-pane fade">
+            <h1>Request a key</h1>
+            <div class="form-group">
+                <p>Patient's ID
+                    <input type="text" ng-model="pid">
+                </p>
+            </div>
+            <button type="button" class="btn btn-default" ng-click="reqKey()">Submit</button>
+
+        </div>
+
+        <div id="pk" class="tab-pane fade">
+            <h2>Shared Patient Keys</h2>
+            <div class="container-fluid" id="patientTable">
+                <button type="button" class="btn btn-default" ng-click="getKeys()">Refresh</button>
+                <table class="table table-striped" style="width: 50%;">
+                    <tr>
+                        <th>PID</th>
+                        <th>Patient Key</th>
+                    </tr>
+                    <tr ng-repeat="row in keyArray">
+                        <td>{{row.id}}</td>
+                        <td>{{row.key}}</td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
+        <div id="notifications" class="tab-pane fade">
+            <h2>Notifications</h2>
+            <div class="container-fluid" id="patientTable">
+                <button type="button" class="btn btn-default" ng-click="">Refresh</button>
+                <table class="table table-striped" style="width: 50%;">
+                    <tr>
+                        <th>Time</th>
+                        <th>Message</th>
+                    </tr>
+                    <tr ng-repeat="row in notiArray">
+                        <td>{{row.time}}</td>
+                        <td>{{row.msg}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
