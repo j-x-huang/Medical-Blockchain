@@ -25,6 +25,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     $scope.pid
     $scope.patientKey
     $scope.privateKey
+    let _login = false
 
     $scope.notiArray = []
 
@@ -38,10 +39,12 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     $scope.immunizationForm = {}
     $scope.conditionForm = {}
 
-    let _id;
     $scope.myArray = []
 
     $scope.submitRecord = function () {
+        if (!isCredsProvided()) {
+            return
+        }
         var recordForm = {}
         switch ($scope.selectedRecord.type) {
             case 'Allergy':
@@ -66,25 +69,48 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         recordForm = Object.assign({}, $scope.recordForm, recordForm)
         recordForm.$class = namespace + '.' + $scope.selectedRecord.type
         recordForm.patient = "resource:" + namespace + ".Patient#" + _id
-        recordForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + recordForm.healthProvider
-        console.log(recordForm)
+        recordForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + $scope.hid
 
-        encryptForm(recordForm)
 
-        var endpoint = apiBaseURL + $scope.selectedRecord.type
-        $scope.endpoint = endpoint
+        var patientKey;
 
-        $http({
-            method: 'POST',
-            url: endpoint,
-            data: angular.toJson(recordForm),
-            headers: {
-                'Content-Type': 'application/json'
+        var endpoint = endpoint2 + 'selectPatientKeysByPatientID?p=resource%3Anz.ac.auckland.Patient%23' + _id;
+
+        //DUPLICATE
+        $http.get(endpoint).then(function (response) {
+            console.log(response.data)
+            if (response.data.length === 0) {
+                alert("The patient has not shared a key with you")
+                return
             }
-        }).then(_success, _error)
+
+            var pKeyBody = response.data[0]
+            var encryptedKey = pKeyBody.encryptedPatientKeyHPPublic
+
+            patientKey = $scope.tryDecrypt(encryptedKey)
+
+            encryptForm(recordForm, patientKey)
+
+            var endpoint = apiBaseURL + $scope.selectedRecord.type
+            $scope.endpoint = endpoint
+    
+            $http({
+                method: 'POST',
+                url: endpoint,
+                data: angular.toJson(recordForm),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(_success, _error)
+        }, _error)
     }
 
     $scope.getPatients = function () {
+
+        if (!isCredsProvided()) {
+            return
+        }
+
         var endpoint = apiBaseURL + 'Patient'
 
         $http.get(endpoint).then(function (response) {
@@ -93,11 +119,21 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     }
 
     $scope.getMe = function () {
+        if ($scope.privateKey === undefined || $scope.privateKey === '' || $scope.privateKey === null) {
+            alert("Private key not uploaded")
+            return
+        }
+
+        if ($scope.hid === undefined || $scope.hid === '' || $scope.hid === null) {
+            alert("Id not entered")
+            return
+        }
+
         var endpoint = apiBaseURL + "HealthProvider/" + $scope.hid
 
         $http.get(endpoint).then(function (response) {
-            console.log(response.data)
             $scope.hpArray = response.data
+            _login = true
         }, _error)
     }
 
@@ -156,11 +192,9 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
     $scope.setTab = function (tag) {
         if (tag === 'Patient') {
-            $scope.patientTab = true;
             $scope.getPatients()
-        } else {
-            $scope.patientTab = false;
-            $scope.getData(tag)
+        } else if (tag === 'PatientKey') {
+            $scope.getKeys()
         }
     }
 
@@ -169,12 +203,12 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         _records = $scope.myArray[index].records
     }
 
-    function encryptForm(form) {
+    function encryptForm(form, patientKey) {
         var keys = Object.keys(form)
 
         keys.forEach(function (key) {
             if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
-                var encryptedData = symEncrypt(form[key], $scope.patientKey)
+                var encryptedData = symEncrypt(form[key], patientKey)
                 form[key] = encryptedData.toString()
             }
 
@@ -206,20 +240,42 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
 
     $scope.viewRecords = function (index) {
+        if (!isCredsProvided()) {
+            return
+        }
+        var patientKey;
+
         var patient = $scope.myArray[index]
 
-        ModalService.showModal({
-            templateUrl: "./recordsModal.html",
-            controller: "recordsController",
-            preClose: (modal) => { modal.element.modal('hide'); },
-            inputs: {
-                title: "Patient Details",
-                patient: patient,
-                patientKey: $scope.patientKey
+        var endpoint = endpoint2 + 'selectPatientKeysByPatientID?p=resource%3Anz.ac.auckland.Patient%23' + patient.id;
+
+        //DUPLICATE
+        $http.get(endpoint).then(function (response) {
+            console.log(response.data)
+            if (response.data.length === 0) {
+                alert("The patient has not shared a key with you")
+                return
             }
-        }).then(function (modal) {
-            modal.element.modal();
-        });
+
+            var pKeyBody = response.data[0]
+            var encryptedKey = pKeyBody.encryptedPatientKeyHPPublic
+
+            patientKey = $scope.tryDecrypt(encryptedKey)
+            
+            ModalService.showModal({
+                templateUrl: "./recordsModal.html",
+                controller: "recordsController",
+                preClose: (modal) => { modal.element.modal('hide'); },
+                inputs: {
+                    title: "Patient Details",
+                    patient: patient,
+                    patientKey: patientKey
+                }
+            }).then(function (modal) {
+                modal.element.modal();
+            });
+
+        }, _error)
 
     }
 
@@ -235,14 +291,15 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
                 $scope.patientKey = str
             } else if (file.type == "application/x-x509-ca-cert") {
                 $scope.privateKey = str
+                alert("Private key successfully uploaded")
             } else {
-                error("Unable to read file")
+                alert("Unable to read file")
             }
         }
     }
 
     function isCredsProvided() {
-        if ($scope.hid === undefined || $scope.hid === '' || $scope.privateKey === undefined) {
+        if (! _login) {
             alert("Credentials not fully supplied")
             return false
         }

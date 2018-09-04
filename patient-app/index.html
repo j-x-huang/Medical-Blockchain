@@ -49,13 +49,13 @@
             <a data-toggle="tab" href="#keys">Keys</a>
         </li>
         <li>
-            <a data-toggle="tab" href="#records">My Record</a>
+            <a data-toggle="tab" href="#records" ng-click="setTab('MyRecords')">My Records</a>
         </li>
         <li>
             <a data-toggle="tab" href="#notifications">Notifications</a>
         </li>
         <li>
-            <a data-toggle="tab" href="#sharedKeys">My Shared Keys</a>
+            <a data-toggle="tab" href="#sharedKeys" ng-click="setTab('MySharedKeys')">My Shared Keys</a>
         </li>
     </ul>
 
@@ -72,7 +72,7 @@
                 <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
                 <p>Enter your id:</p>
                 <input type="text" ng-model="pid">
-                <button type="button" class="btn btn-default" ng-click="getPatient()">Show My Details</button>
+                <button type="button" class="btn btn-default" ng-click="login()">Login</button>
             </div>
             <div class="container-fluid" id="patientTable">
                 <table class="table table-striped" style="width: 100%;">

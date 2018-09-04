@@ -21,7 +21,6 @@
     <script src="js/jsencrypt/bin/jsencrypt.js"></script>
     <script src="js/encryption.js"></script>
     <script src="patientController.js"></script>
-    <script src="cryptoController.js"></script>
     <script src="recordsController.js"></script>
 
     <script src="https://dwmkerr.github.io/angular-modal-service/angular-modal-service.js"></script>
@@ -64,8 +63,6 @@
                             <input type="text" ng-model="recordForm.record_reasonCode"> </p>
                         <p>Reason Description:
                             <input type="text" ng-model="recordForm.record_reasonDesc"> </p>
-                        <p>Health Provider ID:
-                            <input type="text" ng-model="recordForm.healthProvider"> </p>
                         <hr>
                         <p>Record type:
                             <select ng-model="selectedRecord.type" ng-options="type for type in types">
@@ -164,16 +161,16 @@
             <a data-toggle="tab" href="#home">Home</a>
         </li>
         <li>
-            <a data-toggle="tab" href="#patients">Patients</a>
+            <a data-toggle="tab" href="#patients" ng-click="setTab('Patient')">Patients</a>
         </li>
         <li>
             <a data-toggle="tab" href="#req">Request Sharing</a>
         </li>
         <li>
-            <a data-toggle="tab" href="#pk">Patient Keys</a>
+            <a data-toggle="tab" href="#pk" ng-click="setTab('PatientKey')">Patient Keys</a>
         </li>
         <li>
-            <a data-toggle="tab" href="#notifications">Notifications</a>
+            <a data-toggle="tab" href="#notifications" ng-click="setTab('Notifications')">Notifications</a>
         </li>
     </ul>
 
@@ -191,7 +188,7 @@
                 <button type="button" class="btn btn-default" ng-click="getMe()">Show My Details</button>
             </div>
 
-            <div class="container-fluid" id="hpTable">
+            <div class="container-fluid" id="hpArray">
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
                         <th>ID</th>
@@ -199,11 +196,11 @@
                         <th>Phone</th>
                         <th>Address</th>
                     </tr>
-                    <tr ng-repeat="row in hpArray">
-                        <td>{{row.id}}</td>
-                        <td>{{row.name}}</td>
-                        <td>{{row.phone}}</td>
-                        <td>{{row.address}}</td>
+                    <tr>
+                        <td>{{hpArray.id}}</td>
+                        <td>{{hpArray.name}}</td>
+                        <td>{{hpArray.phone}}</td>
+                        <td>{{hpArray.address}}</td>
                     </tr>
                 </table>
             </div>
@@ -267,7 +264,7 @@
         <div id="notifications" class="tab-pane fade">
             <h2>Notifications</h2>
             <div class="container-fluid" id="patientTable">
-                <button type="button" class="btn btn-default" ng-click="">Refresh</button>
+                <button type="button" class="btn btn-default" ng-click="refresh">Refresh</button>
                 <table class="table table-striped" style="width: 50%;">
                     <tr>
                         <th>Time</th>

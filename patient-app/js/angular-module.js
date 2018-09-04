@@ -15,6 +15,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
     $scope.pid
     $scope.hid
+    let _login = false
 
     $scope.patientTab = true
 
@@ -31,7 +32,17 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     $scope.hpArray = []
     $scope.notiTable = []
 
-    $scope.getPatient = function () {
+    $scope.login = function () {
+        if ($scope.patientKey === '' || $scope.patientKey === undefined || $scope.patientKey === null) {
+            alert("You have not uploaded your patient key")
+            return
+        }
+
+        if ($scope.privateKey === '' || $scope.privateKey === undefined || $scope.privateKey === null) {
+            alert("You have not uploaded your private key")
+            return
+        }
+
         if ($scope.pid === '' || $scope.pid === undefined) {
             alert("Your ID is not stated")
             return
@@ -40,20 +51,14 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         $scope.endpoint = endpoint
 
         $http.get(endpoint).then(function (response) {
-            console.log(response.data)
             $scope.myArray = response.data
+            _login = true;
         }, _error)
     }
 
     $scope.shareKey = function (index) {
 
-        if ($scope.pid === '' || $scope.pid === undefined) {
-            alert("Your ID is not stated")
-            return
-        }
-
-        if ($scope.patientKey === '' || $scope.patientKey === undefined) {
-            alert("You have not entered your patient key")
+        if (!isCredsProvided()) {
             return
         }
         var hid = ''
@@ -87,14 +92,13 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                }).then(_success, _error)
+                }).then(_success(null, $scope.viewKeys), _error)
 
             }, _error)
     }
 
     $scope.viewKeys = function() {
-        if ($scope.pid === '' || $scope.pid === undefined) {
-            alert("Your ID is not stated")
+        if (!isCredsProvided()) {
             return
         }
 
@@ -139,16 +143,14 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(_success, _error)
+        }).then(_success(null, $scope.viewKeys), _error)
     }
 
     $scope.setTab = function (tag) {
-        if (tag === 'Patient') {
-            $scope.patientTab = true;
-            $scope.getPatients()
-        } else {
-            $scope.patientTab = false;
-            $scope.getData(tag)
+        if (tag === 'MyRecords') {
+            $scope.getAllRecords()
+        } else if (tag === 'MySharedKeys') {
+            $scope.viewKeys()
         }
     }
 
@@ -162,8 +164,14 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
      * @param response
      * @private
      */
-    function _success(response) {
+    function _success(response, callback) {
         alert("Operation successful")
+
+        if (callback !== undefined) {
+            setTimeout(function(){
+                callback()
+            }, 2500);
+        }
     }
 
     /**
@@ -206,10 +214,12 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
             if (file.type == "text/plain") {
                 $scope.patientKey = str
+                alert('Patient key successfully submitted')
             } else if (file.type == "application/x-x509-ca-cert") {
                 $scope.privateKey = str
+                alert('Private key successfully submitted')
             } else {
-                error("Unable to read file")
+                alert("Unable to read file")
             }
         }
     }
@@ -217,8 +227,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
     $scope.getAllRecords = function () {
 
-        if ($scope.pid === '' || $scope.pid === undefined || $scope.patientKey === undefined) {
-            alert("Your ID is not stated")
+        if (!isCredsProvided()) {
             return
         }
 
@@ -303,6 +312,14 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
             }
         }
     });
+
+    function isCredsProvided() {
+        if (_login === false) {
+            alert("Credentials not fully supplied")
+            return false
+        }
+        return true
+    }
 
     $scope.refresh = function () {
         $scope.notiTable.reload();
