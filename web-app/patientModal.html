@@ -1,3 +1,6 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="css\style.css">
+</head>
 <div id="patientModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -6,7 +9,7 @@
                 <h4 class="modal-title">Add Patient</h4>
             </div>
             <div class="modal-body">
-                <p>PID:
+                <!-- <p>PID:
                     <input type="text" ng-model="patientForm.id" ng-disabled="update"> </p>
                 <p>Birthdate:
                     <input type="text" ng-model="patientForm.birthDate"> </p>
@@ -22,7 +25,7 @@
                     <input type="text" ng-model="patientForm.prefix"> </p>
                 <p>First Name:
                     <input type="text" ng-model="patientForm.first"> </p>
-                <p>LastName:
+                <p>Last Name:
                     <input type="text" ng-model="patientForm.last"> </p>
                 <p>Suffic:
                     <input type="text" ng-model="patientForm.suffic"> </p>
@@ -39,7 +42,111 @@
                 <p>Birthplace:
                     <input type="text" ng-model="patientForm.birthplace"> </p>
                 <p>Address:
-                    <input type="text" ng-model="patientForm.address"> </p>
+                    <input type="text" ng-model="patientForm.address"> </p> -->
+                <table>
+                    <tr>
+                        <td>
+                            PID:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.id" ng-disabled="update"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Birth date:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.birthDate"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Death date:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.deathDate"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            IRD Number:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.ird"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Driver Number:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.drivers"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Passport Number:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.passport"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Prefix:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.prefix"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            First Name:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.first"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Last Name:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.last"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Suffic:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.suffic"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Maiden Name:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.maiden"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Marital:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.marital"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Race:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.race"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Ethnicity:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.ethinicity"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Gender:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.gender"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Birthplace:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.birthplace"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Address:
+                        </td>
+                        <td><input type="text" ng-model="patientForm.address"></td>
+                    </tr>
+                </table>
             </div>
             <div class="modal-footer">
                 <button ng-click="submitPatient()" type="button" class="btn btn-default" data-dismiss="modal" ng-hide="update">Submit</button>

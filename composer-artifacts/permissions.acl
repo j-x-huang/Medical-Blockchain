@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-rule HealthProviderSeeOwnHistoryOnly {
+rule HealthProvidersSeeOwnHistoryOnly {
     description: "Health providers should be able to see the history of their own transactions only"
     participant(m): "nz.ac.auckland.HealthProvider"
     operation: READ
@@ -20,8 +20,8 @@ rule HealthProviderSeeOwnHistoryOnly {
     action: DENY
 }
 
-rule HealthPro {
-    description: "Health providers should be able to see the history of their own transactions only"
+rule HealthProviderCannotSeeSystemTransactions {
+    description: "Health providers should be able to see some of the system transactions"
     participant(m): "nz.ac.auckland.HealthProvider"
     operation: READ
     resource(v): "org.hyperledger.composer.system.HistorianRecord"
@@ -80,7 +80,7 @@ rule HealthProvidersCanAccessPatientsThatSharedKey {
 }
 
 rule HealthProvidersCanOnlyAccessSharedPatientsRecords {
-    description: ""
+    description: "Health providers can only access records from patients that shared their patient key"
     participant(hp): "nz.ac.auckland.HealthProvider"
     operation: READ,UPDATE,DELETE
     resource(r) : "nz.ac.auckland.Record"
@@ -89,7 +89,7 @@ rule HealthProvidersCanOnlyAccessSharedPatientsRecords {
 }
 
 rule HealthProvidersCanOnlyCreateRecordsForSharedPatients {
-    description: "Grand health providers full access to patient records"
+    description: "Health providers can only create records for consented patients"
     participant(hp): "nz.ac.auckland.HealthProvider"
     operation: CREATE
     resource(r) : "nz.ac.auckland.Record"
@@ -98,7 +98,7 @@ rule HealthProvidersCanOnlyCreateRecordsForSharedPatients {
 }
 
 rule HealthProvidersCanCreateRecordSharingRequests {
-    description: ""
+    description: "Health providers can create record sharing request transactions"
     participant(hp): "nz.ac.auckland.HealthProvider"
     operation: ALL
     resource(rrs) : "nz.ac.auckland.RequestRecordSharing"
@@ -107,7 +107,7 @@ rule HealthProvidersCanCreateRecordSharingRequests {
 }
 
 rule PatientsCanOnlyViewRecordSharingRequestedToThemselves {
-    description: ""
+    description: "A patient should only be able to see record sharing requests for him/her"
     participant(p) : "nz.ac.auckland.Patient"
     operation: READ
     resource(rrs) : "nz.ac.auckland.RequestRecordSharing"
@@ -116,7 +116,7 @@ rule PatientsCanOnlyViewRecordSharingRequestedToThemselves {
 }
 
 rule PatientsCanRevokeTheirSharedKeys {
-    description: "Patients should only be able to access their own shared patient keys"
+    description: "A patient should be able to revoke the patient key shared with another HP"
     participant(p) : "nz.ac.auckland.Patient"
     operation: ALL
     resource(rmrs) : "nz.ac.auckland.RevokeMedicalRecordsSharing"
