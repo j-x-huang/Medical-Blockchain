@@ -319,7 +319,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         }).then(function (modal) {
             modal.element.modal();
             modal.close.then(function(result) {
-                //
+                $('.modal-backdrop').remove()
               });
         });
 
