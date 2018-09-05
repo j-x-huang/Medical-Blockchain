@@ -2,8 +2,8 @@ var app = angular.module('myApp')
 var endpoint = "http://localhost:3000/api/queries/"
 
 app.controller('recordsController', [
-    '$scope', '$element', '$http', 'patient', 'patientKey',
-    function ($scope, $element, $http, patient, patientKey) {
+    '$scope', '$element', '$http', 'patient', 'patientKey', 'close',
+    function ($scope, $element, $http, patient, patientKey, close) {
 
         $scope.allergy=[]
         $scope.cond=[]

@@ -273,6 +273,9 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
                 }
             }).then(function (modal) {
                 modal.element.modal();
+                modal.close.then(function(result) {
+                    $('.modal-backdrop').remove()
+                  });
             });
 
         }, _error)
@@ -348,4 +351,10 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         return asymDecrypt(encryptedPkey, $scope.privateKey)
 
     }
+
+    $scope.keyPress = function(value) {
+        if (value.keyCode == 42) {
+          ModalService.closeModals(null, 500);
+        }
+      };
 })
