@@ -12,106 +12,139 @@
  * limitations under the License.
  */
 
-'use strict';
+"use strict";
 /**
  * Write your transction processor functions here
  */
 
 /**
- * 
- * @param {nz.ac.auckland.ShareKey} shareKey - 
+ *
+ * @param {nz.ac.auckland.ShareKey} shareKey -
  * @transaction
  */
 async function shareAKey(shareKey) {
+  let factory = getFactory();
 
-    let factory = getFactory();
+  let assetRegistry = await getAssetRegistry("nz.ac.auckland.PatientKey");
 
-    let assetRegistry = await getAssetRegistry('nz.ac.auckland.PatientKey');
+  let resource = "resource:";
 
-    let shareKeyNotification = factory.newEvent('nz.ac.auckland', 'ShareKeyNotification');
+  let patient = shareKey.patient;
+  let healthProvider = shareKey.healthProvider;
 
-    let patientKey = factory.newResource('nz.ac.auckland', 'PatientKey', makeid());
+  let results = await query("selectPatientKey", {
+    p: resource + patient.getFullyQualifiedIdentifier(),
+    hp: resource + healthProvider.getFullyQualifiedIdentifier()
+  });
 
-    patientKey.patient = shareKey.patient;
-    patientKey.healthProvider = shareKey.healthProvider;
-    patientKey.encryptedPatientKeyHPPublic = shareKey.encryptedPatientKeyHPPublic;
+  if (results.length > 0) {
+    throw new Error(
+      "Already shared patient key with healthcare provider: " +
+        healthProvider.name +
+        "!"
+    );
+  }
 
+  let shareKeyNotification = factory.newEvent(
+    "nz.ac.auckland",
+    "ShareKeyNotification"
+  );
 
-    shareKeyNotification.key= patientKey;
-    emit(shareKeyNotification);
+  let patientKey = factory.newResource(
+    "nz.ac.auckland",
+    "PatientKey",
+    makeid()
+  );
 
-    await assetRegistry.add(patientKey);
+  patientKey.patient = shareKey.patient;
+  patientKey.healthProvider = shareKey.healthProvider;
+  patientKey.encryptedPatientKeyHPPublic = shareKey.encryptedPatientKeyHPPublic;
 
-    let patientAssetRegistry = await getParticipantRegistry('nz.ac.auckland.Patient')
+  shareKeyNotification.key = patientKey;
+  emit(shareKeyNotification);
 
-    shareKey.patient.consentedHPs.push(shareKey.healthProvider);
+  await assetRegistry.add(patientKey);
 
-    await patientAssetRegistry.update(shareKey.patient);
-    //Must add HP to list of consented health providers
+  let patientAssetRegistry = await getParticipantRegistry(
+    "nz.ac.auckland.Patient"
+  );
 
+  shareKey.patient.consentedHPs.push(shareKey.healthProvider);
+
+  await patientAssetRegistry.update(shareKey.patient);
+  //Must add HP to list of consented health providers
 }
 
 /**
- * 
- * @param {nz.ac.auckland.RevokeMedicalRecordsSharing} revokeTransaction - 
+ *
+ * @param {nz.ac.auckland.RevokeMedicalRecordsSharing} revokeTransaction -
  * @transaction
  */
 async function revokeMedicalRecordsSharing(revokeTransaction) {
-
   let factory = getFactory();
 
-  let assetRegistry = await getAssetRegistry('nz.ac.auckland.PatientKey');
-  
+  let assetRegistry = await getAssetRegistry("nz.ac.auckland.PatientKey");
+
   let resource = "resource:";
 
   let patient = revokeTransaction.patient;
   let healthProvider = revokeTransaction.healthProvider;
-  
-  let results = await query('selectPatientKey', { p: resource + patient.getFullyQualifiedIdentifier(), hp: resource + healthProvider.getFullyQualifiedIdentifier() });
 
-  if(results.length >0){
-    
-    let patientKey = results[0];
-    
-    await assetRegistry.remove(patientKey);
-    
+  let results = await query("selectPatientKey", {
+    p: resource + patient.getFullyQualifiedIdentifier(),
+    hp: resource + healthProvider.getFullyQualifiedIdentifier()
+  });
+
+  if (results.length > 0) {
+    for (var i = 0; i < results.length; i++) {
+      await assetRegistry.remove(results[i]);
+    }
+  } else {
+    throw new Error("No patient key for this Healthcare provider found!");
   }
-  
+
   let consentedHPs = patient.consentedHPs;
 
   consentedHPs = consentedHPs.filter(item => item !== healthProvider);
-  
+
   patient.consentedHPs = consentedHPs;
-  
-  let patientAssetRegistry = await getParticipantRegistry('nz.ac.auckland.Patient');
-  
-  let revokeMedicalRecordsSharingNotification = factory.newEvent('nz.ac.auckland', 'RevokeMedicalRecordsSharingNotification');
+
+  let patientAssetRegistry = await getParticipantRegistry(
+    "nz.ac.auckland.Patient"
+  );
+
+  let revokeMedicalRecordsSharingNotification = factory.newEvent(
+    "nz.ac.auckland",
+    "RevokeMedicalRecordsSharingNotification"
+  );
 
   revokeMedicalRecordsSharingNotification.patient = patient;
-  revokeMedicalRecordsSharingNotification.healthProvider= healthProvider;
+  revokeMedicalRecordsSharingNotification.healthProvider = healthProvider;
   emit(revokeMedicalRecordsSharingNotification);
 
-  await patientAssetRegistry.update(patient)
-
+  await patientAssetRegistry.update(patient);
 }
 
 /**
- * 
- * @param {nz.ac.auckland.RequestRecordSharing} requestRecordSharingTransaction - 
+ *
+ * @param {nz.ac.auckland.RequestRecordSharing} requestRecordSharingTransaction -
  * @transaction
  */
 async function requestRecordSharing(requestRecordSharingTransaction) {
-
-  let requestRecordSharingNotification = getFactory().newEvent('nz.ac.auckland', 'RequestRecordSharingNotification');
-  requestRecordSharingNotification.patient = requestRecordSharingTransaction.patient;
-  requestRecordSharingNotification.healthProvider = requestRecordSharingTransaction.healthProvider;
+  let requestRecordSharingNotification = getFactory().newEvent(
+    "nz.ac.auckland",
+    "RequestRecordSharingNotification"
+  );
+  requestRecordSharingNotification.patient =
+    requestRecordSharingTransaction.patient;
+  requestRecordSharingNotification.healthProvider =
+    requestRecordSharingTransaction.healthProvider;
   emit(requestRecordSharingNotification);
-
 }
 
 /**
- * 
- * @param {nz.ac.auckland.CreateNewPatient} createNewPatientTransaction - 
+ *
+ * @param {nz.ac.auckland.CreateNewPatient} createNewPatientTransaction -
  * @transaction
  */
 /* async function createNewPatient(createNewPatientTransaction) {
@@ -147,42 +180,36 @@ async function requestRecordSharing(requestRecordSharingTransaction) {
 } */
 
 function makeid() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  
-    for (var i = 0; i < 7; i++)
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-  
-    return text;
+  var text = "";
+  var possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 7; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
 }
 
 function checkAccessToPatient(patient, healthProvider) {
-    
-    let consentedHPs = patient.consentedHPs;
+  let consentedHPs = patient.consentedHPs;
 
-    console.log(patient);
-    console.log(healthProvider);
-    console.log(healthProvider.getIdentifier());
-    console.log(consentedHPs);
-  
-    for (var i = 0; i < consentedHPs.length; i++) {
+  console.log(patient);
+  console.log(healthProvider);
+  console.log(healthProvider.getIdentifier());
+  console.log(consentedHPs);
 
+  for (var i = 0; i < consentedHPs.length; i++) {
     console.log(consentedHPs[i]);
 
-      if(consentedHPs[i].getIdentifier() === healthProvider.getIdentifier()){
-
-        return true;
-
-      }
-
+    if (consentedHPs[i].getIdentifier() === healthProvider.getIdentifier()) {
+      return true;
     }
-  
-    return false;
+  }
+
+  return false;
 }
 
-
 function checkAccessToPatientUsingPatientKey(patient, healthProvider) {
-    
   /* let consentedHPs = patient.consentedHPs;
 
   console.log(patient);
@@ -205,29 +232,32 @@ function checkAccessToPatientUsingPatientKey(patient, healthProvider) {
   console.log("All patient keys: ");
 
   console.log(allKeys); */
-  
-  let assetRegistry = getAssetRegistry('nz.ac.auckland.PatientKey');
-  
-  let patientId = "resource:nz.ac.auckland.Patient#" + patient.id;
-  
-  let healthProviderId = "resource:nz.ac.auckland.HealthProvider#" + healthProvider.id;
 
-  let results = query('selectAllPatientKeys');
-  
+  let assetRegistry = getAssetRegistry("nz.ac.auckland.PatientKey");
+
+  let patientId = "resource:nz.ac.auckland.Patient#" + patient.id;
+
+  let healthProviderId =
+    "resource:nz.ac.auckland.HealthProvider#" + healthProvider.id;
+
+  let results = query("selectAllPatientKeys");
+
   /* if (results.length > 0){
     return true;
   } */
-  
+
   for (let n = 0; n < results.length; n++) {
-        if(results[n].healthProvider.getIdentifier() === healthProvider.getIdentifier()){
-           return true;
-        }
+    if (
+      results[n].healthProvider.getIdentifier() ===
+      healthProvider.getIdentifier()
+    ) {
+      return true;
+    }
   }
-  
-  if(results.length > 0){
-  	return true;
+
+  if (results.length > 0) {
+    return true;
   }
 
   return false;
 }
-  
