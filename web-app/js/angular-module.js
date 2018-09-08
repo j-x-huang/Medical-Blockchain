@@ -364,4 +364,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         $scope.decryptedKey = asymDecrypt($scope.encryptedPkey, $scope.privateKey)
 
     }
+
+    
 })
