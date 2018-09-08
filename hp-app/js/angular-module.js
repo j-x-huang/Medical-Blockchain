@@ -1,9 +1,83 @@
-var app = angular.module('myApp', ['angularModalService', 'ngMaterial', 'ngMessages', 'ngWebsocket']);
+var app = angular.module('myApp', ['angularModalService', 'ngMaterial', 'ngMessages', 'ngWebsocket', 'ngRoute']);
 var apiBaseURL = "http://localhost:3000/api/";
 var namespace = "nz.ac.auckland"
 var endpoint2 = "http://localhost:3000/api/queries/"
 
-app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
+app.service("myService", function() {
+    return {
+        privateKey: "",
+        id: "",
+        details: undefined
+    }
+});
+
+
+app.config(function($routeProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl: "login.html",
+        controller: "loginCtrl"
+    })
+    .when("/main", {
+        templateUrl : "main.html",
+        controller: "myCtrl",
+        resolve:{
+            check: function(myService, $location) {
+                console.log(myService.id)
+                if(myService.privateKey === "" || myService.id === "" || myService.id === undefined || myService.details === undefined) {
+                    $location.path('/');  //redirect user to home if it does not have permission.
+                    alert("Details are missing");
+                }
+                
+            }
+        }
+    })
+});
+
+
+app.controller('loginCtrl', function($scope, $http, $location, myService) {
+    $scope.id;
+
+    $scope.handleFiles = function (files) {
+        var file = files[0]
+        var reader = new FileReader();
+        reader.readAsBinaryString(file);
+
+        reader.onload=function(){
+            var str = reader.result
+
+            if (file.type == "application/x-x509-ca-cert") {
+                myService.privateKey = str
+                alert('Private key successfully submitted')
+            } else {
+                alert("Unable to read file")
+            }
+        }
+    }
+
+    $scope.login = function() {
+        myService.id = $scope.id
+        var endpoint = apiBaseURL + "HealthProvider/" + myService.id
+
+        $http.get(endpoint).then(function (response) {
+            myService.details = response.data
+            $location.path("/main")
+
+        }, function (res) {
+            alert("Health Provider does not exist")
+        })
+
+    }
+
+})
+
+app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, myService) {
+
+    console.log(myService.id)
+    console.log(myService.privateKey)
+    console.log(myService.details)
+
+
 
     $scope.recordForm = {
         $class: "nz.ac.auckland.Record",
@@ -16,8 +90,8 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         patient: ""
     }
 
-    $scope.hid
-    $scope.hpArray = []
+    $scope.hid = myService.id
+    $scope.hpArray = myService.details
     $scope.keyArray = []
 
     $scope.patientTab = true
@@ -119,16 +193,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     }
 
     $scope.getMe = function () {
-        if ($scope.privateKey === undefined || $scope.privateKey === '' || $scope.privateKey === null) {
-            alert("Private key not uploaded")
-            return
-        }
-
-        if ($scope.hid === undefined || $scope.hid === '' || $scope.hid === null) {
-            alert("Id not entered")
-            return
-        }
-
         var endpoint = apiBaseURL + "HealthProvider/" + $scope.hid
 
         $http.get(endpoint).then(function (response) {
