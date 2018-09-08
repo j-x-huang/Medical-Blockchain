@@ -1,10 +1,90 @@
-var app = angular.module('myApp', ['angularModalService', 'ngMaterial', 'ngMessages', 'ngWebsocket']);
+var app = angular.module('myApp', ['angularModalService', 'ngMaterial', 'ngMessages', 'ngWebsocket', 'ngRoute']);
 var apiBaseURL = "http://localhost:3000/api/";
 var endpoint2 = "http://localhost:3000/api/queries/"
 
 var namespace = "nz.ac.auckland"
 
-app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
+app.service("myService", function() {
+    return {
+        patientKey: "",
+        privateKey: "",
+        id: "",
+        details: undefined
+    }
+});
+
+
+app.config(function($routeProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl: "login.html",
+        controller: "loginCtrl"
+    })
+    .when("/main", {
+        templateUrl : "main.html",
+        controller: "myCtrl",
+        resolve:{
+            check: function(myService, $location) {
+                console.log(myService.id)
+                if(myService.patientKey === "" || myService.privateKey === "" || myService.id === "" || myService.id === undefined || myService.details === undefined) {
+                    $location.path('/');  //redirect user to home if it does not have permission.
+                    alert("Details are missing");
+                }
+                
+            }
+        }
+    })
+});
+
+
+app.controller('loginCtrl', function($scope, $http, $location, myService) {
+    $scope.id;
+
+    $scope.handleFiles = function (files) {
+        var file = files[0]
+        var reader = new FileReader();
+        reader.readAsBinaryString(file);
+
+        reader.onload=function(){
+            var str = reader.result
+
+            if (file.type == "text/plain") {
+                myService.patientKey = str
+                alert('Patient key successfully submitted')
+            } else if (file.type == "application/x-x509-ca-cert") {
+                myService.privateKey = str
+                alert('Private key successfully submitted')
+            } else {
+                alert("Unable to read file")
+            }
+        }
+    }
+
+    $scope.login = function() {
+        myService.id = $scope.id
+
+        var endpoint = apiBaseURL + 'Patient/' + myService.id
+        $scope.endpoint = endpoint
+
+        $http.get(endpoint).then(function (response) {
+            myService.details = response.data
+            $location.path("/main")
+
+        }, function (res) {
+            alert("Patient does not exist")
+        })
+
+    }
+
+})
+
+
+app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, myService) {
+
+    console.log(myService.id)
+    console.log(myService.patientKey)
+    console.log(myService.privateKey)
+
 
     $scope.allergy=[]
     $scope.cond=[]
@@ -13,14 +93,14 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     $scope.obs=[]
     $scope.proc=[]
 
-    $scope.pid
+    $scope.pid = myService.id
     $scope.hid
-    let _login = false
+    let _login = true
 
     $scope.patientTab = true
 
-    $scope.patientKey
-    $scope.privateKey
+    $scope.patientKey = myService.patientKey
+    $scope.privateKey = myService.privateKey
 
 
     $scope.shareForm = {
@@ -28,25 +108,11 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         healthProvider: ""
     }
 
-    $scope.myArray = []
+    $scope.myArray = myService.details
     $scope.hpArray = []
     $scope.notiTable = []
 
     $scope.login = function () {
-        if ($scope.patientKey === '' || $scope.patientKey === undefined || $scope.patientKey === null) {
-            alert("You have not uploaded your patient key")
-            return
-        }
-
-        if ($scope.privateKey === '' || $scope.privateKey === undefined || $scope.privateKey === null) {
-            alert("You have not uploaded your private key")
-            return
-        }
-
-        if ($scope.pid === '' || $scope.pid === undefined) {
-            alert("Your ID is not stated")
-            return
-        }
         var endpoint = apiBaseURL + 'Patient/' + $scope.pid
         $scope.endpoint = endpoint
 
@@ -324,5 +390,5 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     $scope.refresh = function () {
         $scope.notiTable.reload();
     }
-    
+
 })

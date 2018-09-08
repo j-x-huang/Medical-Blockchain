@@ -1,0 +1,12 @@
+<body ng-app="myApp">
+    <div class="container-fluid">
+        <p>Upload your Patient key:</p>
+        <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
+        <p>Upload your Private key</p>
+        <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
+        <p>Enter your id:</p>
+        <input type="text" ng-model="id">
+        <button type="button" class="btn btn-default" ng-click="login()">Sign in</button>
+
+    </div>
+</body>
