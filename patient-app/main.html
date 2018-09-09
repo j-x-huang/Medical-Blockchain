@@ -28,8 +28,6 @@
 
         <div id="keys" class="tab-pane fade in active">
             <h1>MyDetails</h1>
-            <button type="button" class="btn btn-default" ng-click="login()">Refresh</button>
-
             <!-- <div class="container-fluid">
                 <p>Upload your Patient key:</p>
                 <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
@@ -40,6 +38,8 @@
                 <button type="button" class="btn btn-default" ng-click="login()">Login</button>
             </div> -->
             <div class="container-fluid" id="patientTable">
+                <button type="button" class="btn btn-default refreshBtn" ng-click="login()">Refresh</button>
+
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
                         <th>ID</th>
@@ -62,11 +62,12 @@
         </div>
         <div id="records" class="tab-pane fade">
             <h1>My Records</h1>
-            <button type="button" class="btn btn-default" ng-click="getAllRecords()">Refresh</button>
             <div class="row">
 
                 <div class="col-sm-3">
                     <div class="container-fluid">
+                        <button type="button" class="btn btn-default refreshBtn" ng-click="getAllRecords()">Refresh</button>
+
                         <ul class="list-group">
                             <li class="list-group-item">
                                 Allergies
@@ -480,7 +481,7 @@
         <div id="notifications" class="tab-pane fade">
             <h1>Notifications</h1>
             <div class="container-fluid" id="notificationsTable">
-                <button type="button" class="btn btn-default" ng-click="refresh()">Refresh</button>
+                <button type="button" class="btn btn-default refreshBtn" ng-click="refresh()">Refresh</button>
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
                         <th>HID</th>
@@ -507,7 +508,7 @@
                     <input type="text" ng-model="hid" />
                     <button type="button" class="btn btn-default" ng-click="shareKey()">Share</button>
                 </p>
-                <button type="button" class="btn btn-default" ng-click="viewKeys()">Refresh</button>
+                <button type="button" class="btn btn-default refreshBtn" ng-click="viewKeys()">Refresh</button>
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
                             <th>ID</th>

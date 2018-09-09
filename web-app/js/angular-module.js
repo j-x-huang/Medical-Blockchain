@@ -32,11 +32,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     $scope.selectedRecord = {}
     $scope.types = ["Allergy", "Procedure", "Observation", "Medication", "Immunization", "Condition"]
 
-    $scope.shareForm = {
-        patient: "",
-        healthProvider: ""
-    }
-
     $scope.allergyForm = {}
     $scope.procedureForm = {}
     $scope.observationForm = {}
@@ -156,39 +151,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         }, _error)
     }
 
-    $scope.shareKey = function () {
-
-
-        var hid = $scope.shareForm.healthProvider
-
-        $scope.shareForm.$class = "nz.ac.auckland.ShareKey"
-        $scope.shareForm.patient = "resource:" + namespace + ".Patient#" + $scope.shareForm.patient
-        $scope.shareForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + $scope.shareForm.healthProvider
-
-        $http.get(apiBaseURL + "HealthProvider/" + hid)
-            .then(function (response) {
-                console.log(response.data)
-
-                var hp = response.data
-
-                encryptedPatientKeyHPPublic = asymEncrypt($scope.patientKey, hp.publicKey)
-
-                $scope.shareForm.encryptedPatientKeyHPPublic = encryptedPatientKeyHPPublic
-
-                var endpoint = apiBaseURL + "ShareKey"
-                $scope.endpoint = endpoint
-
-                $http({
-                    method: 'POST',
-                    url: endpoint,
-                    data: angular.toJson($scope.shareForm),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }).then(_success, _error)
-
-            }, _error)
-    }
     $scope.delete = function (index) {
         var isConfirmed = confirm("Are you sure you want to delete this patient?")
 
@@ -405,6 +367,65 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         $scope.decryptedKey = asymDecrypt($scope.encryptedPkey, $scope.privateKey)
 
     }
+
+    $scope.notiArray = []
+
+    var ws = $websocket.$new('ws://localhost:3000');
+
+    ws.$on('$open', function () { // it listents for 'incoming event'
+        console.log("WS Open");
+    })
+    .$on('$message', function (data) {
+        console.log(data)
+        if (data.$class === "nz.ac.auckland.ShareKeyNotification") {
+            var kLine = data.key.split('#')
+            var kId = kLine[1];
+
+            var timestamp = new Date(data.timestamp);
+
+            var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
+            var notification = {
+                time: timeString,
+                msg: "Patient key #" + kId + " is being shared"
+            }
+
+            $scope.notiArray.unshift(notification)
+        } else if (data.$class === "nz.ac.auckland.RevokeMedicalRecordsSharingNotification") {
+            var pLine = data.patient.split('#')
+            var pId = pLine[1]
+
+            var hpLine = data.healthProvider.split('#')
+            var hpId = hpLine[1]
+
+            var timestamp = new Date(data.timestamp);
+
+            var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
+            var notification = {
+                time: timeString,
+                msg: "Patient #" + pId + " stopped sharing their key with HP #" + hpId
+            }
+            $scope.notiArray.unshift(notification)
+
+        } else if (data.$class === "nz.ac.auckland.RequestRecordSharingNotification") {
+            var hpLine = data.healthProvider.split('#')
+            var hpId = hpLine[1];
+
+            var pLine = data.patient.split('#')
+            var pId = pLine[1]
+
+            var timestamp = new Date(data.timestamp);
+
+            var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
+
+            var notification = {
+                time: timeString,
+                msg: "HP #" + hpId + " has requested a key from Patient #" + pId
+            }
+            $scope.notiArray.unshift(notification)
+
+        }
+
+    });
 
     
 })

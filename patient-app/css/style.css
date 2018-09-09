@@ -84,3 +84,7 @@ td {
   background: inherit;
   left: 20px;
 }
+
+.refreshBtn {
+  margin-bottom: 5px !important; 
+}

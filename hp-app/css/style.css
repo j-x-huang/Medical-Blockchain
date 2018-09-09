@@ -109,3 +109,7 @@ table td:last-child {
 input {
   width: 100%;
 }
+
+.refreshBtn {
+  margin-bottom: 5px !important; 
+}

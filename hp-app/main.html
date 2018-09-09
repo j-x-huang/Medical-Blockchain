@@ -143,9 +143,10 @@
 
         <div id="home" class="tab-pane fade in active">
             <h1>My Identity</h1>
-            <button type="button" class="btn btn-default" ng-click="getMe()">Refresh</button>
 
             <div class="container-fluid" id="hpArray">
+                <button type="button" class="btn btn-default refreshBtn" ng-click="getMe()">Refresh</button>
+
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
                         <th>ID</th>
@@ -165,8 +166,9 @@
 
         <div id="patients" class="tab-pane fade">
             <h1>Patients</h1>
-            <button type="button" class="btn btn-default" ng-click="getPatients()">Get Patients</button>
             <div class="container-fluid" id="patientTable">
+                <button type="button" class="btn btn-default refreshBtn" ng-click="getPatients()">Get Patients</button>
+
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
                         <th>ID</th>
@@ -203,7 +205,7 @@
         <div id="pk" class="tab-pane fade">
             <h2>Shared Patient Keys</h2>
             <div class="container-fluid" id="patientTable">
-                <button type="button" class="btn btn-default" ng-click="getKeys()">Refresh</button>
+                <button type="button" class="btn btn-default refreshBtn" ng-click="getKeys()">Refresh</button>
                 <table class="table table-striped" style="width: 50%;">
                     <tr>
                         <th>PID</th>
@@ -221,7 +223,7 @@
         <div id="notifications" class="tab-pane fade">
             <h2>Notifications</h2>
             <div class="container-fluid" id="patientTable">
-                <button type="button" class="btn btn-default" ng-click="refresh">Refresh</button>
+                <button type="button" class="btn btn-default refreshBtn" ng-click="refresh">Refresh</button>
                 <table class="table table-striped" style="width: 50%;">
                     <tr>
                         <th>Time</th>
