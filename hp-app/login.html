@@ -1,10 +1,93 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="css\login.css">
+</head>
+
 <body ng-app="myApp">
-        <div class="container-fluid">
-            <p>Upload your Private key</p>
-            <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
-            <p>Enter your id:</p>
-            <input type="text" ng-model="id">
-            <button type="button" class="btn btn-default" ng-click="login()">Sign in</button>
-    
+    <!--  <div class="container-fluid">
+        <p>Upload your Private key</p>
+        <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
+        <p>Enter your id:</p>
+        <input type="text" ng-model="id">
+        <button type="button" class="btn btn-default" ng-click="login()">Sign in</button>
+
+        
+
+        <p>Upload your Private key</p>
+        <label for="file">Private key</label>
+        <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
+        <label for="id">ID</label>
+        <input type="text" name="id" id="id" ng-model="id" required/>
+        <button type="button" class="btn btn-primary" ng-click="login()">Sign in</button>
+
+    </div>
+
+    <div class="col-md-12">
+        <p><strong>Login</strong></p>
+
+        <form ng-submit="submitLogin()" class="form">
+            <div class="col-md-4"></div>
+
+            <div class="form-group" ng-class="{ 'has-error': form.username.$dirty && form.username.$error.required }">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" class="form-control" ng-model="login.username" required />
+                <span ng-show="form.username.$dirty && form.username.$error.required" class="help-block">Username is required</span>
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error': form.password.$dirty && form.password.$error.required }">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" class="form-control" ng-model="login.password" required />
+                <span ng-show="form.password.$dirty && form.password.$error.required" class="help-block">Password is required</span>
+            </div>
+            <div class="form-actions">
+                <button type="submit" ng-disabled="form.$invalid || login.dataLoading" class="btn btn-primary">Login</button>
+                <img ng-if="login.dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
+                />
+                <span class="text-danger" style="color:red">{{ error }}</span>
+                <a href="#!/register" class="btn btn-link">Register</a>
+            </div>
+
+    </div> -->
+
+    <div class="container">
+        <div class="row">
+            <div class="center-form panel">
+                <div class="panel-body">
+
+                    <img class="login-icon" src="./resources/healthcare-provider.png" />
+
+                    <h2 class="text-center login-title">Healthcare Provider Login</h2>
+
+                    <form method="post" ng-submit="login()" name="loginForm">
+
+                        <div class="form-group login-components">
+                            <label for="id">Health Provider ID</label>
+                            <input class="form-control input-lg" type="text" name="id" id="id" ng-model="id" required/>
+                        </div>
+
+                        <div class="form-group login-components">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroupFileAddon01">Key</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" aria-describedby="inputGroupFileAddon01"
+                                        required>
+                                    <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group login-components login-button">
+                            <button type="submit" ng-disabled="loginForm.$invalid" class="btn btn-primary btn-block">Sign
+                                In
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
         </div>
-    </body>
+    </div>
+
+</body>
