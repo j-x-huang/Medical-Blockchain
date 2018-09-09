@@ -77,19 +77,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
     console.log(myService.privateKey)
     console.log(myService.details)
 
-
-
-    $scope.recordForm = {
-        $class: "nz.ac.auckland.Record",
-        id: "",
-        record_date: "",
-        record_code: "",
-        record_reasonCode: "",
-        record_reasonDesc: "",
-        healthProvider: "",
-        patient: ""
-    }
-
     $scope.hid = myService.id
     $scope.hpArray = myService.details
     $scope.keyArray = []
@@ -103,102 +90,8 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
 
     $scope.notiArray = []
 
-    $scope.selectedRecord = {}
-    $scope.types = ["Allergy", "Procedure", "Observation", "Medication", "Immunization", "Condition"]
-
-    $scope.allergyForm = {}
-    $scope.procedureForm = {}
-    $scope.observationForm = {}
-    $scope.medicationForm = {}
-    $scope.immunizationForm = {}
-    $scope.conditionForm = {}
-
     $scope.myArray = []
 
-    $scope.submitRecord = function () {
-        if (!isCredsProvided()) {
-            return
-        }
-        var recordForm = {}
-        switch ($scope.selectedRecord.type) {
-            case 'Allergy':
-                recordForm = $scope.allergyForm
-                break
-            case 'Procedure':
-                recordForm = $scope.procedureForm
-                break
-            case 'Observation':
-                recordForm = $scope.observationForm
-                break
-            case 'Immunization':
-                recordForm = $scope.immunizationForm
-                break
-            case 'Condition':
-                recordForm = $scope.conditionForm
-                break
-            case 'Medication':
-                recordForm = $scope.medicationForm
-                break;
-        }
-        recordForm = Object.assign({}, $scope.recordForm, recordForm)
-        recordForm.$class = namespace + '.' + $scope.selectedRecord.type
-        recordForm.patient = "resource:" + namespace + ".Patient#" + _id
-        recordForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + $scope.hid
-
-        dateToString(recordForm)
-        var patientKey;
-
-        var endpoint = endpoint2 + 'selectPatientKeysByPatientID?p=resource%3Anz.ac.auckland.Patient%23' + _id;
-
-        //DUPLICATE
-        $http.get(endpoint).then(function (response) {
-            console.log(response.data)
-            if (response.data.length === 0) {
-                alert("The patient has not shared a key with you")
-                return
-            }
-
-            var pKeyBody = response.data[0]
-            var encryptedKey = pKeyBody.encryptedPatientKeyHPPublic
-
-            patientKey = $scope.tryDecrypt(encryptedKey)
-
-            encryptForm(recordForm, patientKey)
-
-            var endpoint = apiBaseURL + $scope.selectedRecord.type
-            $scope.endpoint = endpoint
-            clearFields()
-
-            $http({
-                method: 'POST',
-                url: endpoint,
-                data: angular.toJson(recordForm),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(_success, _error)
-        }, _error)
-    }
-
-    function clearFields() {
-        $scope.recordForm = {
-            $class: "nz.ac.auckland.Record",
-            id: "",
-            record_date: "",
-            record_code: "",
-            record_reasonCode: "",
-            record_reasonDesc: "",
-            healthProvider: "",
-            patient: ""
-        }
-
-        $scope.allergyForm = {}
-        $scope.procedureForm = {}
-        $scope.observationForm = {}
-        $scope.medicationForm = {}
-        $scope.immunizationForm = {}
-        $scope.conditionForm = {}
-    }
 
     $scope.getPatients = function () {
 
@@ -275,6 +168,27 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
 
     }
 
+    $scope.addRecord = function (index) {
+        var id = $scope.myArray[index].id
+
+        ModalService.showModal({
+            templateUrl: "./addRecordModal.html",
+            controller: "addRecordController",
+            preClose: (modal) => { modal.element.modal('hide'); },
+            inputs: {
+                _id: id,
+                hid: $scope.hid,
+                privateKey: $scope.privateKey
+            }
+        }).then(function (modal) {
+            modal.element.modal();
+            modal.close.then(function(result) {
+                $('.modal-backdrop').remove()
+              });
+        });
+
+    }
+
     $scope.setTab = function (tag) {
         if (tag === 'Patient') {
             $scope.getPatients()
@@ -286,21 +200,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
     $scope.getId = function (index) {
         _id = $scope.myArray[index].id
         _records = $scope.myArray[index].records
-    }
-
-    function encryptForm(form, patientKey) {
-        var keys = Object.keys(form)
-        console.log(form)
-
-        keys.forEach(function (key) {
-            if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
-                var encryptedData = symEncrypt(form[key], patientKey)
-                form[key] = encryptedData.toString()
-            }
-
-        })
-
-        console.log(form)
     }
 
     /**
@@ -444,14 +343,4 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
         }
       };
 
-    function dateToString(form) {
-        var keys = Object.keys(form)
-
-        keys.forEach(function (key) {
-            if (form[key] instanceof Date) {
-                form[key] = form[key].toLocaleDateString('en-GB')
-            }
-        })
-        console.log(form)
-    }
 })
