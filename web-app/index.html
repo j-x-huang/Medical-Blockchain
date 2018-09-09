@@ -61,8 +61,6 @@
                         <input type="text" ng-model="healthProviderForm.phone"> </p>
                     <p>Address:
                         <input type="text" ng-model="healthProviderForm.address"> </p>
-                    <p>Address:
-                        <input type="text" ng-model="healthProviderForm.publicKey"> </p>
                 </div>
                 <div class="modal-footer">
                     <button ng-click="submitHP()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
@@ -85,7 +83,7 @@
                         <p>ID:
                             <input type="text" ng-model="recordForm.id"> </p>
                         <p>Date:
-                            <input type="text" ng-model="recordForm.record_date"> </p>
+                            <input type="date" ng-model="recordForm.record_date"> </p>
                         <p>Code:
                             <input type="text" ng-model="recordForm.record_code"> </p>
                         <p>Reason Code:
@@ -104,9 +102,9 @@
                     <!-- ALLERGIES -->
                     <div class="form-group" ng-show="selectedRecord.type=='Allergy'">
                         <p>Start Date:
-                            <input type="text" ng-model="allergyForm.allergy_start"> </p>
+                            <input type="date" ng-model="allergyForm.allergy_start"> </p>
                         <p>End Date:
-                            <input type="text" ng-model="allergyForm.allergy_stop"> </p>
+                            <input type="date" ng-model="allergyForm.allergy_stop"> </p>
                         <p>Code:
                             <input type="text" ng-model="allergyForm.allergy_code"> </p>
                         <p>Description:
@@ -116,7 +114,7 @@
                     <!-- PROCEDURE -->
                     <div class="form-group" ng-show="selectedRecord.type=='Procedure'">
                         <p>Date:
-                            <input type="text" ng-model="procedureForm.procedure_date"> </p>
+                            <input type="date" ng-model="procedureForm.procedure_date"> </p>
                         <p>Code:
                             <input type="text" ng-model="procedureForm.procedure_code"> </p>
                         <p>Description:
@@ -129,7 +127,7 @@
                     <!-- OBSERVATION -->
                     <div class="form-group" ng-show="selectedRecord.type=='Observation'">
                         <p>Date:
-                            <input type="text" ng-model="observationForm.obs_date"> </p>
+                            <input type="date" ng-model="observationForm.obs_date"> </p>
                         <p>Code:
                             <input type="text" ng-model="observationForm.obs_code"> </p>
                         <p>Description:
@@ -143,9 +141,9 @@
                     <!-- MEDICATION -->
                     <div class="form-group" ng-show="selectedRecord.type=='Medication'">
                         <p>Start Date:
-                            <input type="text" ng-model="medicationForm.medication_start"> </p>
+                            <input type="date" ng-model="medicationForm.medication_start"> </p>
                         <p>End Date:
-                            <input type="text" ng-model="medicationForm.medication_stop"> </p>
+                            <input type="date" ng-model="medicationForm.medication_stop"> </p>
                         <p>Code:
                             <input type="text" ng-model="medicationForm.medication_code"> </p>
                         <p>Description:
@@ -159,7 +157,7 @@
                     <!-- IMMUNIZATION -->
                     <div class="form-group" ng-show="selectedRecord.type=='Immunization'">
                         <p>Date:
-                            <input type="text" ng-model="immunizationForm.imm_date"> </p>
+                            <input type="date" ng-model="immunizationForm.imm_date"> </p>
                         <p>Code:
                             <input type="text" ng-model="immunizationForm.imm_code"> </p>
                         <p>Description:
@@ -169,9 +167,9 @@
                     <!-- CONDITION -->
                     <div class="form-group" ng-show="selectedRecord.type=='Condition'">
                         <p>Start Date:
-                            <input type="text" ng-model="conditionForm.cond_start"> </p>
+                            <input type="date" ng-model="conditionForm.cond_start"> </p>
                         <p>End Date:
-                            <input type="text" ng-model="conditionForm.cond_stop"> </p>
+                            <input type="date" ng-model="conditionForm.cond_stop"> </p>
                         <p>Code:
                             <input type="text" ng-model="conditionForm.cond_code"> </p>
                         <p>Description:

@@ -9,24 +9,24 @@ app.controller('PatientController', [
 
         $scope.patientForm = {
             $class: "nz.ac.auckland.Patient",
-            id: "string",
-            birthDate: "string",
-            deathDate: "string",
-            ird: "string",
-            drivers: "string",
-            passport: "string",
-            prefix: "string",
-            first: "string",
-            last: "string",
-            suffic: "string",
-            maiden: "string",
-            marital: "string",
-            race: "string",
-            ethinicity: "string",
-            gender: "string",
-            birthplace: "string",
-            address: "string",
-            publicKey: "string",
+            id: "",
+            birthDate: "",
+            deathDate: "",
+            ird: "",
+            drivers: "",
+            passport: "",
+            prefix: "",
+            first: "",
+            last: "",
+            suffic: "",
+            maiden: "",
+            marital: "",
+            race: "",
+            ethinicity: "",
+            gender: "",
+            birthplace: "",
+            address: "",
+            publicKey: "",
             consentedHPs: []
         }
 
@@ -47,6 +47,7 @@ app.controller('PatientController', [
             $scope.endpoint = endpoint
             patientForm = Object.assign({}, $scope.patientForm)
             delete patientForm.id
+            dateToString(patientForm)
             encryptForm(patientForm)
             $http({
                 method: 'PUT',
@@ -68,6 +69,8 @@ app.controller('PatientController', [
             patientForm = Object.assign({}, $scope.patientForm)
             patientForm.publicKey = keys.publicKey
             $scope.privateKey = keys.privateKey
+
+            dateToString(patientForm)
             $http({
                 method: 'POST',
                 url: endpoint,
@@ -80,6 +83,17 @@ app.controller('PatientController', [
                 $scope.viewData(response.data);
                 $scope.close()
             }, _error)
+        }
+
+        function dateToString(form) {
+            var keys = Object.keys(form)
+    
+            keys.forEach(function (key) {
+                if (form[key] instanceof Date) {
+                    form[key] = form[key].toLocaleDateString('en-GB')
+                }
+            })
+            console.log(form)
         }
 
         function encryptForm(form) {

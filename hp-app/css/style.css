@@ -34,12 +34,6 @@ nav li a:hover {
   color: rgb(255, 255, 255);
 }
 
-td {
-  padding-right: 30px;
-  padding-bottom: 10px;
-  white-space: nowrap;
-}
-
 .material-switch > input[type="checkbox"] {
   display: none;
 }
@@ -83,6 +77,12 @@ td {
 .material-switch > input[type="checkbox"]:checked + label::after {
   background: inherit;
   left: 20px;
+}
+
+td {
+  padding-right: 30px;
+  padding-bottom: 10px;
+  white-space: nowrap;
 }
 
 table {

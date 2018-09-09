@@ -1,11 +1,11 @@
 <head>
     <link rel="stylesheet" type="text/css" href="css\modal.css">
 </head>
-<div id="patientModal" class="modal fade" role="dialog">
+<div id="patientModal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-dismiss="modal" ng-click="close()">&times;</button>
                 <h4 class="modal-title">Add Patient</h4>
             </div>
             <div class="modal-body">
@@ -54,13 +54,13 @@
                         <td>
                             Birth date:
                         </td>
-                        <td><input type="text" ng-model="patientForm.birthDate"></td>
+                        <td><input type="date" ng-model="patientForm.birthDate"></td>
                     </tr>
                     <tr>
                         <td>
                             Death date:
                         </td>
-                        <td><input type="text" ng-model="patientForm.deathDate"></td>
+                        <td><input type="date" ng-model="patientForm.deathDate"></td>
                     </tr>
                     <tr>
                         <td>

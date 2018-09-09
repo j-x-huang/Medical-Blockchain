@@ -81,11 +81,11 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
 
     $scope.recordForm = {
         $class: "nz.ac.auckland.Record",
-        id: "string",
-        record_date: "string",
-        record_code: "string",
-        record_reasonCode: "string",
-        record_reasonDesc: "string",
+        id: "",
+        record_date: "",
+        record_code: "",
+        record_reasonCode: "",
+        record_reasonDesc: "",
         healthProvider: "",
         patient: ""
     }
@@ -98,8 +98,8 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
 
     $scope.pid
     $scope.patientKey
-    $scope.privateKey
-    let _login = false
+    $scope.privateKey = myService.privateKey
+    let _login = true
 
     $scope.notiArray = []
 
@@ -145,7 +145,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
         recordForm.patient = "resource:" + namespace + ".Patient#" + _id
         recordForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + $scope.hid
 
-
+        dateToString(recordForm)
         var patientKey;
 
         var endpoint = endpoint2 + 'selectPatientKeysByPatientID?p=resource%3Anz.ac.auckland.Patient%23' + _id;
@@ -167,7 +167,8 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
 
             var endpoint = apiBaseURL + $scope.selectedRecord.type
             $scope.endpoint = endpoint
-    
+            clearFields()
+
             $http({
                 method: 'POST',
                 url: endpoint,
@@ -177,6 +178,26 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
                 }
             }).then(_success, _error)
         }, _error)
+    }
+
+    function clearFields() {
+        $scope.recordForm = {
+            $class: "nz.ac.auckland.Record",
+            id: "",
+            record_date: "",
+            record_code: "",
+            record_reasonCode: "",
+            record_reasonDesc: "",
+            healthProvider: "",
+            patient: ""
+        }
+
+        $scope.allergyForm = {}
+        $scope.procedureForm = {}
+        $scope.observationForm = {}
+        $scope.medicationForm = {}
+        $scope.immunizationForm = {}
+        $scope.conditionForm = {}
     }
 
     $scope.getPatients = function () {
@@ -269,6 +290,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
 
     function encryptForm(form, patientKey) {
         var keys = Object.keys(form)
+        console.log(form)
 
         keys.forEach(function (key) {
             if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
@@ -421,4 +443,15 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
           ModalService.closeModals(null, 500);
         }
       };
+
+    function dateToString(form) {
+        var keys = Object.keys(form)
+
+        keys.forEach(function (key) {
+            if (form[key] instanceof Date) {
+                form[key] = form[key].toLocaleDateString('en-GB')
+            }
+        })
+        console.log(form)
+    }
 })
