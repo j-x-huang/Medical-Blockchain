@@ -65,7 +65,16 @@
                         </div>
 
                         <div class="form-group login-components">
-                            <div class="input-group mb-3">
+                            <label for="file-selector">Private Key</label>
+                            <div id="file-selector">
+                                <label class="btn btn-choose-file" for="my-file-selector">
+                                    <input id="my-file-selector" type="file" style="display:none" onchange="$('#upload-file-info').html(this.files[0].name); angular.element(this).scope().handleFiles(this.files)"
+                                        required> Browse
+                                </label>
+                                <span class='label label-info file-name' id="upload-file-info">Choose a file</span>
+                            </div>
+
+                            <!-- <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="inputGroupFileAddon01">Key</span>
                                 </div>
@@ -74,12 +83,12 @@
                                         required>
                                     <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                                 </div>
-                            </div>
+                            </div> -->
 
                         </div>
 
                         <div class="form-group login-components login-button">
-                            <button type="submit" ng-disabled="loginForm.$invalid" class="btn btn-primary btn-block">Sign
+                            <button type="submit" ng-disabled="loginForm.$invalid" class="btn btn-primary btn-block btn-sign-in">Sign
                                 In
                             </button>
                         </div>
