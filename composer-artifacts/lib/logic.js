@@ -60,7 +60,8 @@ async function shareAKey(shareKey) {
   patientKey.healthProvider = shareKey.healthProvider;
   patientKey.encryptedPatientKeyHPPublic = shareKey.encryptedPatientKeyHPPublic;
 
-  shareKeyNotification.key = patientKey;
+  shareKeyNotification.patient = shareKey.patient;
+  shareKeyNotification.healthProvider = shareKey.healthProvider;
   emit(shareKeyNotification);
 
   await assetRegistry.add(patientKey);

@@ -13,7 +13,7 @@ nav ul {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #333;
+  background-color: rgb(233, 21, 21);
 }
 
 nav li {
@@ -33,6 +33,7 @@ nav li a:hover {
   text-decoration: none;
   color: rgb(255, 255, 255);
 }
+
 
 .material-switch > input[type="checkbox"] {
   display: none;

@@ -39,6 +39,8 @@ app.controller('recordsController', [
 
         function _error(response) {
             console.log(response)
+            alert("Error")
+            $scope.close()
         }
 
         function decryptForm(form) {

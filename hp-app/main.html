@@ -1,5 +1,5 @@
 <div>
-    <nav>
+    <nav class="navbar navbar-default">
         <ul>
             <li>
                 <a href="index.html">Home</a>
@@ -60,14 +60,14 @@
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
                         <th>ID</th>
-                        <th>IRD</th>
+                        <th>Prefix</th>
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Options</th>
                     </tr>
                     <tr ng-repeat="row in myArray">
                         <td>{{row.id}}</td>
-                        <td>{{row.ird}}</td>
+                        <td>{{row.prefix}}</td>
                         <td>{{row.first}}</td>
                         <td>{{row.last}}</td>
                         <td>

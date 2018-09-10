@@ -12,19 +12,11 @@ app.controller('PatientController', [
             id: "",
             birthDate: "",
             deathDate: "",
-            ird: "",
-            drivers: "",
-            passport: "",
             prefix: "",
             first: "",
             last: "",
-            suffic: "",
-            maiden: "",
-            marital: "",
-            race: "",
             ethinicity: "",
             gender: "",
-            birthplace: "",
             address: "",
             publicKey: "",
             consentedHPs: []
@@ -104,7 +96,7 @@ app.controller('PatientController', [
          * @private
          */
         function _error(response) {
-            $scope.viewData(response.data)
+            $scope.close()
             alert("Error")
         }
 

@@ -303,17 +303,17 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService, mySe
     .$on('$message', function (data) {
         console.log(data)
         if (data.$class === "nz.ac.auckland.ShareKeyNotification") {
-            var kLine = data.key.split('#')
-            var kId = kLine[1];
+            var pLine = data.patient.split('#')
+            var pId = pLine[1]
 
             var timestamp = new Date(data.timestamp);
 
             var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
+
             var notification = {
                 time: timeString,
-                msg: "Patient key #" + kId + " is now shared with you"
+                msg: "Patient #" + pId + " has shared their key with you"
             }
-
             $scope.notiArray.unshift(notification)
         } else if (data.$class === "nz.ac.auckland.RevokeMedicalRecordsSharingNotification") {
             var pLine = data.patient.split('#')

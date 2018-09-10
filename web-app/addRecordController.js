@@ -136,6 +136,7 @@ app.controller('addRecordController', [
          */
         function _error(response) {
             $scope.viewData(response.data)
+            $scope.close()
             alert("Error")
         }
 

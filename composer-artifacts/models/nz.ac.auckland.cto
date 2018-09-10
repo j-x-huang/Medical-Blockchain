@@ -28,19 +28,11 @@ participant Patient identified by id{
   o String id
   o String birthDate
   o String deathDate optional
-  o String ird
-  o String drivers optional
-  o String passport optional
   o String prefix optional
   o String first
   o String last 
-  o String suffic optional
-  o String maiden optional
-  o String marital optional
-  o String race
-  o String ethinicity
-  o String gender
-  o String birthplace
+  o String ethinicity optional
+  o String gender optional
   o String address
   o String publicKey
   o HealthProvider[] consentedHPs
@@ -133,7 +125,8 @@ transaction ShareKey {
 }
 
 event ShareKeyNotification {
-  --> PatientKey key
+  --> Patient patient
+  --> HealthProvider healthProvider
 }
 
 transaction RevokeMedicalRecordsSharing {
