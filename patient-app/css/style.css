@@ -34,12 +34,6 @@ nav li a:hover {
   color: rgb(255, 255, 255);
 }
 
-td {
-  padding-right: 30px;
-  padding-bottom: 10px;
-  white-space: nowrap;
-}
-
 .material-switch > input[type="checkbox"] {
   display: none;
 }
@@ -86,5 +80,5 @@ td {
 }
 
 .refreshBtn {
-  margin-bottom: 5px !important; 
+  margin-bottom: 5px !important;
 }

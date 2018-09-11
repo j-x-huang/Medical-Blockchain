@@ -22,9 +22,9 @@ hr {
   /* border-top: 4px solid #f3cbca; */
 }
 
-td:last-child {
-  width: 100%;
-}
+/* table td:last-child {
+  width: 99%;
+} */
 
 input {
   width: 100%;
