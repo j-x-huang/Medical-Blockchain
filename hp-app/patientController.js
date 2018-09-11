@@ -105,7 +105,6 @@ app.controller('PatientController', [
          * @private
          */
         function _success(response) {
-            $scope.viewData(response.data);
             $scope.close()
             alert("Operation successful")
         }
@@ -117,7 +116,6 @@ app.controller('PatientController', [
          * @private
          */
         function _error(response) {
-            $scope.viewData(response.data)
             $scope.close()
             alert("Error")
         }
