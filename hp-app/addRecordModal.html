@@ -1,9 +1,12 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="css\modal.css">
+</head>
 <!-- Record Modal-->
-<div id="recordModal" class="modal fade" role="dialog">
+<div id="recordModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-dismiss="modal" ng-click="close()">&times;</button>
                 <h4 class="modal-title">Add Record</h4>
             </div>
             <div class="modal-body">
@@ -105,7 +108,7 @@
             <div class="modal-footer">
                 <button ng-click="submitRecord()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
             </div>
-        </div>br>
+            </br>
+        </div>
     </div>
-</div>
 </div>
