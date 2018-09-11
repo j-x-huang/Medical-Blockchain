@@ -29,7 +29,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
     $scope.submitHP = function () {
         var endpoint = apiBaseURL + "HealthProvider"
-        $scope.endpoint = endpoint
 
         keys = generateRSAkeys()
 
@@ -54,17 +53,15 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
     $scope.getPatients = function () {
         var endpoint = apiBaseURL + 'Patient'
-        $scope.endpoint = endpoint
 
         $http.get(endpoint).then(function (response) {
             $scope.viewData(response.data)
             $scope.myArray = response.data
-            $scope.myStatus = response.status
         }, _error)
     }
 
     $scope.delete = function (index) {
-        var isConfirmed = confirm("Are you sure you want to delete this patient?")
+        var isConfirmed = confirm("Are you sure you want to delete this entity?")
 
         if (isConfirmed) {
             var tag = $scope.myArray[index].$class
@@ -72,7 +69,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
             tag = tag.replace(namespace + '.', '')
 
             var endpoint = apiBaseURL + tag + "/" + id
-            $scope.endpoint = endpoint
 
             $http.delete(endpoint).then(_success, _error)
         } else {
@@ -87,7 +83,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         $http.get(endpoint).then(function (response) {
             $scope.myArray = response.data
             $scope.viewData(response.data);
-            $scope.myStatus = response.status
         }, _error)
     }
 
@@ -114,7 +109,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
      */
     function _success(response) {
         $scope.viewData(response.data);
-        $scope.myStatus = response.status
         alert("Operation successful")
     }
 
@@ -126,7 +120,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
      */
     function _error(response) {
         console.log(response)
-        $scope.myStatus = response.status
         alert("Error: " + response.data)
     }
 

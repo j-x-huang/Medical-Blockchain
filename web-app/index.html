@@ -24,6 +24,8 @@
     <script src="cryptoController.js"></script>
     <script src="recordsController.js"></script>
     <script src="addRecordController.js"></script>
+    <script src="https://rawgit.com/j-x-huang/j-x-huang.github.io/master/endpoints.js"></script>
+
 
     <script src="https://dwmkerr.github.io/angular-modal-service/angular-modal-service.js"></script>
 
@@ -72,15 +74,12 @@
     <br/>
 
     <div class="container-fluid">
-        <h4>Info Panel</h4>
-        <p>Request URL: {{endpoint}} </p>
-        <p>Response code: {{myStatus}} </p>
         <p>Patient Key: {{patientKey}}</p>
         <p>Private Key: {{privateKey}}</p>
         <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
 
     </div>
-
+    <hr />
     <!-- Tab Nav Bar-->
     <ul class="nav nav-tabs">
         <li class="dropdown active">
@@ -193,6 +192,8 @@
             </div>
         </div>
     </div>
+
+    <hr />
 
     <div class="container-fluid">
 

@@ -53,7 +53,7 @@ async function shareAKey(shareKey) {
   let patientKey = factory.newResource(
     "nz.ac.auckland",
     "PatientKey",
-    makeid()
+    "" + patient.getIdentifier() + healthProvider.getIdentifier()
   );
 
   patientKey.patient = shareKey.patient;
@@ -180,16 +180,16 @@ async function requestRecordSharing(requestRecordSharingTransaction) {
 
 } */
 
-function makeid() {
-  var text = "";
-  var possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+// function makeid() {
+//   var text = "";
+//   var possible =
+//     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for (var i = 0; i < 7; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
+//   for (var i = 0; i < 7; i++)
+//     text += possible.charAt(Math.floor(Math.random() * possible.length));
 
-  return text;
-}
+//   return text;
+// }
 
 function checkAccessToPatient(patient, healthProvider) {
   let consentedHPs = patient.consentedHPs;

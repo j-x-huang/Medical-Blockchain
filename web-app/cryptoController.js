@@ -36,8 +36,12 @@ $scope.downloadPrivate = function () {
   //  This close function doesn't need to use jQuery or bootstrap, because
   //  the button has the 'data-dismiss' attribute.
   $scope.close = function() {
- 	  close({
-    }, 500); // close, but give 500ms for bootstrap to animate
+    var isConfirmed = confirm("By closing the modal you will never see the keys again. Are you sure you want to continue?")
+
+    if (isConfirmed) {
+      close({
+      }, 500); // close, but give 500ms for bootstrap to animate
+    }
   };
 
   //  This cancel function must use the bootstrap, 'modal' function because
