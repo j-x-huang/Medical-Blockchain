@@ -2,6 +2,7 @@ td {
   padding-right: 30px;
   padding-bottom: 10px;
   white-space: nowrap;
+  text-align: left;
 }
 
 table {
@@ -21,8 +22,8 @@ hr {
   /* border-top: 4px solid #f3cbca; */
 }
 
-table td:last-child {
-  width: 99%;
+td:last-child {
+  width: 100%;
 }
 
 input {
