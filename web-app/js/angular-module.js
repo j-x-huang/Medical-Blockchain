@@ -1,5 +1,5 @@
 var app = angular.module('myApp', ['angularModalService', 'ngMaterial', 'ngMessages', 'ngWebsocket']);
-var apiBaseURL = "http://localhost:3000/api/";
+var apiBaseURL = ADMIN_ENDPOINT;
 var namespace = "nz.ac.auckland"
 
 app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {

@@ -5,8 +5,8 @@ var app = angular.module("myApp", [
   "ngWebsocket",
   "ngRoute"
 ]);
-var apiBaseURL = "http://localhost:3000/api/";
-var endpoint2 = "http://localhost:3000/api/queries/";
+var apiBaseURL = PATIENT_ENDPOINT;
+var endpoint2 = PATIENT_ENDPOINT + "queries/";
 
 var namespace = "nz.ac.auckland";
 

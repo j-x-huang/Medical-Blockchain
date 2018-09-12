@@ -1,5 +1,5 @@
 var app = angular.module('myApp')
-var endpoint = "http://localhost:3000/api/queries/"
+var endpoint = HP_ENDPOINT + "queries/"
 
 app.controller('recordsController', [
     '$scope', '$element', '$http', 'patient', 'patientKey', 'close',
@@ -11,7 +11,6 @@ app.controller('recordsController', [
         $scope.med=[]
         $scope.obs=[]
         $scope.proc=[]
-
 
         getRecords(endpoint + "selectAllAllergyRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.allergy)
         getRecords(endpoint + "selectAllConditionRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.cond)

@@ -1,5 +1,5 @@
 var app = angular.module('myApp');
-var apiBaseURL = "http://localhost:3000/api/";
+var apiBaseURL = ADMIN_ENDPOINT;
 
 app.controller('PatientController', [
     '$scope', '$http', 'title','patient','update', 'close',

@@ -5,9 +5,9 @@ var app = angular.module("myApp", [
   "ngWebsocket",
   "ngRoute"
 ]);
-var apiBaseURL = "http://localhost:3000/api/";
+var apiBaseURL = HP_ENDPOINT;
 var namespace = "nz.ac.auckland";
-var endpoint2 = "http://localhost:3000/api/queries/";
+var endpoint2 = HP_ENDPOINT + "queries/";
 
 app.service("myService", function() {
   return {

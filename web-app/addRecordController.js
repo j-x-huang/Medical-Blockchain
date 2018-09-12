@@ -1,5 +1,5 @@
 var app = angular.module('myApp')
-var endpoint = "http://localhost:3000/api/queries/"
+var endpoint = ADMIN_ENDPOINT + "queries/"
 
 app.controller('addRecordController', [
     '$scope', '$element', '$http', '_id', 'patientKey', 'close',
