@@ -8,8 +8,8 @@ var app = angular.module("myApp", [
 var apiBaseURL = HP_ENDPOINT;
 var namespace = "nz.ac.auckland";
 var endpoint2 = HP_ENDPOINT + "queries/";
-var webport = HP_ENDPOINT.replace("/api/", "")
-webport = webport.replace("http", "ws")
+var webport = HP_ENDPOINT.replace("/api/", "");
+webport = webport.replace("http", "ws");
 
 app.service("myService", function() {
   return {
@@ -302,11 +302,7 @@ app.controller("myCtrl", function(
     return true;
   }
 
-<<<<<<< HEAD
-  var ws = $websocket.$new("ws://localhost:3001");
-=======
   var ws = $websocket.$new(webport);
->>>>>>> b5b40943fbef7cd00cc5d5c825be4f1a64342c5b
 
   ws.$on("$open", function() {
     // it listents for 'incoming event'
@@ -349,7 +345,7 @@ app.controller("myCtrl", function(
       $scope.notiIcon = true;
       $scope.notiArray.unshift(notification);
     }
-    $scope.$apply()
+    $scope.$apply();
   });
 
   $scope.tryDecrypt = function(encryptedPkey) {
@@ -364,5 +360,5 @@ app.controller("myCtrl", function(
 
   $scope.dismiss = function() {
     $scope.notiIcon = false;
-  }
+  };
 });
