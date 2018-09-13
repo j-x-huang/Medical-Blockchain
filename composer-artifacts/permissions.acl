@@ -73,7 +73,7 @@ rule HealthProvidersReadAccess {
 rule HealthProvidersCanAccessPatientsThatSharedKey {
     description: "Grand health providers access to patients that shared their key"
     participant(hp): "nz.ac.auckland.HealthProvider"
-    operation: READ, UPDATE
+    operation: READ
     resource(p): "nz.ac.auckland.Patient"
     condition: (checkAccessToPatient(p,hp))
     action: ALLOW
@@ -185,10 +185,18 @@ rule PatientReadAssetAccess {
 }
 
 rule PatientReadParticipantAccess {
-    description: "Viewers should have only read access to the participant registry"
+    description: "Patients should have only read access to the participant registry"
     participant: "nz.ac.auckland.Patient"
     operation: READ
     resource: "org.hyperledger.composer.system.ParticipantRegistry"
+    action: ALLOW
+}
+
+rule PatientCanUpdateParticipants {
+    description: "Patients should be able to update participants"
+    participant: "nz.ac.auckland.Patient"
+    operation: CREATE
+    resource: "org.hyperledger.composer.system.UpdateParticipant"
     action: ALLOW
 }
 
