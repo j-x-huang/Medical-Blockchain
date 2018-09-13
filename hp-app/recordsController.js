@@ -167,7 +167,7 @@ app.controller('recordsController', [
         function _error(response) {
             console.log(response)
             $scope.close()
-            alert("Error")
+            alert("Error: " + response.data.error.message);
         }
 
         function decryptForm(form) {

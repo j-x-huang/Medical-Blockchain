@@ -137,7 +137,7 @@ app.controller('addRecordController', [
         function _error(response) {
             $scope.viewData(response.data)
             $scope.close()
-            alert("Error")
+            alert("Error: " + response.data.error.message);
         }
 
         //  This close function doesn't need to use jQuery or bootstrap, because

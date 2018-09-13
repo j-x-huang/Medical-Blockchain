@@ -7,6 +7,8 @@ var app = angular.module("myApp", [
 ]);
 var apiBaseURL = PATIENT_ENDPOINT;
 var endpoint2 = PATIENT_ENDPOINT + "queries/";
+var webport = PATIENT_ENDPOINT.replace("/api/", "")
+webport = webport.replace("http", "ws")
 
 var namespace = "nz.ac.auckland";
 
@@ -273,8 +275,8 @@ app.controller("myCtrl", function(
    * @private
    */
   function _error(response) {
-    console.log(response);
-    alert("Error: " + response.data);
+    console.log(response.data);
+    alert("Error: " + response.data.error.message);
   }
 
   $scope.editPatient = function() {
@@ -407,7 +409,7 @@ app.controller("myCtrl", function(
     });
   }
 
-  var ws = $websocket.$new("ws://localhost:3000");
+  var ws = $websocket.$new(webport);
 
   ws.$on("$open", function() {
     // it listents for 'incoming event'
