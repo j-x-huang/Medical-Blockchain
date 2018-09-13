@@ -1,5 +1,4 @@
 var app = angular.module('myApp')
-var endpoint = "http://localhost:3000/api/queries/"
 
 app.controller('addRecordController', [
     '$scope', '$element', '$http', '_id', 'hid', 'privateKey', 'close',
@@ -49,6 +48,7 @@ app.controller('addRecordController', [
                     recordForm = $scope.medicationForm
                     break;
             }
+            recordForm.id = uuidv4()
             recordForm = Object.assign({}, $scope.recordForm, recordForm)
             recordForm.$class = namespace + '.' + $scope.selectedRecord.type
             recordForm.patient = "resource:" + namespace + ".Patient#" + _id
@@ -139,6 +139,12 @@ app.controller('addRecordController', [
             return asymDecrypt(encryptedPkey, privateKey)
     
         }
+
+        function uuidv4() {
+            return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+              (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+            )
+          }
 
         /**
          * Show response message in a pop-up dialog box

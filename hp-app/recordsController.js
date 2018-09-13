@@ -1,5 +1,7 @@
 var app = angular.module('myApp')
 var endpoint = HP_ENDPOINT + "queries/"
+console.log("endpoint1: " + endpoint)
+
 
 app.controller('recordsController', [
     '$scope', '$element', '$http', 'patient', 'patientKey', 'close',
@@ -12,6 +14,9 @@ app.controller('recordsController', [
         $scope.obs=[]
         $scope.proc=[]
 
+        console.log(HP_ENDPOINT)
+        console.log(endpoint)
+
         getRecords(endpoint + "selectAllAllergyRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.allergy)
         getRecords(endpoint + "selectAllConditionRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.cond)
         getRecords(endpoint + "selectAllImmunizationRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.imm)
@@ -23,6 +28,8 @@ app.controller('recordsController', [
         function getRecords(query, array) {
             $http.get(query).then(function(response) {
 
+                console.log(query)
+                console.log(array)
                 var tempArray= response.data
 
                 tempArray.forEach(function (form) {
@@ -32,7 +39,6 @@ app.controller('recordsController', [
                 console.log(tempArray)
 
                 array.push.apply(array,tempArray)
-                console.log(array)
             }, _error);
         }
 
@@ -47,6 +53,7 @@ app.controller('recordsController', [
     
             keys.forEach(function (key) {
                 if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
+                    console.log(patientKey)
                     var decryptedData = symDecrypt(form[key], patientKey)
                     form[key] = decryptedData
                 }

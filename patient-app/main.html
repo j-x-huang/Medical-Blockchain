@@ -1,14 +1,18 @@
 <!-- <head>
     <link rel="stylesheet" type="text/css" href="css\modal.css">
 </head> -->
-<div>
-    <nav>
-        <ul>
-            <li>
-                <a href="index.html">Home</a>
-            </li>
-        </ul>
-    </nav>
+    <nav class="navbar">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand">MedBloc - Patient</a>
+          </div>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a ng-click="dismiss()" ng-show="notiIcon"><span class="glyphicon glyphicon-exclamation-sign" style="color: red";></span></a></li>
+            <li><a id="name"><span class="glyphicon glyphicon-user"></span> {{myArray.first}} {{myArray.last}}</a></li>
+            <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+          </ul>
+        </div>
+      </nav>
 
     <!-- Tab Nav Bar-->
     <ul class="nav nav-tabs">
@@ -30,7 +34,7 @@
     <div id="content" class="tab-content">
 
         <div id="keys" class="tab-pane fade in active">
-            <h1>MyDetails</h1>
+            <h1>My Details</h1>
             <!-- <div class="container-fluid">
                 <p>Upload your Patient key:</p>
                 <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
@@ -41,7 +45,7 @@
                 <button type="button" class="btn btn-default" ng-click="login()">Login</button>
             </div> -->
             <div class="container-fluid" id="patientTable">
-                <button type="button" class="btn btn-default refreshBtn" ng-click="login()">Refresh</button>
+                <button type="button" class="btn btn-default refreshBtn" ng-click="login()"><span class="glyphicon glyphicon-repeat"></span></button>
 
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
@@ -49,6 +53,7 @@
                         <th>Prefix</th>
                         <th>First Name</th>
                         <th>Last Name</th>
+                        <th>Address</th>
                         <th>Actions</th>
                     </tr>
                     <tr>
@@ -56,6 +61,7 @@
                         <td>{{myArray.prefix}}</td>
                         <td>{{myArray.first}}</td>
                         <td>{{myArray.last}}</td>
+                        <td>{{myArray.address}}</td>
                         <td>
                             <button type="button" class="btn btn-default" ng-click="editPatient()" ng-show="patientTab">Edit</button>
                         </td>
@@ -484,7 +490,7 @@
         <div id="notifications" class="tab-pane fade">
             <h1>Notifications</h1>
             <div class="container-fluid" id="notificationsTable">
-                <button type="button" class="btn btn-default refreshBtn" ng-click="refresh()">Refresh</button>
+                <button type="button" class="btn btn-default refreshBtn" ng-click="refresh()"><span class="glyphicon glyphicon-repeat"></span></button>
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
                         <th>HID</th>
@@ -511,7 +517,7 @@
                     <input type="text" ng-model="hid" />
                     <button type="button" class="btn btn-default" ng-click="shareKey()">Share</button>
                 </p>
-                <button type="button" class="btn btn-default refreshBtn" ng-click="viewKeys()">Refresh</button>
+                <button type="button" class="btn btn-default refreshBtn" ng-click="viewKeys()"><span class="glyphicon glyphicon-repeat"></span></button>
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
                         <th>ID</th>

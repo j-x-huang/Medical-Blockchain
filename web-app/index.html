@@ -38,13 +38,12 @@
 </head>
 
 <body ng-app="myApp" ng-controller="myCtrl" onload="loaded()">
-
-    <nav class>
-        <ul>
-            <li>
-                <a href="index.html">Home</a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand">MedBloc - Admin Portal</a>
+            </div>
+        </div>
     </nav>
 
     <!--Modal Box to add health providers-->
@@ -117,6 +116,7 @@
                         <th>Prefix</th>
                         <th>First Name</th>
                         <th>Last Name</th>
+                        <th>Address</th>
                         <th>Options</th>
                     </tr>
                     <tr ng-repeat="row in myArray">
@@ -124,6 +124,7 @@
                         <td>{{row.prefix}}</td>
                         <td>{{row.first}}</td>
                         <td>{{row.last}}</td>
+                        <td>{{row.address}}</td>
                         <td>
                             <button type="button" class="btn btn-default" ng-click="viewRecords($index)">View Records</button>
                             <button type="button" class="btn btn-default" ng-click="editPatient($index)" ng-show="patientTab">Edit</button>
@@ -155,7 +156,6 @@
                         <td>{{row.phone}}</td>
                         <td>{{row.address}}</td>
                         <td>
-                            <button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button>
                             <button type="button" class="btn btn-default" ng-click="delete($index)">-</button>
                         </td>
                     </tr>

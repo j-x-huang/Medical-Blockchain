@@ -1,10 +1,25 @@
 <div>
-    <nav class="navbar navbar-default">
-        <ul>
-            <li>
-                <a href="index.html">Home</a>
-            </li>
-        </ul>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand">MedBloc - Health Provider</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a ng-click="dismiss()" ng-show="notiIcon">
+                        <span class="glyphicon glyphicon-exclamation-sign" style="color: red" ;></span>
+                    </a>
+                </li>
+                <li>
+                    <a id="name">
+                        <span class="glyphicon glyphicon-user"></span> {{hpArray.name}} </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="glyphicon glyphicon-log-out"></span> Log out</a>
+                </li>
+            </ul>
+        </div>
     </nav>
 
     <!-- Tab Nav Bar-->
@@ -33,7 +48,7 @@
             <h1>My Identity</h1>
 
             <div class="container-fluid" id="hpArray">
-                <button type="button" class="btn btn-default refreshBtn" ng-click="getMe()">Refresh</button>
+                <button type="button" class="btn btn-default refreshBtn" ng-click="getMe()"><span class="glyphicon glyphicon-repeat"></span></button>
 
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
@@ -55,7 +70,7 @@
         <div id="patients" class="tab-pane fade">
             <h1>Patients</h1>
             <div class="container-fluid" id="patientTable">
-                <button type="button" class="btn btn-default refreshBtn" ng-click="getPatients()">Get Patients</button>
+                <button type="button" class="btn btn-default refreshBtn" ng-click="getPatients()"><span class="glyphicon glyphicon-repeat"></span></button>
 
                 <table class="table table-striped" style="width: 100%;">
                     <tr>
@@ -93,7 +108,7 @@
         <div id="pk" class="tab-pane fade">
             <h2>Shared Patient Keys</h2>
             <div class="container-fluid" id="patientTable">
-                <button type="button" class="btn btn-default refreshBtn" ng-click="getKeys()">Refresh</button>
+                <button type="button" class="btn btn-default refreshBtn" ng-click="getKeys()"><span class="glyphicon glyphicon-repeat"></span></button>
                 <table class="table table-striped" style="width: 50%;">
                     <tr>
                         <th>PID</th>
@@ -111,7 +126,7 @@
         <div id="notifications" class="tab-pane fade">
             <h2>Notifications</h2>
             <div class="container-fluid" id="patientTable">
-                <button type="button" class="btn btn-default refreshBtn" ng-click="refresh">Refresh</button>
+                <button type="button" class="btn btn-default refreshBtn" ng-click="refresh"><span class="glyphicon glyphicon-repeat"></span></button>
                 <table class="table table-striped" style="width: 50%;">
                     <tr>
                         <th>Time</th>
