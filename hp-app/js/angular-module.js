@@ -109,6 +109,7 @@ app.controller("myCtrl", function(
   $scope.patientKey;
   $scope.privateKey = myService.privateKey;
   let _login = true;
+  $scope.notiIcon = false;
 
   $scope.notiArray = [];
 
@@ -321,6 +322,7 @@ app.controller("myCtrl", function(
         time: timeString,
         msg: "Patient #" + pId + " has shared their key with you"
       };
+      $scope.notiIcon = true;
       $scope.notiArray.unshift(notification);
     } else if (
       data.$class === "nz.ac.auckland.RevokeMedicalRecordsSharingNotification"
@@ -338,8 +340,10 @@ app.controller("myCtrl", function(
         time: timeString,
         msg: "Patient #" + pId + " is no longer sharing their key with you :("
       };
+      $scope.notiIcon = true;
       $scope.notiArray.unshift(notification);
     }
+    $scope.$apply()
   });
 
   $scope.tryDecrypt = function(encryptedPkey) {
@@ -351,4 +355,8 @@ app.controller("myCtrl", function(
       ModalService.closeModals(null, 500);
     }
   };
+
+  $scope.dismiss = function() {
+    $scope.notiIcon = false;
+  }
 });

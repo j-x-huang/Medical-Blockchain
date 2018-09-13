@@ -2,6 +2,7 @@ html,
 body {
   margin: 0;
   /* background-color: antiquewhite; */
+  height: 100%;
 }
 
 #content {

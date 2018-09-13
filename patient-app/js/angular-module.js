@@ -117,6 +117,8 @@ app.controller("myCtrl", function(
   $scope.hid;
   let _login = true;
 
+  $scope.notiIcon = false;
+
   $scope.patientTab = true;
 
   $scope.patientKey = myService.patientKey;
@@ -128,6 +130,7 @@ app.controller("myCtrl", function(
   };
 
   $scope.myArray = myService.details;
+
   $scope.hpArray = [];
   $scope.notiTable = [];
 
@@ -434,13 +437,19 @@ app.controller("myCtrl", function(
           Description:
             "Healthcare provider #" + hpId + " would like to view your records"
         };
+        $scope.notiIcon = true;
 
         $scope.notiTable.unshift(notification);
         console.log($scope.notiTable);
       }
     }
+    $scope.$apply()
+
   });
 
+  $scope.dismiss = function() {
+    $scope.notiIcon = false;
+  }
   function isCredsProvided() {
     if (_login === false) {
       alert("Credentials not fully supplied");
@@ -450,6 +459,6 @@ app.controller("myCtrl", function(
   }
 
   $scope.refresh = function() {
-    $scope.notiTable.reload();
+    $scope.$apply()
   };
 });

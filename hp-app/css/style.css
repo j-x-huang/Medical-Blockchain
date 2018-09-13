@@ -8,7 +8,7 @@ body {
   margin: 20px;
 }
 
-nav ul {
+/* nav ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -32,6 +32,23 @@ nav li a:hover {
   background-color: #111;
   text-decoration: none;
   color: rgb(255, 255, 255);
+} */
+
+.navbar {
+  background-color: #3dad3c;
+}
+
+.navbar li a, .navbar .navbar-brand {
+color: #fff !important;
+}
+
+.navbar-nav li a:hover{
+color: #fff !important;
+background-color: #63b262 !important;
+}
+
+#name {
+  background-color: #3dad3c !important;
 }
 
 .material-switch > input[type="checkbox"] {

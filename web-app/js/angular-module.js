@@ -330,5 +330,5 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
     });
 
-    
+    $scope.getPatients()
 })
