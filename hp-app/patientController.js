@@ -117,7 +117,7 @@ app.controller('PatientController', [
          */
         function _error(response) {
             $scope.close()
-            alert("Error")
+            alert("Error: " + response.data.error.message);
         }
 
         $scope.viewData = function (data) {

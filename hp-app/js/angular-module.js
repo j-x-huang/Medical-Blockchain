@@ -8,6 +8,8 @@ var app = angular.module("myApp", [
 var apiBaseURL = HP_ENDPOINT;
 var namespace = "nz.ac.auckland";
 var endpoint2 = HP_ENDPOINT + "queries/";
+var webport = HP_ENDPOINT.replace("/api/", "")
+webport = webport.replace("http", "ws")
 
 app.service("myService", function() {
   return {
@@ -243,7 +245,7 @@ app.controller("myCtrl", function(
    */
   function _error(response) {
     console.log(response);
-    alert("Error: " + response.data);
+    alert("Error: " + response.data.error.message);
   }
 
   $scope.viewRecords = function(index) {
@@ -300,7 +302,7 @@ app.controller("myCtrl", function(
     return true;
   }
 
-  var ws = $websocket.$new("ws://localhost:3000");
+  var ws = $websocket.$new(webport);
 
   ws.$on("$open", function() {
     // it listents for 'incoming event'

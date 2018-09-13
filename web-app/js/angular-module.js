@@ -1,6 +1,8 @@
 var app = angular.module('myApp', ['angularModalService', 'ngMaterial', 'ngMessages', 'ngWebsocket']);
 var apiBaseURL = ADMIN_ENDPOINT;
 var namespace = "nz.ac.auckland"
+var webport = ADMIN_ENDPOINT.replace("/api/", "")
+webport = webport.replace("http", "ws")
 
 app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
@@ -120,7 +122,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
      */
     function _error(response) {
         console.log(response)
-        alert("Error: " + response.data)
+        alert("Error: " + response.data.error.message);
     }
 
     $scope.addPatient = function () {
@@ -247,16 +249,6 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
             }
         }
     }
-
-
-    var ws = $websocket.$new('ws://localhost:3000');
-
-    ws.$on('$open', function () { // it listents for 'incoming event'
-      console.log("WS Open");
-    })
-    .$on('$message', function (data) {
-        console.log(data)
-    });
     
     $scope.encryptedPkey
     $scope.decryptedKey
@@ -270,7 +262,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
     $scope.notiArray = []
 
-    var ws = $websocket.$new('ws://localhost:3000');
+    var ws = $websocket.$new(webport);
 
     ws.$on('$open', function () { // it listents for 'incoming event'
         console.log("WS Open");
