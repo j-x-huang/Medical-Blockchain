@@ -11,16 +11,16 @@
             </div>
             <div class="modal-body">
                 <form class="form-group" name="r-frm">
-                    <p>Date:
+                    <p>Date*:
                         <input type="date" ng-model="recordForm.record_date"> </p>
-                    <p>Code:
+                    <p>Code*:
                         <input type="text" ng-model="recordForm.record_code"> </p>
                     <p>Reason Code:
                         <input type="text" ng-model="recordForm.record_reasonCode"> </p>
                     <p>Reason Description:
                         <input type="text" ng-model="recordForm.record_reasonDesc"> </p>
                     <hr>
-                    <p>Record type:
+                    <p>Record type*:
                         <select ng-model="selectedRecord.type" ng-options="type for type in types">
                         </select>
                     </p>
@@ -28,11 +28,11 @@
 
                 <!-- ALLERGIES -->
                 <div class="form-group" ng-show="selectedRecord.type=='Allergy'">
-                    <p>Start Date:
+                    <p>Start Date*:
                         <input type="date" ng-model="allergyForm.allergy_start"> </p>
                     <p>End Date:
                         <input type="date" ng-model="allergyForm.allergy_stop"> </p>
-                    <p>Code:
+                    <p>Code*:
                         <input type="text" ng-model="allergyForm.allergy_code"> </p>
                     <p>Description:
                         <input type="text" ng-model="allergyForm.allergy_desc"> </p>
@@ -40,11 +40,11 @@
 
                 <!-- PROCEDURE -->
                 <div class="form-group" ng-show="selectedRecord.type=='Procedure'">
-                    <p>Date:
+                    <p>Date*:
                         <input type="date" ng-model="procedureForm.procedure_date"> </p>
-                    <p>Code:
+                    <p>Code*:
                         <input type="text" ng-model="procedureForm.procedure_code"> </p>
-                    <p>Description:
+                    <p>Description*:
                         <input type="text" ng-model="procedureForm.procedure_desc"> </p>
                     <p>Reason Code:
                         <input type="text" ng-model="procedureForm.procedure_reasonCode"> </p>
@@ -53,27 +53,27 @@
                 </div>
                 <!-- OBSERVATION -->
                 <div class="form-group" ng-show="selectedRecord.type=='Observation'">
-                    <p>Date:
+                    <p>Date*:
                         <input type="date" ng-model="observationForm.obs_date"> </p>
-                    <p>Code:
+                    <p>Code*:
                         <input type="text" ng-model="observationForm.obs_code"> </p>
                     <p>Description:
                         <input type="text" ng-model="observationForm.obs_desc"> </p>
-                    <p>Value:
+                    <p>Value*:
                         <input type="text" ng-model="observationForm.obs_value"> </p>
-                    <p>Unit:
+                    <p>Unit*:
                         <input type="text" ng-model="observationForm.obs_units"> </p>
                 </div>
 
                 <!-- MEDICATION -->
                 <div class="form-group" ng-show="selectedRecord.type=='Medication'">
-                    <p>Start Date:
+                    <p>Start Date*:
                         <input type="date" ng-model="medicationForm.medication_start"> </p>
                     <p>End Date:
                         <input type="date" ng-model="medicationForm.medication_stop"> </p>
-                    <p>Code:
+                    <p>Code*:
                         <input type="text" ng-model="medicationForm.medication_code"> </p>
-                    <p>Description:
+                    <p>Description*:
                         <input type="text" ng-model="medicationForm.medication_desc"> </p>
                     <p>Reason Code:
                         <input type="text" ng-model="medicationForm.medication_reasonCode"> </p>
@@ -83,9 +83,9 @@
 
                 <!-- IMMUNIZATION -->
                 <div class="form-group" ng-show="selectedRecord.type=='Immunization'">
-                    <p>Date:
+                    <p>Date*:
                         <input type="date" ng-model="immunizationForm.imm_date"> </p>
-                    <p>Code:
+                    <p>Code*:
                         <input type="text" ng-model="immunizationForm.imm_code"> </p>
                     <p>Description:
                         <input type="text" ng-model="immunizationForm.imm_desc"> </p>
@@ -93,11 +93,11 @@
 
                 <!-- CONDITION -->
                 <div class="form-group" ng-show="selectedRecord.type=='Condition'">
-                    <p>Start Date:
+                    <p>Start Date*:
                         <input type="date" ng-model="conditionForm.cond_start"> </p>
                     <p>End Date:
                         <input type="date" ng-model="conditionForm.cond_stop"> </p>
-                    <p>Code:
+                    <p>Code*:
                         <input type="text" ng-model="conditionForm.cond_code"> </p>
                     <p>Description:
                         <input type="text" ng-model="conditionForm.cond_desc"> </p>
