@@ -1,0 +1,28 @@
+hr {
+  display: inline-block;
+  width: 15%;
+  text-align: left;
+  margin-top: 0px;
+  /* border-top: 4px solid #f3cbca; */
+}
+
+.card-content-wrapper {
+  width: 100%;
+  display: block;
+}
+
+.header {
+  width: 25%;
+  display: inline-block;
+  font-size: 18px;
+  word-wrap: break-word;
+  vertical-align: text-top;
+}
+
+.description {
+  width: 70%;
+  display: inline-block;
+  font-size: 18px;
+  word-wrap: break-word;
+  vertical-align: text-top;
+}

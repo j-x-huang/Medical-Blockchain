@@ -1,6 +1,3 @@
-<!-- <head>
-    <link rel="stylesheet" type="text/css" href="css\modal.css">
-</head> -->
 <div>
     <nav>
         <ul>
@@ -248,47 +245,35 @@
                             </md-card-title>
                             <md-card-content>
                                 <hr style="border-top: 8px solid #bee4c7;">
-                                <table>
-                                    <tr>
-                                        <td>
-                                            Record date:
-                                        </td>
-                                        <td>{{records.record_date}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Record type:
-                                        </td>
-                                        <td>Immunization</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Record reason:
-                                        </td>
-                                        <td>{{records.record_reasonDesc}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Health provider:
-                                        </td>
-                                        <td>{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>&nbsp;</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Immunization date:
-                                        </td>
-                                        <td>{{records.imm_date}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Description:
-                                        </td>
-                                        <td>{{records.imm_desc}}</td>
-                                    </tr>
-                                </table>
+                                <div class="card-content-wrapper">
+                                    <p class="header">Record date:</p>
+                                    <p class="description">{{records.record_date}}</p>
+                                </div>
+                                <div class="card-content-wrapper">
+                                    <p class="header">Record type:</p>
+                                    <p class="description">Immunization</p>
+                                </div>
+                                <div class="card-content-wrapper">
+                                    <p class="header">Record reason:</p>
+                                    <p class="description">{{records.record_reasonDesc}}</p>
+                                </div>
+                                <div class="card-content-wrapper">
+                                    <p class="header">Health provider:</p>
+                                    <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1,
+                                        records.healthProvider.length);}}
+                                    </p>
+                                </div>
+                                <div class="card-content-wrapper">
+                                    <p class="header">&nbsp;</p>
+                                </div>
+                                <div class="card-content-wrapper">
+                                    <p class="header">Immunization date:</p>
+                                    <p class="description">{{records.imm_date}}</p>
+                                </div>
+                                <div class="card-content-wrapper">
+                                    <p class="header">Description:</p>
+                                    <p class="description">{{records.imm_desc}}</p>
+                                </div>
                             </md-card-content>
                         </md-card>
 

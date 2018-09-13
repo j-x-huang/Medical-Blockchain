@@ -299,7 +299,7 @@ app.controller("myCtrl", function(
     return true;
   }
 
-  var ws = $websocket.$new("ws://localhost:3000");
+  var ws = $websocket.$new("ws://localhost:3001");
 
   ws.$on("$open", function() {
     // it listents for 'incoming event'
