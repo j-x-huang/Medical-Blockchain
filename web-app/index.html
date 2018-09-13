@@ -166,6 +166,13 @@
         </div>
 
         <div id="transactions" class="tab-pane fade">
+            <h3>Generate Patient Key</h3>
+            <button type="button" class="btn btn-default" ng-click="makeKey()">Generate</button>
+            <p>{{patientKey}}</p>
+            <input type="text" ng-model="hppub">
+            <button type="button" class="btn btn-default" ng-click="wrapKey()">Wrap key</button>
+            <p>{{wKey}}</p>
+
             <h3>Decrypt Key</h3>
             <div class="form-group">
                 <p>encryptedKey

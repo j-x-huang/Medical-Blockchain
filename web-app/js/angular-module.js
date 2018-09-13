@@ -260,6 +260,22 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
     }
 
+    $scope.makeKey = function() {
+        $scope.patientKey = generateRandomKey()
+    }
+
+    $scope.hppub
+    $scope.wKey
+
+    $scope.wrapKey = function() {
+        $scope.wKey = asymEncrypt(
+            $scope.patientKey,
+            $scope.hppub
+          );
+
+    }
+    $scope.getPatients()
+
     $scope.notiArray = []
 
     var ws = $websocket.$new(webport);
@@ -322,5 +338,4 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
     });
 
-    $scope.getPatients()
 })
