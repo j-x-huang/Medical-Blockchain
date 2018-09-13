@@ -7,10 +7,19 @@
             <a class="navbar-brand">MedBloc - Patient</a>
         </div>
         <ul class="nav navbar-nav navbar-right">
-            <li><a ng-click="dismiss()" ng-show="notiIcon"><span class="glyphicon glyphicon-exclamation-sign" style="color: red"
-                        ;></span></a></li>
-            <li><a id="name"><span class="glyphicon glyphicon-user"></span> {{myArray.first}} {{myArray.last}}</a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+            <li>
+                <a ng-click="dismiss()" ng-show="notiIcon">
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color: red" ;></span>
+                </a>
+            </li>
+            <li>
+                <a id="name">
+                    <span class="glyphicon glyphicon-user"></span> {{myArray.first}} {{myArray.last}}</a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="glyphicon glyphicon-log-out"></span> Log out</a>
+            </li>
         </ul>
     </div>
 </nav>
@@ -18,7 +27,7 @@
 <!-- Tab Nav Bar-->
 <ul class="nav nav-tabs">
     <li class="active">
-        <a data-toggle="tab" href="#keys" target="_self">Keys</a>
+        <a data-toggle="tab" href="#keys" target="_self">My Details</a>
     </li>
     <li>
         <a data-toggle="tab" href="#records" ng-click="setTab('MyRecords')" target="_self">My Records</a>
@@ -28,6 +37,9 @@
     </li>
     <li>
         <a data-toggle="tab" href="#sharedKeys" ng-click="setTab('MySharedKeys')" target="_self">My Shared Keys</a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#healthProvider" ng-click="setTab('HealthProvider')" target="_self">Health Provider Directory</a>
     </li>
 </ul>
 
@@ -46,7 +58,9 @@
                 <button type="button" class="btn btn-default" ng-click="login()">Login</button>
             </div> -->
         <div class="container-fluid" id="patientTable">
-            <button type="button" class="btn btn-default refreshBtn" ng-click="login()"><span class="glyphicon glyphicon-repeat"></span></button>
+            <button type="button" class="btn btn-default refreshBtn" ng-click="login()">
+                <span class="glyphicon glyphicon-repeat"></span>
+            </button>
 
             <table class="table table-striped" style="width: 100%;">
                 <tr>
@@ -76,7 +90,9 @@
 
             <div class="col-sm-3">
                 <div class="container-fluid">
-                    <button type="button" class="btn btn-default refreshBtn" ng-click="getAllRecords()"><span class="glyphicon glyphicon-repeat"></span></button>
+                    <button type="button" class="btn btn-default refreshBtn" ng-click="getAllRecords()">
+                        <span class="glyphicon glyphicon-repeat"></span>
+                    </button>
 
                     <ul class="list-group">
                         <li class="list-group-item">
@@ -152,8 +168,7 @@
                             </div>
                             <div class="card-content-wrapper">
                                 <p class="header">Health provider:</p>
-                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1,
-                                    records.healthProvider.length);}}
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
                                 </p>
                             </div>
                             <div class="card-content-wrapper">
@@ -196,8 +211,7 @@
                             </div>
                             <div class="card-content-wrapper">
                                 <p class="header">Health provider:</p>
-                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1,
-                                    records.healthProvider.length);}}
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
                                 </p>
                             </div>
                             <div class="card-content-wrapper">
@@ -240,8 +254,7 @@
                             </div>
                             <div class="card-content-wrapper">
                                 <p class="header">Health provider:</p>
-                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1,
-                                    records.healthProvider.length);}}
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
                                 </p>
                             </div>
                             <div class="card-content-wrapper">
@@ -280,8 +293,7 @@
                             </div>
                             <div class="card-content-wrapper">
                                 <p class="header">Health provider:</p>
-                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1,
-                                    records.healthProvider.length);}}
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
                                 </p>
                             </div>
                             <div class="card-content-wrapper">
@@ -325,8 +337,7 @@
                             </div>
                             <div class="card-content-wrapper">
                                 <p class="header">Health provider:</p>
-                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1,
-                                    records.healthProvider.length);}}
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
                                 </p>
                             </div>
                             <div class="card-content-wrapper">
@@ -373,8 +384,7 @@
                             </div>
                             <div class="card-content-wrapper">
                                 <p class="header">Health provider:</p>
-                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1,
-                                    records.healthProvider.length);}}
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
                                 </p>
                             </div>
                             <div class="card-content-wrapper">
@@ -405,7 +415,9 @@
     <div id="notifications" class="tab-pane fade">
         <h1>Notifications</h1>
         <div class="container-fluid" id="notificationsTable">
-            <button type="button" class="btn btn-default refreshBtn" ng-click="refresh()"><span class="glyphicon glyphicon-repeat"></span></button>
+            <button type="button" class="btn btn-default refreshBtn" ng-click="refresh()">
+                <span class="glyphicon glyphicon-repeat"></span>
+            </button>
             <table class="table table-striped" style="width: 100%;">
                 <tr>
                     <th>HID</th>
@@ -432,7 +444,9 @@
                 <input type="text" ng-model="hid" />
                 <button type="button" class="btn btn-default" ng-click="shareKey()">Share</button>
             </p>
-            <button type="button" class="btn btn-default refreshBtn" ng-click="viewKeys()"><span class="glyphicon glyphicon-repeat"></span></button>
+            <button type="button" class="btn btn-default refreshBtn" ng-click="viewKeys()">
+                <span class="glyphicon glyphicon-repeat"></span>
+            </button>
             <table class="table table-striped" style="width: 100%;">
                 <tr>
                     <th>ID</th>
@@ -449,6 +463,29 @@
                     <td>
                         <button type="button" class="btn btn-default" ng-click="revokeKey($index)">Revoke</button>
                     </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="healthProvider" class="tab-pane fade">
+        <h2>Health Provider Directory</h2>
+
+        <div class="container-fluid" id="hpTable">
+            <button type="button" class="btn btn-default refreshBtn" ng-click="getHPs()"><span class="glyphicon glyphicon-repeat"></button>
+
+            <table class="table table-striped" style="width: 100%;">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                </tr>
+                <tr ng-repeat="row in hpDir">
+                    <td>{{row.id}}</td>
+                    <td>{{row.name}}</td>
+                    <td>{{row.phone}}</td>
+                    <td>{{row.address}}</td>
                 </tr>
             </table>
         </div>

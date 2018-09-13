@@ -134,6 +134,7 @@ app.controller("myCtrl", function(
   $scope.myArray = myService.details;
 
   $scope.hpArray = [];
+  $scope.hpDir = [];
   $scope.notiTable = [];
 
   $scope.login = function() {
@@ -145,6 +146,15 @@ app.controller("myCtrl", function(
       _login = true;
     }, _error);
   };
+
+  $scope.getHPs = function() {
+    var endpoint = apiBaseURL + "HealthProvider"
+    $scope.endpoint = endpoint
+
+    $http.get(endpoint).then(function (response) {
+        $scope.hpDir = response.data
+    }, _error)
+  }
 
   $scope.shareKey = function(index) {
     if (!isCredsProvided()) {
@@ -245,6 +255,8 @@ app.controller("myCtrl", function(
       $scope.getAllRecords();
     } else if (tag === "MySharedKeys") {
       $scope.viewKeys();
+    } else if (tag === "HealthProvider") {
+      $scope.getHPs();
     }
   };
 
