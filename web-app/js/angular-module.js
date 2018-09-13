@@ -72,7 +72,12 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
             var endpoint = apiBaseURL + tag + "/" + id
 
-            $http.delete(endpoint).then(_success, _error)
+            $http.delete(endpoint).then(function(response) {
+                $scope.viewData(response.data);
+                alert("Operation successful");
+                $scope.getPatients()
+                $scope.getData("HealthProvider")
+            }, _error)
         } else {
             alert("Deletion averted")
         }
@@ -165,6 +170,10 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
             }
         }).then(function (modal) {
             modal.element.modal();
+            modal.close.then(function (result) {
+                $scope.getPatients()
+                $scope.getData("HealthProvider")
+            })
 
         });
     }

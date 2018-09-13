@@ -1,8 +1,8 @@
 var app = angular.module('myApp');
 
 app.controller('cryptoController', [
-  '$scope', '$element', 'patientKey', 'privateKey', 
-  function($scope, $element, patientKey, privateKey) {
+  '$scope', '$element', 'patientKey', 'privateKey', 'close', 
+  function($scope, $element, patientKey, privateKey, close) {
 
   $scope.patientKey = patientKey;
   $scope.privateKey = privateKey;
