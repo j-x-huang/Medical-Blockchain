@@ -12,249 +12,489 @@
  * limitations under the License.
  */
 
-'use strict';
+"use strict";
 /**
  * Write the unit tests for your transction processor functions here
  */
 
-const AdminConnection = require('composer-admin').AdminConnection;
-const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
-const { BusinessNetworkDefinition, CertificateUtil, IdCard } = require('composer-common');
-const path = require('path');
+const AdminConnection = require("composer-admin").AdminConnection;
+const BusinessNetworkConnection = require("composer-client")
+  .BusinessNetworkConnection;
+const {
+  BusinessNetworkDefinition,
+  CertificateUtil,
+  IdCard
+} = require("composer-common");
+const path = require("path");
 
-const chai = require('chai');
+const chai = require("chai");
+const encryption = require("./encryption");
 chai.should();
-chai.use(require('chai-as-promised'));
+chai.use(require("chai-as-promised"));
 
-const namespace = 'nz.ac.auckland';
-const assetType = 'Patient';
-const assetNS = namespace + '.' + assetType;
+const namespace = "nz.ac.auckland";
+const assetType = "Patient";
+const assetNS = namespace + "." + assetType;
 // const participantType = 'HealthProvider';
 // const participantNS = namespace + '.' + participantType;
-const healthProviderParticipantType = 'HealthProvider';
-const healthProviderParticipantNS = namespace + '.' + healthProviderParticipantType;
-const viewerParticipantType = 'Viewer';
-const viewerParticipantNS = namespace + '.' + viewerParticipantType;
+const healthProviderParticipantType = "HealthProvider";
+const healthProviderParticipantNS =
+  namespace + "." + healthProviderParticipantType;
+const patientParticipantType = "Patient";
+const patientParticipantNS = namespace + "." + patientParticipantType;
+const allergyRecordAssetType = "Allergy";
+const allergyRecordAssetNS = namespace + "." + allergyRecordAssetType;
+const requestRecordSharingTransactionType = "RequestRecordSharing";
+const requestRecordSharingTransactionNS =
+  namespace + "." + "RequestRecordSharing";
+const keySize = 512;
 
-describe('#' + namespace, () => {
-    // In-memory card store for testing so cards are not persisted to the file system
-    const cardStore = require('composer-common').NetworkCardStoreManager.getCardStore( { type: 'composer-wallet-inmemory' } );
+var nshPublicKey = "";
+var nshPrivateKey = "";
+var gmcPublicKey = "";
+var gmcPrivateKey = "";
+var p1PublicKey = "";
+var p1PrivateKey = "";
+var p2PublicKey = "";
+var p2PrivateKey = "";
 
-    // Embedded connection used for local testing
-    const connectionProfile = {
-        name: 'embedded',
-        'x-type': 'embedded'
+describe("#" + namespace, () => {
+  // In-memory card store for testing so cards are not persisted to the file system
+  const cardStore = require("composer-common").NetworkCardStoreManager.getCardStore(
+    { type: "composer-wallet-inmemory" }
+  );
+
+  // Embedded connection used for local testing
+  const connectionProfile = {
+    name: "embedded",
+    "x-type": "embedded"
+  };
+
+  // Name of the business network card containing the administrative identity for the business network
+  const adminCardName = "admin";
+
+  // Admin connection to the blockchain, used to deploy the business network
+  let adminConnection;
+
+  // This is the business network connection the tests will use.
+  let businessNetworkConnection;
+
+  // This is the factory for creating instances of types.
+  let factory;
+
+  // These are the identities for Alice and Bob.
+  const nshCardName = "nsh";
+  const gmcCardName = "gmc";
+  const p1CardName = "ea";
+  const p2CardName = "mmc";
+
+  // These are a list of receieved events.
+  let events;
+
+  let businessNetworkName;
+
+  before(async () => {
+    // Generate certificates for use with the embedded connection
+    const credentials = CertificateUtil.generate({ commonName: "admin" });
+
+    // Identity used with the admin connection to deploy business networks
+    const deployerMetadata = {
+      version: 1,
+      userName: "PeerAdmin",
+      roles: ["PeerAdmin", "ChannelAdmin"]
     };
+    const deployerCard = new IdCard(deployerMetadata, connectionProfile);
+    deployerCard.setCredentials(credentials);
+    const deployerCardName = "PeerAdmin";
 
-    // Name of the business network card containing the administrative identity for the business network
-    const adminCardName = 'admin';
+    adminConnection = new AdminConnection({ cardStore: cardStore });
 
-    // Admin connection to the blockchain, used to deploy the business network
-    let adminConnection;
+    await adminConnection.importCard(deployerCardName, deployerCard);
+    await adminConnection.connect(deployerCardName);
+  });
 
-    // This is the business network connection the tests will use.
-    let businessNetworkConnection;
+  /**
+   *
+   * @param {String} cardName The card name to use for this identity
+   * @param {Object} identity The identity details
+   */
+  async function importCardForIdentity(cardName, identity) {
+    const metadata = {
+      userName: identity.userID,
+      version: 1,
+      enrollmentSecret: identity.userSecret,
+      businessNetwork: businessNetworkName
+    };
+    const card = new IdCard(metadata, connectionProfile);
+    await adminConnection.importCard(cardName, card);
+  }
 
-    // This is the factory for creating instances of types.
-    let factory;
+  // This is called before each test is executed.
+  beforeEach(async () => {
+    // Generate a business network definition from the project directory.
+    let businessNetworkDefinition = await BusinessNetworkDefinition.fromDirectory(
+      path.resolve(__dirname, "..")
+    );
+    businessNetworkName = businessNetworkDefinition.getName();
+    await adminConnection.install(businessNetworkDefinition);
+    const startOptions = {
+      networkAdmins: [
+        {
+          userName: "admin",
+          enrollmentSecret: "adminpw"
+        }
+      ]
+    };
+    const adminCards = await adminConnection.start(
+      businessNetworkName,
+      businessNetworkDefinition.getVersion(),
+      startOptions
+    );
+    await adminConnection.importCard(adminCardName, adminCards.get("admin"));
 
-    // These are the identities for Alice and Bob.
-    const aliceCardName = 'alice';
-    const bobCardName = 'bob';
-    const trudyCardName = 'trudy';
-
-    // These are a list of receieved events.
-    let events;
-
-    let businessNetworkName;
-
-    before(async () => {
-        // Generate certificates for use with the embedded connection
-        const credentials = CertificateUtil.generate({ commonName: 'admin' });
-
-        // Identity used with the admin connection to deploy business networks
-        const deployerMetadata = {
-            version: 1,
-            userName: 'PeerAdmin',
-            roles: [ 'PeerAdmin', 'ChannelAdmin' ]
-        };
-        const deployerCard = new IdCard(deployerMetadata, connectionProfile);
-        deployerCard.setCredentials(credentials);
-        const deployerCardName = 'PeerAdmin';
-
-        adminConnection = new AdminConnection({ cardStore: cardStore });
-
-        await adminConnection.importCard(deployerCardName, deployerCard);
-        await adminConnection.connect(deployerCardName);
+    // Create and establish a business network connection
+    businessNetworkConnection = new BusinessNetworkConnection({
+      cardStore: cardStore
     });
-
-    /**
-     *
-     * @param {String} cardName The card name to use for this identity
-     * @param {Object} identity The identity details
-     */
-    async function importCardForIdentity(cardName, identity) {
-        const metadata = {
-            userName: identity.userID,
-            version: 1,
-            enrollmentSecret: identity.userSecret,
-            businessNetwork: businessNetworkName
-        };
-        const card = new IdCard(metadata, connectionProfile);
-        await adminConnection.importCard(cardName, card);
-    }
-
-    // This is called before each test is executed.
-    beforeEach(async () => {
-        // Generate a business network definition from the project directory.
-        let businessNetworkDefinition = await BusinessNetworkDefinition.fromDirectory(path.resolve(__dirname, '..'));
-        businessNetworkName = businessNetworkDefinition.getName();
-        await adminConnection.install(businessNetworkDefinition);
-        const startOptions = {
-            networkAdmins: [
-                {
-                    userName: 'admin',
-                    enrollmentSecret: 'adminpw'
-                }
-            ]
-        };
-        const adminCards = await adminConnection.start(businessNetworkName, businessNetworkDefinition.getVersion(), startOptions);
-        await adminConnection.importCard(adminCardName, adminCards.get('admin'));
-
-        // Create and establish a business network connection
-        businessNetworkConnection = new BusinessNetworkConnection({ cardStore: cardStore });
-        events = [];
-        businessNetworkConnection.on('event', event => {
-            events.push(event);
-        });
-        await businessNetworkConnection.connect(adminCardName);
-
-        // Get the factory for the business network.
-        factory = businessNetworkConnection.getBusinessNetwork().getFactory();
-
-        const participantRegistry = await businessNetworkConnection.getParticipantRegistry(healthProviderParticipantNS);
-        // Create the participants.
-        const alice = factory.newResource(namespace, healthProviderParticipantType, 'H1');
-        alice.name = 'Alice';
-        alice.phone = '021765677';
-        alice.address = '23 one street';
-
-        const bob = factory.newResource(namespace, healthProviderParticipantType, 'H2');
-        bob.name = 'Bob';
-        bob.phone = '022687543';
-        bob.address = '12 second drive';
-
-        participantRegistry.addAll([alice, bob]);
-
-        const assetRegistry = await businessNetworkConnection.getAssetRegistry(assetNS);
-        // Create the assets.
-        const patient1 = factory.newResource(namespace, assetType, 'ab6d8296-d3c7-4fef-9215-40b156db67ac');
-        patient1.birthDate = '19/4/1994';
-        patient1.ird = '999-55-1956';
-        patient1.drivers = 'S99951024';
-        patient1.passport = 'X10571629X';
-        patient1.prefix = 'Mr.';
-        patient1.first = 'Emmanuel';
-        patient1.last = 'Adams';
-        patient1.race = 'white';
-        patient1.ethinicity = 'irish';
-        patient1.gender = 'Male';
-        patient1.birthplace = 'Winchendon MA US';
-        patient1.address = '53 Kristopher Springs Suite 264 Whitman MA 02382 US';
-        patient1.record = '';
-
-        // patient1.owner = factory.newRelationship(namespace, healthProviderParticipantType, 'alice@email.com');
-
-        const patient2 = factory.newResource(namespace, assetType, '4bb1c058-5218-42e0-b53e-07c1f5899ad1');
-        patient2.birthDate = '1/6/1985';
-        patient2.ird = '999-98-8389';
-        patient2.drivers = 'S99933988';
-        patient2.prefix = 'Ms.';
-        patient2.first = 'Martha';
-        patient2.last = 'McCullough';
-        patient2.marital = 'S';
-        patient2.race = 'asian';
-        patient2.ethinicity = 'chinese';
-        patient2.gender = 'Female';
-        patient2.birthplace = 'Boston MA US';
-        patient2.address = '7 Wiley Points Newburyport MA 01951 US';
-        patient2.record = '';
-
-        // patient2.owner = factory.newRelationship(namespace, healthProviderParticipantType, 'bob@email.com');
-
-        assetRegistry.addAll([patient1, patient2]);
-
-        // Issue the identities.
-        let identity = await businessNetworkConnection.issueIdentity(healthProviderParticipantNS + '#H1', 'alice1');
-        await importCardForIdentity(aliceCardName, identity);
-        identity = await businessNetworkConnection.issueIdentity(healthProviderParticipantNS + '#H2', 'bob1');
-        await importCardForIdentity(bobCardName, identity);
+    events = [];
+    businessNetworkConnection.on("event", event => {
+      events.push(event);
     });
+    await businessNetworkConnection.connect(adminCardName);
 
-    /**
-     * Reconnect using a different identity.
-     * @param {String} cardName The name of the card for the identity to use
-     */
-    async function useIdentity(cardName) {
-        await businessNetworkConnection.disconnect();
-        businessNetworkConnection = new BusinessNetworkConnection({ cardStore: cardStore });
-        events = [];
-        businessNetworkConnection.on('event', (event) => {
-            events.push(event);
-        });
-        await businessNetworkConnection.connect(cardName);
-        factory = businessNetworkConnection.getBusinessNetwork().getFactory();
-    }
+    // Get the factory for the business network.
+    factory = businessNetworkConnection.getBusinessNetwork().getFactory();
 
-    it('Alice can read all of the patients', async () => {
-        // Use the identity for Alice.
-        await useIdentity(aliceCardName);
-        const assetRegistry = await businessNetworkConnection.getAssetRegistry(assetNS);
-        const assets = await assetRegistry.getAll();
+    const participantRegistryHP = await businessNetworkConnection.getParticipantRegistry(
+      healthProviderParticipantNS
+    );
+    // Create the participants.
+    const nsh = factory.newResource(
+      namespace,
+      healthProviderParticipantType,
+      "H1"
+    );
+    nsh.name = "North Shore Hospital";
+    nsh.phone = "09-486 8900";
+    nsh.address = "124 Shakespeare Rd, Takapuna, Auckland 0620";
 
-        // Validate the assets.
-        assets.should.have.lengthOf(2);
-        const asset1 = assets[0];
-        asset1.pid.should.equal('4bb1c058-5218-42e0-b53e-07c1f5899ad1');
-        asset1.first.should.equal('Martha');
-        asset1.last.should.equal('McCullough');
-        asset1.race.should.equal('asian');
-        asset1.ethinicity.should.equal('chinese');
-        asset1.gender.should.equal('Female');
-        const asset2 = assets[1];
-        asset2.pid.should.equal('ab6d8296-d3c7-4fef-9215-40b156db67ac');
-        asset2.first.should.equal('Emmanuel');
-        asset2.last.should.equal('Adams');
-        asset2.race.should.equal('white');
-        asset2.ethinicity.should.equal('irish');
-        asset2.gender.should.equal('Male');
+    var nshKeys = encryption.generateRSAkeys(keySize);
+    nsh.publicKey = nshKeys.publicKey;
+    nshPublicKey = nshKeys.publicKey;
+    nshPrivateKey = nshKeys.privateKey;
+
+    const gmc = factory.newResource(
+      namespace,
+      healthProviderParticipantType,
+      "H2"
+    );
+    gmc.name = "Glenfield Medical Centre";
+    gmc.phone = "09-444 5911";
+    gmc.address = "452 Glenfield Road, Glenfield, Auckland 0629";
+
+    var gmcKeys = encryption.generateRSAkeys(keySize);
+    gmc.publicKey = gmcKeys.publicKey;
+    gmcPublicKey = gmcKeys.publicKey;
+    gmcPrivateKey = gmcKeys.privateKey;
+
+    participantRegistryHP.addAll([nsh, gmc]);
+
+    const participantRegistryPatient = await businessNetworkConnection.getParticipantRegistry(
+      patientParticipantNS
+    );
+
+    const patient1 = factory.newResource(
+      namespace,
+      patientParticipantType,
+      "P1"
+    );
+    patient1.birthDate = "19/4/1994";
+    patient1.prefix = "Mr.";
+    patient1.first = "Emmanuel";
+    patient1.last = "Adams";
+    patient1.ethinicity = "irish";
+    patient1.gender = "Male";
+    patient1.address = "53 Kristopher Springs Suite 264 Whitman MA 02382 US";
+
+    var p1Keys = encryption.generateRSAkeys(keySize);
+    patient1.publicKey = p1Keys.publicKey;
+    p1PublicKey = p1Keys.publicKey;
+    p1PrivateKey = p1Keys.privateKey;
+
+    patient1.consentedHPs = [];
+
+    const patient2 = factory.newResource(
+      namespace,
+      patientParticipantType,
+      "P2"
+    );
+    patient2.birthDate = "1/6/1985";
+    patient2.prefix = "Ms.";
+    patient2.first = "Martha";
+    patient2.last = "McCullough";
+    patient2.ethinicity = "chinese";
+    patient2.gender = "Female";
+    patient2.address = "7 Wiley Points Newburyport MA 01951 US";
+
+    var p2Keys = encryption.generateRSAkeys(keySize);
+    patient2.publicKey = p2Keys.publicKey;
+    p2PublicKey = p2Keys.publicKey;
+    p2PrivateKey = p2Keys.privateKey;
+
+    patient2.consentedHPs = [];
+
+    participantRegistryPatient.addAll([patient1, patient2]);
+
+    // Issue the identities.
+    let identity = await businessNetworkConnection.issueIdentity(
+      healthProviderParticipantNS + "#H1",
+      "NSH"
+    );
+    await importCardForIdentity(nshCardName, identity);
+    identity = await businessNetworkConnection.issueIdentity(
+      healthProviderParticipantNS + "#H2",
+      "GMC"
+    );
+    await importCardForIdentity(gmcCardName, identity);
+    identity = await businessNetworkConnection.issueIdentity(
+      patientParticipantNS + "#P1",
+      "EmmanuelAdams"
+    );
+    await importCardForIdentity(p1CardName, identity);
+    identity = await businessNetworkConnection.issueIdentity(
+      patientParticipantNS + "#P2",
+      "MarthaMcCullough"
+    );
+    await importCardForIdentity(p2CardName, identity);
+  });
+
+  /**
+   * Reconnect using a different identity.
+   * @param {String} cardName The name of the card for the identity to use
+   */
+  async function useIdentity(cardName) {
+    await businessNetworkConnection.disconnect();
+    businessNetworkConnection = new BusinessNetworkConnection({
+      cardStore: cardStore
     });
-
-    it('Bob can read all of the patients', async () => {
-        // Use the identity for Bob.
-        await useIdentity(bobCardName);
-        const assetRegistry = await businessNetworkConnection.getAssetRegistry(assetNS);
-        const assets = await assetRegistry.getAll();
-
-        // Validate the assets.
-        assets.should.have.lengthOf(2);
-        const asset1 = assets[0];
-        asset1.pid.should.equal('4bb1c058-5218-42e0-b53e-07c1f5899ad1');
-        asset1.first.should.equal('Martha');
-        asset1.last.should.equal('McCullough');
-        asset1.race.should.equal('asian');
-        asset1.ethinicity.should.equal('chinese');
-        asset1.gender.should.equal('Female');
-        const asset2 = assets[1];
-        asset2.pid.should.equal('ab6d8296-d3c7-4fef-9215-40b156db67ac');
-        asset2.first.should.equal('Emmanuel');
-        asset2.last.should.equal('Adams');
-        asset2.race.should.equal('white');
-        asset2.ethinicity.should.equal('irish');
-        asset2.gender.should.equal('Male');
+    events = [];
+    businessNetworkConnection.on("event", event => {
+      events.push(event);
     });
+    await businessNetworkConnection.connect(cardName);
+    factory = businessNetworkConnection.getBusinessNetwork().getFactory();
+  }
 
-    /* it('Alice can add assets that she owns', async () => {
+  it("A patient can see all healthcare providers", async () => {
+    // Use the identity for Emmanuel Adams.
+    await useIdentity(p1CardName);
+    const participantRegistry = await businessNetworkConnection.getParticipantRegistry(
+      healthProviderParticipantNS
+    );
+    const participants = await participantRegistry.getAll();
+
+    // Validate the participants.
+    participants.should.have.lengthOf(2);
+    const participant1 = participants[0];
+    participant1.id.should.equal("H1");
+    participant1.name.should.equal("North Shore Hospital");
+    participant1.phone.should.equal("09-486 8900");
+    participant1.address.should.equal(
+      "124 Shakespeare Rd, Takapuna, Auckland 0620"
+    );
+    participant1.publicKey.should.equal(nshPublicKey);
+    const participant2 = participants[1];
+    participant2.id.should.equal("H2");
+    participant2.name.should.equal("Glenfield Medical Centre");
+    participant2.phone.should.equal("09-444 5911");
+    participant2.address.should.equal(
+      "452 Glenfield Road, Glenfield, Auckland 0629"
+    );
+    participant2.publicKey.should.equal(gmcPublicKey);
+  });
+
+  it("A patient can only read own patient data", async () => {
+    // Use the identity for Emmanuel Adams.
+    await useIdentity(p1CardName);
+    const participantRegistry = await businessNetworkConnection.getParticipantRegistry(
+      patientParticipantNS
+    );
+    const participants = await participantRegistry.getAll();
+
+    // Validate the participants.
+    participants.should.have.lengthOf(1);
+    const participant = participants[0];
+    participant.id.should.equal("P1");
+    participant.birthDate.should.equal("19/4/1994");
+    participant.prefix.should.equal("Mr.");
+    participant.first.should.equal("Emmanuel");
+    participant.last.should.equal("Adams");
+    participant.ethinicity.should.equal("irish");
+    participant.gender.should.equal("Male");
+    participant.address.should.equal(
+      "53 Kristopher Springs Suite 264 Whitman MA 02382 US"
+    );
+    participant.publicKey.should.equal(p1PublicKey);
+  });
+
+  it("A patient cannot create new patients", async () => {
+    // Use the identity for Emmanuel Adams.
+    await useIdentity(p1CardName);
+    const participantRegistry = await businessNetworkConnection.getParticipantRegistry(
+      patientParticipantNS
+    );
+
+    const newPatient = factory.newResource(
+      namespace,
+      patientParticipantType,
+      "P2"
+    );
+    newPatient.birthDate = "1/6/1985";
+    newPatient.prefix = "Ms.";
+    newPatient.first = "Martha";
+    newPatient.last = "McCullough";
+    newPatient.ethinicity = "chinese";
+    newPatient.gender = "Female";
+    newPatient.address = "7 Wiley Points Newburyport MA 01951 US";
+
+    var npKeys = encryption.generateRSAkeys(keySize);
+    newPatient.publicKey = npKeys.publicKey;
+
+    newPatient.consentedHPs = [];
+
+    // Validate the participants.
+    participantRegistry
+      .add(newPatient)
+      .should.be.rejectedWith(/does not have .* access to resource/);
+  });
+
+  it("A patient cannot add health records", async () => {
+    // Use the identity for Alice.
+    await useIdentity(p2CardName);
+    const assetRegistry = await businessNetworkConnection.getAssetRegistry(
+      allergyRecordAssetNS
+    );
+
+    const record1 = factory.newResource(
+      namespace,
+      allergyRecordAssetType,
+      "R1"
+    );
+    record1.record_date = "10/11/2007";
+    record1.record_code = "371883000";
+    record1.healthProvider = factory.newRelationship(
+      namespace,
+      healthProviderParticipantType,
+      "H1"
+    );
+    record1.patient = factory.newRelationship(
+      namespace,
+      patientParticipantType,
+      "P2"
+    );
+    record1.allergy_start = "11/03/1995";
+    record1.allergy_stop = "10/11/2007";
+    record1.allergy_code = "425525006";
+    record1.allergy_desc = "Allergy to dairy product";
+
+    assetRegistry
+      .add(record1)
+      .should.be.rejectedWith(/does not have .* access to resource/);
+  });
+
+  it("A healthcare provider cannot view unconsented patients", async () => {
+    // Use the identity for Glenfield Medical Center.
+    await useIdentity(gmcCardName);
+    const participantRegistry = await businessNetworkConnection.getParticipantRegistry(
+      patientParticipantNS
+    );
+    const participants = await participantRegistry.getAll();
+
+    // Validate the participants.
+    participants.should.have.lengthOf(0);
+  });
+
+  it("A healthcare provider can view other healthcare providers", async () => {
+    // Use the identity for Glenfield Medical Center.
+    await useIdentity(gmcCardName);
+    const participantRegistry = await businessNetworkConnection.getParticipantRegistry(
+      healthProviderParticipantNS
+    );
+    const participants = await participantRegistry.getAll();
+
+    // Validate the participants.
+    participants.should.have.lengthOf(2);
+    const participant1 = participants[0];
+    participant1.id.should.equal("H1");
+    participant1.name.should.equal("North Shore Hospital");
+    participant1.phone.should.equal("09-486 8900");
+    participant1.address.should.equal(
+      "124 Shakespeare Rd, Takapuna, Auckland 0620"
+    );
+    participant1.publicKey.should.equal(nshPublicKey);
+    const participant2 = participants[1];
+    participant2.id.should.equal("H2");
+    participant2.name.should.equal("Glenfield Medical Centre");
+    participant2.phone.should.equal("09-444 5911");
+    participant2.address.should.equal(
+      "452 Glenfield Road, Glenfield, Auckland 0629"
+    );
+    participant2.publicKey.should.equal(gmcPublicKey);
+  });
+
+  // it('A healthcare provider can send a record sharing request to a patient', async () => {
+  //     // Use the identity for North Shore Hosiptal.
+  //     await useIdentity(nshCardName);
+
+  //     // Submit the transaction.
+  //     const transaction = factory.newTransaction(namespace, requestRecordSharingTransactionType);
+  //     transaction.healthProvider = factory.newRelationship(namespace, healthProviderParticipantType, 'H1');
+  //     transaction.patient = factory.newRelationship(namespace, patientParticipantType, 'P2');
+  //     await businessNetworkConnection.submitTransaction(transaction);
+
+  //     // Validate the event.
+  //     events.should.have.lengthOf(1);
+  //     const event = events[0];
+  //     event.eventId.should.be.a('string');
+  //     event.timestamp.should.be.an.instanceOf(Date);
+  //     event.healthProvider.should.equal(factory.newRelationship(namespace, healthProviderParticipantType, 'H1'));
+  //     event.patient.should.equal(factory.newRelationship(namespace, patientParticipantType, 'P2'));
+
+  //     // const assetRegistry = await businessNetworkConnection.getTransactionRegistry(requestRecordSharingTransactionNS);
+  //     // const assets = await assetRegistry.getAll();
+
+  //     // // Validate that the transaction is made.
+  //     // assets.should.have.lengthOf(1);
+  //     // const asset = assets[0];
+  //     // asset.healthProvider.should.equal(factory.newRelationship(namespace, healthProviderParticipantType, 'H1'));
+  //     // asset.patient.should.equal(factory.newRelationship(namespace, patientParticipantType, 'P2'));
+  // });
+
+  // it('Bob can read all of the patients', async () => {
+  //     // Use the identity for Bob.
+  //     await useIdentity(bobCardName);
+  //     const assetRegistry = await businessNetworkConnection.getAssetRegistry(assetNS);
+  //     const assets = await assetRegistry.getAll();
+
+  //     // Validate the assets.
+  //     assets.should.have.lengthOf(2);
+  //     const asset1 = assets[0];
+  //     asset1.pid.should.equal('4bb1c058-5218-42e0-b53e-07c1f5899ad1');
+  //     asset1.first.should.equal('Martha');
+  //     asset1.last.should.equal('McCullough');
+  //     asset1.race.should.equal('asian');
+  //     asset1.ethinicity.should.equal('chinese');
+  //     asset1.gender.should.equal('Female');
+  //     const asset2 = assets[1];
+  //     asset2.pid.should.equal('ab6d8296-d3c7-4fef-9215-40b156db67ac');
+  //     asset2.first.should.equal('Emmanuel');
+  //     asset2.last.should.equal('Adams');
+  //     asset2.race.should.equal('white');
+  //     asset2.ethinicity.should.equal('irish');
+  //     asset2.gender.should.equal('Male');
+  // });
+
+  /* it('Alice can add assets that she owns', async () => {
         // Use the identity for Alice.
         await useIdentity(aliceCardName);
 
@@ -505,5 +745,4 @@ describe('#' + namespace, () => {
         transaction.newValue = '60';
         businessNetworkConnection.submitTransaction(transaction).should.be.rejectedWith(/does not have .* access to resource/);
     });*/
-
 });

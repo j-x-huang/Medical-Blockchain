@@ -31,9 +31,30 @@
     "eslint": "latest",
     "nyc": "latest",
     "mkdirp": "latest",
-    "mocha": "latest"
+    "mocha": "latest",
+    "jsencrypt": "latest",
+    "sjcl": "latest",
+    "crypto-js": "latest",
+    "navigator": "latest",
+    "window": "latest",
+    "node-jsencrypt": "latest"
   },
   "dependencies": {
     "angular-modal-service": "^0.13.0"
+  },
+  "eslintConfig": {
+    "rules": {
+      "require-jsdoc": "off",
+      "no-trailing-spaces": "off",
+      "valid-jsdoc": "off",
+      "quotes": "off",
+      "no-unused-vars": "off",
+      "no-undef": "off",
+      "indent": "off"
+    },
+    "parserOptions": {
+      "sourceType": "module",
+      "allowImportExportEverywhere": true
+    }
   }
 }
