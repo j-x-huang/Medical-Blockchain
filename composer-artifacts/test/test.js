@@ -46,7 +46,16 @@ const allergyRecordAssetType = "Allergy";
 const allergyRecordAssetNS = namespace + "." + allergyRecordAssetType;
 const requestRecordSharingTransactionType = "RequestRecordSharing";
 const requestRecordSharingTransactionNS =
-  namespace + "." + "RequestRecordSharing";
+  namespace + "." + requestRecordSharingTransactionType;
+const recordSharingTransactionType = "ShareKey";
+const recordSharingTransactionNS =
+  namespace + "." + recordSharingTransactionType;
+const patientKeyAssetType = "PatientKey";
+const patientKeyAssetNS = namespace + "." + patientKeyAssetType;
+const revokeMedicalRecordsSharingTransactionType =
+  "RevokeMedicalRecordsSharing";
+const revokeMedicalRecordsSharingTransactionNS =
+  namespace + "." + revokeMedicalRecordsSharingTransactionType;
 const keySize = 512;
 
 var nshPublicKey = "";
@@ -55,8 +64,10 @@ var gmcPublicKey = "";
 var gmcPrivateKey = "";
 var p1PublicKey = "";
 var p1PrivateKey = "";
+var p1PatientKey = "";
 var p2PublicKey = "";
 var p2PrivateKey = "";
+var p2PatientKey = "";
 
 describe("#" + namespace, () => {
   // In-memory card store for testing so cards are not persisted to the file system
@@ -197,7 +208,7 @@ describe("#" + namespace, () => {
     gmcPublicKey = gmcKeys.publicKey;
     gmcPrivateKey = gmcKeys.privateKey;
 
-    participantRegistryHP.addAll([nsh, gmc]);
+    await participantRegistryHP.addAll([nsh, gmc]);
 
     const participantRegistryPatient = await businessNetworkConnection.getParticipantRegistry(
       patientParticipantNS
@@ -215,13 +226,14 @@ describe("#" + namespace, () => {
     patient1.ethinicity = "irish";
     patient1.gender = "Male";
     patient1.address = "53 Kristopher Springs Suite 264 Whitman MA 02382 US";
+    patient1.consentedHPs = [];
 
     var p1Keys = encryption.generateRSAkeys(keySize);
     patient1.publicKey = p1Keys.publicKey;
     p1PublicKey = p1Keys.publicKey;
     p1PrivateKey = p1Keys.privateKey;
 
-    patient1.consentedHPs = [];
+    p1PatientKey = encryption.generateRandomKey();
 
     const patient2 = factory.newResource(
       namespace,
@@ -235,15 +247,16 @@ describe("#" + namespace, () => {
     patient2.ethinicity = "chinese";
     patient2.gender = "Female";
     patient2.address = "7 Wiley Points Newburyport MA 01951 US";
+    patient2.consentedHPs = [];
 
     var p2Keys = encryption.generateRSAkeys(keySize);
     patient2.publicKey = p2Keys.publicKey;
     p2PublicKey = p2Keys.publicKey;
     p2PrivateKey = p2Keys.privateKey;
 
-    patient2.consentedHPs = [];
+    p2PatientKey = encryption.generateRandomKey();
 
-    participantRegistryPatient.addAll([patient1, patient2]);
+    await participantRegistryPatient.addAll([patient1, patient2]);
 
     // Issue the identities.
     let identity = await businessNetworkConnection.issueIdentity(
@@ -285,7 +298,7 @@ describe("#" + namespace, () => {
     factory = businessNetworkConnection.getBusinessNetwork().getFactory();
   }
 
-  it("A patient can see all healthcare providers", async () => {
+  it("Patients can see all healthcare providers", async () => {
     // Use the identity for Emmanuel Adams.
     await useIdentity(p1CardName);
     const participantRegistry = await businessNetworkConnection.getParticipantRegistry(
@@ -313,7 +326,7 @@ describe("#" + namespace, () => {
     participant2.publicKey.should.equal(gmcPublicKey);
   });
 
-  it("A patient can only read own patient data", async () => {
+  it("Patients can only read their own patient data", async () => {
     // Use the identity for Emmanuel Adams.
     await useIdentity(p1CardName);
     const participantRegistry = await businessNetworkConnection.getParticipantRegistry(
@@ -337,7 +350,7 @@ describe("#" + namespace, () => {
     participant.publicKey.should.equal(p1PublicKey);
   });
 
-  it("A patient cannot create new patients", async () => {
+  it("Patients cannot create new patients", async () => {
     // Use the identity for Emmanuel Adams.
     await useIdentity(p1CardName);
     const participantRegistry = await businessNetworkConnection.getParticipantRegistry(
@@ -363,12 +376,12 @@ describe("#" + namespace, () => {
     newPatient.consentedHPs = [];
 
     // Validate the participants.
-    participantRegistry
+    await participantRegistry
       .add(newPatient)
       .should.be.rejectedWith(/does not have .* access to resource/);
   });
 
-  it("A patient cannot add health records", async () => {
+  it("Patients cannot add health records", async () => {
     // Use the identity for Alice.
     await useIdentity(p2CardName);
     const assetRegistry = await businessNetworkConnection.getAssetRegistry(
@@ -397,12 +410,12 @@ describe("#" + namespace, () => {
     record1.allergy_code = "425525006";
     record1.allergy_desc = "Allergy to dairy product";
 
-    assetRegistry
+    await assetRegistry
       .add(record1)
       .should.be.rejectedWith(/does not have .* access to resource/);
   });
 
-  it("A healthcare provider cannot view unconsented patients", async () => {
+  it("Healthcare providers cannot view unconsented patients", async () => {
     // Use the identity for Glenfield Medical Center.
     await useIdentity(gmcCardName);
     const participantRegistry = await businessNetworkConnection.getParticipantRegistry(
@@ -414,7 +427,7 @@ describe("#" + namespace, () => {
     participants.should.have.lengthOf(0);
   });
 
-  it("A healthcare provider can view other healthcare providers", async () => {
+  it("Healthcare providers can view other healthcare providers", async () => {
     // Use the identity for Glenfield Medical Center.
     await useIdentity(gmcCardName);
     const participantRegistry = await businessNetworkConnection.getParticipantRegistry(
@@ -442,33 +455,278 @@ describe("#" + namespace, () => {
     participant2.publicKey.should.equal(gmcPublicKey);
   });
 
-  // it('A healthcare provider can send a record sharing request to a patient', async () => {
-  //     // Use the identity for North Shore Hosiptal.
-  //     await useIdentity(nshCardName);
+  it("Healthcare providers can send a record sharing request to a patient", async () => {
+    // Use the identity for North Shore Hosiptal.
+    await useIdentity(nshCardName);
 
-  //     // Submit the transaction.
-  //     const transaction = factory.newTransaction(namespace, requestRecordSharingTransactionType);
-  //     transaction.healthProvider = factory.newRelationship(namespace, healthProviderParticipantType, 'H1');
-  //     transaction.patient = factory.newRelationship(namespace, patientParticipantType, 'P2');
-  //     await businessNetworkConnection.submitTransaction(transaction);
+    // Submit the transaction.
+    const transaction = factory.newTransaction(
+      namespace,
+      requestRecordSharingTransactionType
+    );
+    transaction.healthProvider = factory.newRelationship(
+      namespace,
+      healthProviderParticipantType,
+      "H1"
+    );
+    transaction.patient = factory.newRelationship(
+      namespace,
+      patientParticipantType,
+      "P2"
+    );
+    await businessNetworkConnection.submitTransaction(transaction);
 
-  //     // Validate the event.
-  //     events.should.have.lengthOf(1);
-  //     const event = events[0];
-  //     event.eventId.should.be.a('string');
-  //     event.timestamp.should.be.an.instanceOf(Date);
-  //     event.healthProvider.should.equal(factory.newRelationship(namespace, healthProviderParticipantType, 'H1'));
-  //     event.patient.should.equal(factory.newRelationship(namespace, patientParticipantType, 'P2'));
+    // Validate the event.
+    events.should.have.lengthOf(1);
+    const event = events[0];
+    event.eventId.should.be.a("string");
+    event.timestamp.should.be.an.instanceOf(Date);
+    event.healthProvider
+      .getFullyQualifiedIdentifier()
+      .should.equal(healthProviderParticipantNS + "#H1");
+    event.patient
+      .getFullyQualifiedIdentifier()
+      .should.equal(patientParticipantNS + "#P2");
+  });
 
-  //     // const assetRegistry = await businessNetworkConnection.getTransactionRegistry(requestRecordSharingTransactionNS);
-  //     // const assets = await assetRegistry.getAll();
+  it("Heathcare providers cannot add health records to unconsented patients", async () => {
+    // Use the identity for North Shore Hosiptal.
+    await useIdentity(nshCardName);
 
-  //     // // Validate that the transaction is made.
-  //     // assets.should.have.lengthOf(1);
-  //     // const asset = assets[0];
-  //     // asset.healthProvider.should.equal(factory.newRelationship(namespace, healthProviderParticipantType, 'H1'));
-  //     // asset.patient.should.equal(factory.newRelationship(namespace, patientParticipantType, 'P2'));
-  // });
+    const assetRegistry = await businessNetworkConnection.getAssetRegistry(
+      allergyRecordAssetNS
+    );
+
+    const newRecord = factory.newResource(
+      namespace,
+      allergyRecordAssetType,
+      "R1"
+    );
+    newRecord.record_date = "10/11/2007";
+    newRecord.record_code = "371883000";
+    newRecord.healthProvider = factory.newRelationship(
+      namespace,
+      healthProviderParticipantType,
+      "H1"
+    );
+    newRecord.patient = factory.newRelationship(
+      namespace,
+      patientParticipantType,
+      "P2"
+    );
+    newRecord.allergy_start = "11/03/1995";
+    newRecord.allergy_stop = "10/11/2007";
+    newRecord.allergy_code = "425525006";
+    newRecord.allergy_desc = "Allergy to dairy product";
+
+    await assetRegistry
+      .add(newRecord)
+      .should.be.rejectedWith(/does not have .* access to resource/);
+  });
+
+  it("Patients can share records with healthcare providers, healthcare providers can view/add records for consented patients, patients can revoke consent", async () => {
+    // Pre-defined values for a health record about allergy
+    const allergyRecord = {};
+    allergyRecord.record_date = "10/11/2007";
+    allergyRecord.record_code = "371883000";
+    allergyRecord.allergy_start = "11/03/1995";
+    allergyRecord.allergy_stop = "10/11/2007";
+    allergyRecord.allergy_code = "425525006";
+    allergyRecord.allergy_desc = "Allergy to dairy product";
+
+    // Use the identity for Martha (patient 2)
+    await useIdentity(p2CardName);
+
+    // Create the record sharing transaction
+    const recordSharingTransaction = factory.newTransaction(
+      namespace,
+      recordSharingTransactionType
+    );
+    recordSharingTransaction.healthProvider = factory.newRelationship(
+      namespace,
+      healthProviderParticipantType,
+      "H1"
+    );
+    recordSharingTransaction.patient = factory.newRelationship(
+      namespace,
+      patientParticipantType,
+      "P2"
+    );
+    recordSharingTransaction.encryptedPatientKeyHPPublic = encryption.asymEncrypt(
+      p2PatientKey,
+      nshPublicKey
+    );
+
+    // Submit the record sharing transaction
+    await businessNetworkConnection.submitTransaction(recordSharingTransaction);
+
+    // Switch to Northshore Hospital
+    await useIdentity(nshCardName);
+
+    const patientKeyAssetRegistry = await businessNetworkConnection.getAssetRegistry(
+      patientKeyAssetNS
+    );
+
+    const patientKeys = await patientKeyAssetRegistry.getAll();
+
+    // Validate whether a shared patient key from Martha (p2) is created
+    patientKeys.should.have.lengthOf(1);
+    const patientKey = patientKeys[0];
+
+    patientKey.healthProvider
+      .getFullyQualifiedIdentifier()
+      .should.equal(healthProviderParticipantNS + "#H1");
+    patientKey.patient
+      .getFullyQualifiedIdentifier()
+      .should.equal(patientParticipantNS + "#P2");
+
+    const patientParticipantRegistry = await businessNetworkConnection.getParticipantRegistry(
+      patientParticipantNS
+    );
+
+    const patients = await patientParticipantRegistry.getAll();
+
+    // Validate whether the healthcare provider could read patient data of Martha (p2)
+    patients.should.have.lengthOf(1);
+    const p2 = patients[0];
+    p2.id.should.equal("P2");
+    p2.first.should.equal("Martha");
+
+    const recordAssetRegistryHP = await businessNetworkConnection.getAssetRegistry(
+      allergyRecordAssetNS
+    );
+
+    // Decrypt the Martha's patient key
+    const symKeyMartha = encryption.asymDecrypt(
+      patientKey.encryptedPatientKeyHPPublic,
+      nshPrivateKey
+    );
+
+    // Create a new allergy health record for Martha and encrypt the fields with her patient key
+    const record = factory.newResource(namespace, allergyRecordAssetType, "R1");
+    record.record_date = encryption.symEncrypt(
+      allergyRecord.record_date,
+      symKeyMartha
+    );
+    record.record_code = encryption.symEncrypt(
+      allergyRecord.record_code,
+      symKeyMartha
+    );
+    record.healthProvider = factory.newRelationship(
+      namespace,
+      healthProviderParticipantType,
+      "H1"
+    );
+    record.patient = factory.newRelationship(
+      namespace,
+      patientParticipantType,
+      "P2"
+    );
+    record.allergy_start = encryption.symEncrypt(
+      allergyRecord.allergy_start,
+      symKeyMartha
+    );
+    record.allergy_stop = encryption.symEncrypt(
+      allergyRecord.allergy_stop,
+      symKeyMartha
+    );
+    record.allergy_code = encryption.symEncrypt(
+      allergyRecord.allergy_code,
+      symKeyMartha
+    );
+    record.allergy_desc = encryption.symEncrypt(
+      allergyRecord.allergy_desc,
+      symKeyMartha
+    );
+
+    // Add the new health record
+    await recordAssetRegistryHP.add(record);
+
+    // Validate that the record has been added
+    const recordsHP = await recordAssetRegistryHP.getAll();
+    recordsHP.should.have.lengthOf(1);
+
+    // Use the identity for Martha.
+    await useIdentity(p2CardName);
+
+    const recordAssetRegistryPatient = await businessNetworkConnection.getAssetRegistry(
+      allergyRecordAssetNS
+    );
+
+    // Validate the record added by the healthcare provider (Northshore Hospital)
+    const recordsPatient = await recordAssetRegistryPatient.getAll();
+    recordsPatient.should.have.lengthOf(1);
+    const retrievedRecord = recordsPatient[0];
+
+    // Validate that the decrypted fields has the correct value
+    retrievedRecord.healthProvider
+      .getFullyQualifiedIdentifier()
+      .should.equal(healthProviderParticipantNS + "#H1");
+
+    retrievedRecord.patient
+      .getFullyQualifiedIdentifier()
+      .should.equal(patientParticipantNS + "#P2");
+
+    encryption
+      .symDecrypt(retrievedRecord.record_date, p2PatientKey)
+      .should.equal(allergyRecord.record_date);
+    encryption
+      .symDecrypt(retrievedRecord.record_code, p2PatientKey)
+      .should.equal(allergyRecord.record_code);
+    encryption
+      .symDecrypt(retrievedRecord.allergy_start, p2PatientKey)
+      .should.equal(allergyRecord.allergy_start);
+    encryption
+      .symDecrypt(retrievedRecord.allergy_stop, p2PatientKey)
+      .should.equal(allergyRecord.allergy_stop);
+    encryption
+      .symDecrypt(retrievedRecord.allergy_code, p2PatientKey)
+      .should.equal(allergyRecord.allergy_code);
+    encryption
+      .symDecrypt(retrievedRecord.allergy_desc, p2PatientKey)
+      .should.equal(allergyRecord.allergy_desc);
+
+    // Create a transaction to revoke consent/record sharing
+    const revokeMedicalRecordsSharingTransaction = factory.newTransaction(
+      namespace,
+      revokeMedicalRecordsSharingTransactionType
+    );
+    revokeMedicalRecordsSharingTransaction.healthProvider = factory.newRelationship(
+      namespace,
+      healthProviderParticipantType,
+      "H1"
+    );
+    revokeMedicalRecordsSharingTransaction.patient = factory.newRelationship(
+      namespace,
+      patientParticipantType,
+      "P2"
+    );
+
+    // Submit the record sharing revocation transaction
+    await businessNetworkConnection.submitTransaction(
+      revokeMedicalRecordsSharingTransaction
+    );
+
+    // Switch to healthcare provider Northshore Hospital
+    await useIdentity(nshCardName);
+
+    const patientParticipantRegistryAfterRecordSharingRevocation = await businessNetworkConnection.getParticipantRegistry(
+      patientParticipantNS
+    );
+
+    // Validates that the healthcare provider Northshore Hospital no longer has access to Martha's (patient 2) patient data and health records after record sharing revocation
+    const patientsHPAfterRecordSharingRevocation = await patientParticipantRegistryAfterRecordSharingRevocation.getAll();
+
+    patientsHPAfterRecordSharingRevocation.should.have.lengthOf(0);
+
+    const recordAssetRegistryAfterRecordSharingRevocation = await businessNetworkConnection.getAssetRegistry(
+      allergyRecordAssetNS
+    );
+
+    const recordsHPAfterRecordSharingRevocation = await recordAssetRegistryAfterRecordSharingRevocation.getAll();
+
+    recordsHPAfterRecordSharingRevocation.should.have.lengthOf(0);
+  });
 
   // it('Bob can read all of the patients', async () => {
   //     // Use the identity for Bob.
