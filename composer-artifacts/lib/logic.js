@@ -32,6 +32,7 @@ async function shareAKey(shareKey) {
   let patient = shareKey.patient;
   let healthProvider = shareKey.healthProvider;
 
+  // eslint-disable-next-line
   let results = await query("selectPatientKey", {
     p: resource + patient.getFullyQualifiedIdentifier(),
     hp: resource + healthProvider.getFullyQualifiedIdentifier()
@@ -91,6 +92,7 @@ async function revokeMedicalRecordsSharing(revokeTransaction) {
   let patient = revokeTransaction.patient;
   let healthProvider = revokeTransaction.healthProvider;
 
+  // eslint-disable-next-line
   let results = await query("selectPatientKey", {
     p: resource + patient.getFullyQualifiedIdentifier(),
     hp: resource + healthProvider.getFullyQualifiedIdentifier()
@@ -194,14 +196,7 @@ async function requestRecordSharing(requestRecordSharingTransaction) {
 function checkAccessToPatient(patient, healthProvider) {
   let consentedHPs = patient.consentedHPs;
 
-  console.log(patient);
-  console.log(healthProvider);
-  console.log(healthProvider.getIdentifier());
-  console.log(consentedHPs);
-
   for (var i = 0; i < consentedHPs.length; i++) {
-    console.log(consentedHPs[i]);
-
     if (consentedHPs[i].getIdentifier() === healthProvider.getIdentifier()) {
       return true;
     }
@@ -241,6 +236,7 @@ function checkAccessToPatientUsingPatientKey(patient, healthProvider) {
   let healthProviderId =
     "resource:nz.ac.auckland.HealthProvider#" + healthProvider.id;
 
+  // eslint-disable-next-line
   let results = query("selectAllPatientKeys");
 
   /* if (results.length > 0){
