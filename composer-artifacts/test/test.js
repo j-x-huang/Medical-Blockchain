@@ -455,6 +455,37 @@ describe("#" + namespace, () => {
     participant2.publicKey.should.equal(gmcPublicKey);
   });
 
+  it("Healthcare providers cannot create new patients", async () => {
+    // Use the identity for Glenfield Medical Center.
+    await useIdentity(gmcCardName);
+    const participantRegistry = await businessNetworkConnection.getParticipantRegistry(
+      patientParticipantNS
+    );
+
+    const newPatient = factory.newResource(
+      namespace,
+      patientParticipantType,
+      "P3"
+    );
+    newPatient.birthDate = "1/6/1985";
+    newPatient.prefix = "Ms.";
+    newPatient.first = "GMC";
+    newPatient.last = "GMC";
+    newPatient.ethinicity = "chinese";
+    newPatient.gender = "Female";
+    newPatient.address = "7 Wiley Points Newburyport MA 01951 US";
+
+    var npKeys = encryption.generateRSAkeys(keySize);
+    newPatient.publicKey = npKeys.publicKey;
+
+    newPatient.consentedHPs = [];
+
+    // Validate the participants.
+    await participantRegistry
+      .add(newPatient)
+      .should.be.rejectedWith(/does not have .* access to resource/);
+  });
+
   it("Healthcare providers can send a record sharing request to a patient", async () => {
     // Use the identity for North Shore Hosiptal.
     await useIdentity(nshCardName);
@@ -487,6 +518,34 @@ describe("#" + namespace, () => {
     event.patient
       .getFullyQualifiedIdentifier()
       .should.equal(patientParticipantNS + "#P2");
+  });
+
+  it("Healthcare providers cannot send a record sharing request with a different healthcare provider identity", async () => {
+    // Use the identity for North Shore Hosiptal.
+    await useIdentity(nshCardName);
+
+    // Create the transaction
+    const transaction = factory.newTransaction(
+      namespace,
+      requestRecordSharingTransactionType
+    );
+
+    // Use identity/ID of healthcare provider 2 (Glenfield Medical Center)
+    transaction.healthProvider = factory.newRelationship(
+      namespace,
+      healthProviderParticipantType,
+      "H2"
+    );
+    transaction.patient = factory.newRelationship(
+      namespace,
+      patientParticipantType,
+      "P2"
+    );
+
+    // Submit the transaction and validates that it is rejected
+    await businessNetworkConnection
+      .submitTransaction(transaction)
+      .should.be.rejectedWith(/does not have .* access to resource/);
   });
 
   it("Heathcare providers cannot add health records to unconsented patients", async () => {
@@ -726,6 +785,37 @@ describe("#" + namespace, () => {
     const recordsHPAfterRecordSharingRevocation = await recordAssetRegistryAfterRecordSharingRevocation.getAll();
 
     recordsHPAfterRecordSharingRevocation.should.have.lengthOf(0);
+  });
+
+  it("Patients cannot share records with healthcare providers using identities of other patients", async () => {
+    // Use the identity for Martha (patient 2)
+    await useIdentity(p2CardName);
+
+    // Create the record sharing transaction
+    const recordSharingTransaction = factory.newTransaction(
+      namespace,
+      recordSharingTransactionType
+    );
+    recordSharingTransaction.healthProvider = factory.newRelationship(
+      namespace,
+      healthProviderParticipantType,
+      "H1"
+    );
+    // Use identity of patient 1 (Emmanuel Adams) for the transaction
+    recordSharingTransaction.patient = factory.newRelationship(
+      namespace,
+      patientParticipantType,
+      "P1"
+    );
+    recordSharingTransaction.encryptedPatientKeyHPPublic = encryption.asymEncrypt(
+      p2PatientKey,
+      nshPublicKey
+    );
+
+    // Submit the record sharing transaction and validates that it is rejected
+    await businessNetworkConnection
+      .submitTransaction(recordSharingTransaction)
+      .should.be.rejectedWith(/does not have .* access to resource/);
   });
 
   // it('Bob can read all of the patients', async () => {
