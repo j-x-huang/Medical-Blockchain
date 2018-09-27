@@ -1,0 +1,117 @@
+/** Sample queries for Commodity Trading business network
+*/
+query selectPatientKey {
+  description: "Select a specific patient key"
+  statement:
+      SELECT nz.ac.auckland.PatientKey
+          WHERE ((patient==_$p) AND (healthProvider==_$hp))
+}
+
+query selectAllRecords {
+  description: "Select all records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Record
+          WHERE (patient==_$p)
+}
+
+query selectAllAllergyRecords {
+  description: "Select all allergy records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Allergy
+          WHERE (patient==_$p)
+}
+
+query selectAllProcedureRecords {
+  description: "Select all procedure records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Procedure
+          WHERE (patient==_$p)
+}
+
+query selectAllObservationRecords {
+  description: "Select all observation records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Observation
+          WHERE (patient==_$p)
+}
+
+query selectAllMedicationRecords {
+  description: "Select all medication records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Medication
+          WHERE (patient==_$p)
+}
+
+query selectAllImmunizationRecords {
+  description: "Select all immunization records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Immunization
+          WHERE (patient==_$p)
+}
+
+query selectAllConditionRecords {
+  description: "Select all condition records of a patient"
+  statement:
+      SELECT nz.ac.auckland.Condition
+          WHERE (patient==_$p)
+}
+
+query selectAllPatientKeys {
+  description: "Select a specific patient key for a specific patient"
+  statement:
+      SELECT nz.ac.auckland.PatientKey
+}
+
+query selectPatients {
+  description: "Select all patients"
+  statement:
+      SELECT nz.ac.auckland.Patient
+}
+
+query selectAllHealthProviders {
+  description: "Selects all health providers"
+  statement:
+    SELECT nz.ac.auckland.HealthProvider
+}
+
+query selectPatientByID {
+  description: "Select a patient with a specific ID"
+  statement:
+      SELECT nz.ac.auckland.Patient
+          WHERE (id==_$id)
+}
+
+query selectPatientByEthinicity {
+  description: "Select all patients based on their ethinicity"
+  statement:
+      SELECT nz.ac.auckland.Patient
+          WHERE (ethinicity==_$ethinicity)
+}
+
+query selectPatientByGender {
+  description: "Select all patients based on their gender"
+  statement:
+      SELECT nz.ac.auckland.Patient
+          WHERE (gender==_$gender)
+}
+
+query selectHealthProviderByID {
+  description: "Select a health providers with a specific ID"
+  statement:
+      SELECT nz.ac.auckland.HealthProvider
+          WHERE (id==_$id)
+}
+
+query selectPatientKeysByPatientID {
+  description: "Selects all patient keys with a specific patient id"
+  statement:
+      SELECT nz.ac.auckland.PatientKey
+          WHERE (patient==_$p)
+}
+
+query selectPatientKeysByHealthProviderID {
+  description: "Selects all patient keys with a specific healthProvider id"
+  statement:
+      SELECT nz.ac.auckland.PatientKey
+          WHERE (healthProvider==_$hp)
+}

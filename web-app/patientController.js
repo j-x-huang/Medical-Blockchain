@@ -1,5 +1,5 @@
 var app = angular.module('myApp');
-var apiBaseURL = "http://localhost:3000/api/";
+var apiBaseURL = ADMIN_ENDPOINT;
 
 app.controller('PatientController', [
     '$scope', '$http', 'title','patient','update', 'close',
@@ -9,27 +9,21 @@ app.controller('PatientController', [
 
         $scope.patientForm = {
             $class: "nz.ac.auckland.Patient",
-            id: "string",
-            birthDate: "string",
-            deathDate: "string",
-            ird: "string",
-            drivers: "string",
-            passport: "string",
-            prefix: "string",
-            first: "string",
-            last: "string",
-            suffic: "string",
-            maiden: "string",
-            marital: "string",
-            race: "string",
-            ethinicity: "string",
-            gender: "string",
-            birthplace: "string",
-            address: "string",
-            records: "[]",
-            PkeyPpass: ".",
-            PkeyHPpass: "."
+            id: "",
+            birthDate: "",
+            deathDate: "",
+            prefix: "",
+            first: "",
+            last: "",
+            ethinicity: "",
+            gender: "",
+            address: "",
+            publicKey: "",
+            consentedHPs: []
         }
+
+        $scope.privateKey
+        $scope.patientKey
         
         if (patient != null) {
             for (var key in patient) {
@@ -45,6 +39,7 @@ app.controller('PatientController', [
             $scope.endpoint = endpoint
             patientForm = Object.assign({}, $scope.patientForm)
             delete patientForm.id
+            dateToString(patientForm)
             encryptForm(patientForm)
             $http({
                 method: 'PUT',
@@ -60,8 +55,14 @@ app.controller('PatientController', [
         $scope.submitPatient = function () {
             var endpoint = apiBaseURL + "Patient"
             $scope.endpoint = endpoint
+
+            keys = generateRSAkeys()
+
             patientForm = Object.assign({}, $scope.patientForm)
-            encryptForm(patientForm)
+            patientForm.publicKey = keys.publicKey
+            $scope.privateKey = keys.privateKey
+
+            dateToString(patientForm)
             $http({
                 method: 'POST',
                 url: endpoint,
@@ -69,27 +70,45 @@ app.controller('PatientController', [
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then(_success, _error)
+            }).then(function(response) {
+                $scope.patientKey = generateRandomKey()
+                $scope.viewData(response.data);
+                $scope.close()
+            }, _error)
         }
 
-        function encryptForm(form) {
+        function dateToString(form) {
             var keys = Object.keys(form)
     
             keys.forEach(function (key) {
-                if (!(key == "$class" || key == "id")) {
-                    var encryptedData = symEncrypt(form[key])
-                    encryptedData = JSON.parse(encryptedData)
-                    form[key] = encryptedData.ct
+                if (form[key] instanceof Date) {
+                    form[key] = form[key].toLocaleDateString('en-GB')
                 }
-    
             })
             console.log(form)
+        }
+
+        function encryptForm(form) {
+            // var keys = Object.keys(form)
+    
+            // keys.forEach(function (key) {
+            //     if (!(key == "$class" || key == "id")) {
+            //         var encryptedData = symEncrypt(form[key])
+            //         encryptedData = JSON.parse(encryptedData)
+            //         form[key] = encryptedData.ct
+            //     }
+    
+            // })
+            // console.log(form)
         }
 
         //  This close function doesn't need to use jQuery or bootstrap, because
         //  the button has the 'data-dismiss' attribute.
         $scope.close = function () {
-            close({}, 500); // close, but give 500ms for bootstrap to animate
+            close({
+                patientKey: $scope.patientKey,
+                privateKey: $scope.privateKey
+            }, 500); // close, but give 500ms for bootstrap to animate
         };
 
 
@@ -101,6 +120,7 @@ app.controller('PatientController', [
          */
         function _success(response) {
             $scope.viewData(response.data);
+            $scope.close()
             alert("Operation successful")
         }
 
@@ -112,7 +132,8 @@ app.controller('PatientController', [
          */
         function _error(response) {
             $scope.viewData(response.data)
-            alert("Error")
+            $scope.close()
+            alert("Error: " + response.data.error.message);
         }
 
         $scope.viewData = function (data) {

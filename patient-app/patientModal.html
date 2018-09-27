@@ -1,0 +1,36 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="css\modal.css">
+</head>
+<div id="patientModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" ng-click="close()">&times;</button>
+                <h4 class="modal-title">Add Patient</h4>
+            </div>
+            <div class="modal-body">
+                <p>PID:
+                    <input type="text" ng-model="patientForm.id" ng-disabled="update"> </p>
+                <p>Birthdate*:
+                    <input type="date" ng-model="patientForm.birthDate"> </p>
+                <p>Prefix*:
+                    <input type="text" ng-model="patientForm.prefix"> </p>
+                <p>First Name*:
+                    <input type="text" ng-model="patientForm.first"> </p>
+                <p>Last Name*:
+                    <input type="text" ng-model="patientForm.last"> </p>
+                <p>Ethnicity:
+                    <input type="text" ng-model="patientForm.ethinicity"> </p>
+                <p>Gender:
+                    <input type="text" ng-model="patientForm.gender"> </p>
+                <p>Address*:
+                    <input type="text" ng-model="patientForm.address"> </p>
+            </div>
+            <div class="modal-footer">
+                <button ng-click="submitPatient()" type="button" class="btn btn-default" data-dismiss="modal" ng-hide="update">Submit</button>
+                <button ng-click="updatePatient()" type="button" class="btn btn-default" data-dismiss="modal" ng-show="update">Update</button>
+
+            </div>
+        </div>
+    </div>
+</div>

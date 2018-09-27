@@ -1,49 +1,25 @@
-
-var app = angular.module('myApp', ['angularModalService']);
-var apiBaseURL = "http://localhost:3000/api/";
+var app = angular.module('myApp', ['angularModalService', 'ngMaterial', 'ngMessages', 'ngWebsocket']);
+var apiBaseURL = ADMIN_ENDPOINT;
 var namespace = "nz.ac.auckland"
+var webport = ADMIN_ENDPOINT.replace("/api/", "")
+webport = webport.replace("http", "ws")
 
-app.controller('myCtrl', function ($scope, $http, ModalService) {
+app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
     $scope.healthProviderForm = {
         $class: "nz.ac.auckland.HealthProvider",
-        id: "string",
-        name: "string",
-        phone: "string",
-        address: "string",
+        id: "",
+        name: "",
+        phone: "",
+        address: "",
         publicKey: "."
     };
 
-    $scope.viewerForm = {
-        $class: "nz.ac.auckland.Viewer",
-        id: "string",
-        healthProvider: ""
-    }
-
-    $scope.recordForm = {
-        $class: "nz.ac.auckland.Record",
-        id: "string",
-        record_date: "string",
-        record_code: "string",
-        record_reasonCode: "string",
-        record_reasonDesc: "string",
-        healthProvider: ""
-    }
-
     $scope.patientTab = true
 
-    $scope.selectedRecord = {}
-    $scope.types = ["Allergy", "Procedure", "Observation", "Medication", "Immunization", "Condition"]
+    $scope.patientKey
+    $scope.privateKey
 
-    $scope.allergyForm = {}
-    $scope.procedureForm = {}
-    $scope.observationForm = {}
-    $scope.medicationForm = {}
-    $scope.immunizationForm = {}
-    $scope.conditionForm = {}
-
-    let _id;
-    let _records;
     $scope.myArray = []
 
 
@@ -55,7 +31,13 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
 
     $scope.submitHP = function () {
         var endpoint = apiBaseURL + "HealthProvider"
-        $scope.endpoint = endpoint
+
+        keys = generateRSAkeys()
+
+        console.log(keys)
+
+        $scope.healthProviderForm.publicKey = keys.publicKey
+        $scope.privateKey = keys.privateKey
 
         $http({
             method: 'POST',
@@ -64,101 +46,24 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(_success, _error)
-    }
+        }).then(function (response) {
+            $scope.viewData(response.data);
 
-    $scope.submitViewer = function () {
-        var endpoint = apiBaseURL + "Viewer"
-        $scope.endpoint = endpoint
-
-        $scope.viewerForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + $scope.viewerForm.healthProvider
-
-        $http({
-            method: 'POST',
-            url: endpoint,
-            data: angular.toJson($scope.viewerForm),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(_success, _error)
-    }
-
-    $scope.submitRecord = function () {
-        var recordForm = {}
-
-        switch ($scope.selectedRecord.type) {
-            case 'Allergy':
-                recordForm = $scope.allergyForm
-                break
-            case 'Procedure':
-                recordForm = $scope.procedureForm
-                break
-            case 'Observation':
-                recordForm = $scope.observationForm
-                break
-            case 'Immunization':
-                recordForm = $scope.immunizationForm
-                break
-            case 'Condition':
-                recordForm = $scope.conditionForm
-                break
-            case 'Medication':
-                recordForm = $scope.medicationForm
-                break;
-        }
-        recordForm = Object.assign({}, $scope.recordForm, recordForm)
-        console.log(recordForm)
-        var records = JSON.parse(_records)
-        records.push(recordForm)
-
-
-        var encryptedRecord = symEncrypt(JSON.stringify(records))
-        encryptedRecord = JSON.parse(encryptedRecord)
-
-        let updatedRecords = {
-            updatedRecords: encryptedRecord.ct,
-            patient: "resource:" + namespace + ".Patient#" + _id
-        }
-        console.log("ID: " + _id)
-
-        var endpoint = apiBaseURL + "MedicalEncounter"
-        $scope.endpoint = endpoint
-
-        $http({
-            method: 'POST',
-            url: endpoint,
-            data: angular.toJson(updatedRecords),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(_success, _error)
+            showCryptoModal("N/A", $scope.privateKey)
+        }, _error)
     }
 
     $scope.getPatients = function () {
         var endpoint = apiBaseURL + 'Patient'
-        $scope.endpoint = endpoint
 
         $http.get(endpoint).then(function (response) {
             $scope.viewData(response.data)
-            $scope.myStatus = response.status
-
-            var tempRecords = response.data
-
-            var keys = Object.keys(tempRecords)
-
-            keys.forEach(function (key) {
-                decryptForm(tempRecords[key])
-            })
-
-            $scope.myArray = tempRecords
-
+            $scope.myArray = response.data
         }, _error)
-
-
     }
 
     $scope.delete = function (index) {
-        var isConfirmed = confirm("Are you sure you want to delete this patient?")
+        var isConfirmed = confirm("Are you sure you want to delete this entity?")
 
         if (isConfirmed) {
             var tag = $scope.myArray[index].$class
@@ -166,9 +71,13 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             tag = tag.replace(namespace + '.', '')
 
             var endpoint = apiBaseURL + tag + "/" + id
-            $scope.endpoint = endpoint
 
-            $http.delete(endpoint).then(_success, _error)
+            $http.delete(endpoint).then(function(response) {
+                $scope.viewData(response.data);
+                alert("Operation successful");
+                $scope.getPatients()
+                $scope.getData("HealthProvider")
+            }, _error)
         } else {
             alert("Deletion averted")
         }
@@ -181,7 +90,6 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         $http.get(endpoint).then(function (response) {
             $scope.myArray = response.data
             $scope.viewData(response.data);
-            $scope.myStatus = response.status
         }, _error)
     }
 
@@ -200,17 +108,6 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
         _records = $scope.myArray[index].records
     }
 
-    function decryptForm(form) {
-        var keys = Object.keys(form)
-
-        keys.forEach(function (key) {
-            if (!(key == "$class" || key == "id")) {
-                var decryptedData = symDecrypt(form[key])
-                form[key] = decryptedData
-            }
-        })
-    }
-
     /**
      * Show response message in a pop-up dialog box
      *
@@ -219,7 +116,6 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
      */
     function _success(response) {
         $scope.viewData(response.data);
-        $scope.myStatus = response.status
         alert("Operation successful")
     }
 
@@ -231,8 +127,7 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
      */
     function _error(response) {
         console.log(response)
-        $scope.myStatus = response.status
-        alert("Error: " + response.data)
+        alert("Error: " + response.data.error.message);
     }
 
     $scope.addPatient = function () {
@@ -241,12 +136,45 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             controller: "PatientController",
             preClose: (modal) => { modal.element.modal('hide'); },
             inputs: {
-                title: "A More Complex Example",
+                title: "Register",
                 patient: null,
                 update: false
             }
         }).then(function (modal) {
             modal.element.modal();
+            modal.close.then(function (result) {
+                $('.modal-backdrop').remove()
+
+                if (result.patientKey === undefined || result.privateKey === undefined) {
+                    //
+                } else {
+                    $scope.patientKey = result.patientKey
+                    $scope.privateKey = result.privateKey
+
+                    showCryptoModal(result.patientKey, result.privateKey)
+                }
+            })
+
+
+        });
+    }
+
+    function showCryptoModal(patientKey, privateKey) {
+        ModalService.showModal({
+            templateUrl: "./cryptoModal.html",
+            controller: "cryptoController",
+            preClose: (modal) => { modal.element.modal('hide'); },
+            inputs: {
+                patientKey: patientKey,
+                privateKey: privateKey
+            }
+        }).then(function (modal) {
+            modal.element.modal();
+            modal.close.then(function (result) {
+                $scope.getPatients()
+                $scope.getData("HealthProvider")
+            })
+
         });
     }
 
@@ -264,8 +192,159 @@ app.controller('myCtrl', function ($scope, $http, ModalService) {
             }
         }).then(function (modal) {
             modal.element.modal();
+            modal.close.then(function(result) {
+                $('.modal-backdrop').remove()
+              });
 
         });
 
     };
+
+    $scope.viewRecords = function (index) {
+        var patient = $scope.myArray[index]
+
+        ModalService.showModal({
+            templateUrl: "./recordsModal.html",
+            controller: "recordsController",
+            preClose: (modal) => { modal.element.modal('hide'); },
+            inputs: {
+                title: "Patient Details",
+                patient: patient,
+                patientKey: $scope.patientKey
+            }
+        }).then(function (modal) {
+            modal.element.modal();
+            modal.close.then(function(result) {
+                $('.modal-backdrop').remove()
+              });
+        });
+
+    }
+
+    $scope.addRecord = function (index) {
+        var id = $scope.myArray[index].id
+
+        ModalService.showModal({
+            templateUrl: "./addRecordModal.html",
+            controller: "addRecordController",
+            preClose: (modal) => { modal.element.modal('hide'); },
+            inputs: {
+                _id: id,
+                patientKey: $scope.patientKey
+            }
+        }).then(function (modal) {
+            modal.element.modal();
+            modal.close.then(function(result) {
+                $('.modal-backdrop').remove()
+              });
+        });
+
+    }
+
+    $scope.handleFiles = function (files) {
+        var file = files[0]
+        var reader = new FileReader();
+        reader.readAsBinaryString(file);
+
+        reader.onload=function(){
+            var str = reader.result
+
+            if (file.type == "text/plain") {
+                $scope.patientKey = str
+            } else if (file.type == "application/x-x509-ca-cert") {
+                $scope.privateKey = str
+            } else {
+                error("Unable to read file")
+            }
+        }
+    }
+    
+    $scope.encryptedPkey
+    $scope.decryptedKey
+
+    $scope.testDecrypt = function() {
+        console.log($scope.encryptedPkey)
+        console.log($scope.privateKey)
+        $scope.decryptedKey = asymDecrypt($scope.encryptedPkey, $scope.privateKey)
+
+    }
+
+    $scope.makeKey = function() {
+        $scope.patientKey = generateRandomKey()
+    }
+
+    $scope.hppub
+    $scope.wKey
+
+    $scope.wrapKey = function() {
+        $scope.wKey = asymEncrypt(
+            $scope.patientKey,
+            $scope.hppub
+          );
+
+    }
+    $scope.getPatients()
+
+    $scope.notiArray = []
+
+    var ws = $websocket.$new(webport);
+
+    ws.$on('$open', function () { // it listents for 'incoming event'
+        console.log("WS Open");
+    })
+    .$on('$message', function (data) {
+        console.log(data)
+        if (data.$class === "nz.ac.auckland.ShareKeyNotification") {
+            var hpLine = data.healthProvider.split('#')
+            var hpId = hpLine[1];
+
+            var pLine = data.patient.split('#')
+            var pId = pLine[1]
+
+            var timestamp = new Date(data.timestamp);
+
+            var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
+
+            var notification = {
+                time: timeString,
+                msg: "Patient #" + pId + " has shared their key with HP #" + hpId
+            }
+            $scope.notiArray.unshift(notification)
+        } else if (data.$class === "nz.ac.auckland.RevokeMedicalRecordsSharingNotification") {
+            var pLine = data.patient.split('#')
+            var pId = pLine[1]
+
+            var hpLine = data.healthProvider.split('#')
+            var hpId = hpLine[1]
+
+            var timestamp = new Date(data.timestamp);
+
+            var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
+            var notification = {
+                time: timeString,
+                msg: "Patient #" + pId + " stopped sharing their key with HP #" + hpId
+            }
+            $scope.notiArray.unshift(notification)
+
+        } else if (data.$class === "nz.ac.auckland.RequestRecordSharingNotification") {
+            var hpLine = data.healthProvider.split('#')
+            var hpId = hpLine[1];
+
+            var pLine = data.patient.split('#')
+            var pId = pLine[1]
+
+            var timestamp = new Date(data.timestamp);
+
+            var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
+
+            var notification = {
+                time: timeString,
+                msg: "HP #" + hpId + " has requested a key from Patient #" + pId
+            }
+            $scope.notiArray.unshift(notification)
+
+        }
+
+    });
+
 })

@@ -3,14 +3,16 @@
 *.bna
 *.card
 
-/fabric-tools
+fabric-tools/
 
-/alice
-/bob
+alice/
+bob/
 
-/node_modules
+node_modules/
 /dist
 
 .idea
+
+.vscode/*
 
 package-lock.json

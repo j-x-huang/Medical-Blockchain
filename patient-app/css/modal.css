@@ -1,0 +1,27 @@
+td {
+  padding-right: 30px;
+  padding-bottom: 10px;
+  white-space: nowrap;
+  text-align: left;
+}
+
+table {
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
+whiteText {
+  color: rgb(255, 255, 255);
+}
+
+hr {
+  display: inline-block;
+  width: 15%;
+  text-align: left;
+  margin-top: 0px;
+  /* border-top: 4px solid #f3cbca; */
+}
+
+/* table td:last-child {
+  width: 99%;
+} */

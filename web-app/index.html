@@ -2,34 +2,49 @@
 <html lang="en">
 
 <head>
-    <title>Medical Network</title>
+    <title>MedBloc - Admin Portal</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="css\style.css">
+    <link rel="stylesheet" type="text/css" href="css\card.css">
     <link rel="stylesheet" type="text/css" href="css\jquery.json-viewer.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-sanitize.js"></script>
+    <script src="bower_components/ng-websocket/ng-websocket.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.2.0/ui-bootstrap-tpls.min.js"></script>
     <script src="http://bitwiseshiftleft.github.io/sjcl/sjcl.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <script src="https://rawgit.com/j-x-huang/j-x-huang.github.io/master/endpoints.js"></script>
     <script src="js/angular-module.js"></script>
     <script src="js/jquery.json-viewer.js"></script>
+    <script src="js/jsencrypt/bin/jsencrypt.js"></script>
     <script src="js/encryption.js"></script>
     <script src="patientController.js"></script>
+    <script src="cryptoController.js"></script>
+    <script src="recordsController.js"></script>
+    <script src="addRecordController.js"></script>
+
+
     <script src="https://dwmkerr.github.io/angular-modal-service/angular-modal-service.js"></script>
+
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.js"></script>
 
 </head>
 
 <body ng-app="myApp" ng-controller="myCtrl" onload="loaded()">
-
-    <nav class>
-        <ul>
-            <li>
-                <a href="index.html">Home</a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand">MedBloc - Admin Portal</a>
+            </div>
+        </div>
     </nav>
 
     <!--Modal Box to add health providers-->
@@ -37,17 +52,17 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal" onclick="var decrypted = symDecrypt('U2FsdGVkX1+7BOGI6SODxf0aQjzypAk9gPRjmisMB1M=','598veczqUe9A/12Ighb9AQ==')">&times;</button>
                     <h4 class="modal-title">Add Health Provider</h4>
                 </div>
                 <div class="modal-body">
-                    <p>HID:
+                    <p>HID*:
                         <input type="text" ng-model="healthProviderForm.id"> </p>
-                    <p>Name:
+                    <p>Name*:
                         <input type="text" ng-model="healthProviderForm.name"> </p>
-                    <p>Phone:
+                    <p>Phone*:
                         <input type="text" ng-model="healthProviderForm.phone"> </p>
-                    <p>Address:
+                    <p>Address*:
                         <input type="text" ng-model="healthProviderForm.address"> </p>
                 </div>
                 <div class="modal-footer">
@@ -58,178 +73,33 @@
     </div>
     <br/>
 
-    <!--Modal Box to add viewers-->
-    <div id="viewerModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add Viewer</h4>
-                </div>
-                <div class="modal-body">
-                    <p>VID:
-                        <input type="text" ng-model="viewerForm.id"> </p>
-                    <p>Health Provider ID:
-                        <input type="text" ng-model="viewerForm.healthProvider"> </p>
-                </div>
-                <div class="modal-footer">
-                    <button ng-click="submitViewer()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <br/>
-
-    <!-- Record Modal-->
-    <div id="recordModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add Record</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <p>ID:
-                            <input type="text" ng-model="recordForm.id"> </p>
-                        <p>Date:
-                            <input type="text" ng-model="recordForm.record_date"> </p>
-                        <p>Code:
-                            <input type="text" ng-model="recordForm.record_code"> </p>
-                        <p>Reason Code:
-                            <input type="text" ng-model="recordForm.record_reasonCode"> </p>
-                        <p>Reason Description:
-                            <input type="text" ng-model="recordForm.record_reasonDesc"> </p>
-                        <p>Health Provider ID:
-                            <input type="text" ng-model="recordForm.healthProvider"> </p>
-                        <hr>
-                        <p>Record type: 
-                        <select ng-model="selectedRecord.type" ng-options="type for type in types">
-                        </select> </p>
-                    </div>
-
-                    <!-- ALLERGIES -->
-                    <div class="form-group" ng-show="selectedRecord.type=='Allergy'">
-                        <p>Start Date:
-                            <input type="text" ng-model="allergyForm.allergy_start"> </p>
-                        <p>End Date:
-                            <input type="text" ng-model="allergyForm.allergy_end"> </p>
-                        <p>Code:
-                            <input type="text" ng-model="allergyForm.allergy_code"> </p>
-                        <p>Description:
-                            <input type="text" ng-model="allergyForm.allergy_desc"> </p>
-                    </div>
-
-                    <!-- PROCEDURE -->
-                    <div class="form-group" ng-show="selectedRecord.type=='Procedure'">
-                        <p>Date:
-                            <input type="text" ng-model="procedureForm.procedure_date"> </p>
-                        <p>Code:
-                            <input type="text" ng-model="procedureForm.procedure_code"> </p>
-                        <p>Description:
-                            <input type="text" ng-model="procedureForm.procedure_desc"> </p>
-                        <p>Reason Code:
-                            <input type="text" ng-model="procedureForm.procedure_reasonCode"> </p>
-                        <p>Reason Description:
-                            <input type="text" ng-model="procedureForm.procedure_reasonDesc"> </p>
-                    </div>
-                    <!-- OBSERVATION -->
-                    <div class="form-group" ng-show="selectedRecord.type=='Observation'">
-                        <p>Date:
-                            <input type="text" ng-model="observationForm.observation_date"> </p>
-                        <p>Code:
-                            <input type="text" ng-model="observationForm.observation_code"> </p>
-                        <p>Description:
-                            <input type="text" ng-model="observationForm.observation_desc"> </p>
-                        <p>Value:
-                            <input type="text" ng-model="observationForm.observation_value"> </p>
-                        <p>Unit:
-                            <input type="text" ng-model="observationForm.observation_unit"> </p>
-                    </div>
-
-                    <!-- MEDICATION -->
-                    <div class="form-group" ng-show="selectedRecord.type=='Medication'">
-                        <p>Start Date:
-                            <input type="text" ng-model="medicationForm.medication_start"> </p>
-                        <p>End Date:
-                            <input type="text" ng-model="medicationForm.medication_end"> </p>
-                        <p>Code:
-                            <input type="text" ng-model="medicationForm.medication_code"> </p>
-                        <p>Description:
-                            <input type="text" ng-model="medicationForm.medication_desc"> </p>
-                        <p>Reason Code:
-                            <input type="text" ng-model="medicationForm.medication_code"> </p>
-                        <p>Reason Description:
-                            <input type="text" ng-model="medicationForm.medication_desc"> </p>
-                    </div>
-
-                    <!-- IMMUNIZATION -->
-                    <div class="form-group" ng-show="selectedRecord.type=='Immunization'">
-                        <p>Date:
-                            <input type="text" ng-model="immunizationForm.immunization_date"> </p>
-                        <p>Code:
-                            <input type="text" ng-model="immunizationForm.immunization_code"> </p>
-                        <p>Description:
-                            <input type="text" ng-model="immunizationForm.immunization_desc"> </p>
-                    </div>
-
-                    <!-- CONDITION -->
-                    <div class="form-group" ng-show="selectedRecord.type=='Condition'">
-                        <p>Start Date:
-                            <input type="text" ng-model="conditionForm.condition_start"> </p>
-                        <p>End Date:
-                            <input type="text" ng-model="conditionForm.condition_end"> </p>
-                        <p>Code:
-                            <input type="text" ng-model="conditionForm.condition_code"> </p>
-                        <p>Description:
-                            <input type="text" ng-model="conditionForm.condition_desc"> </p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                        <button ng-click="submitRecord()" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
-                </div>
-                </br>
-            </div>
-        </div>
-    </div>
-
     <div class="container-fluid">
-        <h4>Info Panel</h4>
-        <p>Request URL: {{endpoint}} </p>
-        <p>Response code: {{myStatus}} </p>
+        <p>Patient Key: {{patientKey}}</p>
+        <p>Private Key: {{privateKey}}</p>
+        <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
 
     </div>
-
+    <hr />
     <!-- Tab Nav Bar-->
     <ul class="nav nav-tabs">
         <li class="dropdown active">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Assets
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Participants
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
                 <li>
                     <a href="#patient" data-toggle="tab" ng-click="setTab('Patient')">Patient</a>
                 </li>
-            </ul>
-        </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Participants
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
                 <li>
                     <a href="#healthProvider" data-toggle="tab" ng-click="setTab('HealthProvider')">Health Provider</a>
                 </li>
-                <li>
-                    <a href="#viewer" data-toggle="tab" ng-click="setTab('Viewer')">Viewer</a>
-                </li>
             </ul>
         </li>
         <li>
-            <a data-toggle="tab" href="#queries">Queries</a>
+            <a data-toggle="tab" href="#notifications">Notifications</a>
         </li>
         <li>
-            <a data-toggle="tab" href="#system">System</a>
+            <a data-toggle="tab" href="#transactions">Transactions</a>
         </li>
     </ul>
 
@@ -238,51 +108,101 @@
 
         <div id="patient" class="tab-pane fade in active">
             <h1>Patients</h1>
-            <button type="button" class="btn btn-default" ng-click="addPatient()">Add Patient</button>
-            <button type="button" class="btn btn-default" ng-click="getPatients()">Get Patients</button>
+            <button type="button" class="btn btn-default refreshBtn" ng-click="addPatient()">Add Patient</button>
+            <button type="button" class="btn btn-default refreshBtn" ng-click="getPatients()">Get Patients</button>
+            <div class="container-fluid" id="patientTable">
+                <table class="table table-striped" style="width: 100%;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Prefix</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Address</th>
+                        <th>Options</th>
+                    </tr>
+                    <tr ng-repeat="row in myArray">
+                        <td>{{row.id}}</td>
+                        <td>{{row.prefix}}</td>
+                        <td>{{row.first}}</td>
+                        <td>{{row.last}}</td>
+                        <td>{{row.address}}</td>
+                        <td>
+                            <button type="button" class="btn btn-default" ng-click="viewRecords($index)">View Records</button>
+                            <button type="button" class="btn btn-default" ng-click="editPatient($index)" ng-show="patientTab">Edit</button>
+                            <button type="button" ng-click="addRecord($index)" class="btn btn-default">+</button>
+                            <button type="button" class="btn btn-default" ng-click="delete($index)">-</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
         <div id="healthProvider" class="tab-pane fade">
             <h1>Health Providers</h1>
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#hpModal">Add Health Provider</button>
-            <button type="button" class="btn btn-default" ng-click="getData('HealthProvider')">Get Health Providers</button>
-        </div>
-        <div id="viewer" class="tab-pane fade">
-            <h1>Viewers</h1>
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#viewerModal">Add Viewer</button>
-            <button type="button" class="btn btn-default" ng-click="getData('Viewer')">Get Viewers</button>
+            <button type="button" class="btn btn-default refreshBtn" data-toggle="modal" data-target="#hpModal">Add Health
+                Provider</button>
+            <button type="button" class="btn btn-default refreshBtn" ng-click="getData('HealthProvider')">Get Health Providers</button>
+
+            <div class="container-fluid" id="hpTable">
+
+                <table class="table table-striped" style="width: 100%;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Options</th>
+                    </tr>
+                    <tr ng-repeat="row in myArray">
+                        <td>{{row.id}}</td>
+                        <td>{{row.name}}</td>
+                        <td>{{row.phone}}</td>
+                        <td>{{row.address}}</td>
+                        <td>
+                            <button type="button" class="btn btn-default" ng-click="delete($index)">-</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
+        <div id="transactions" class="tab-pane fade">
+            <h3>Generate Patient Key</h3>
+            <button type="button" class="btn btn-default" ng-click="makeKey()">Generate</button>
+            <p>{{patientKey}}</p>
+            <!-- <input type="text" ng-model="hppub">
+            <button type="button" class="btn btn-default" ng-click="wrapKey()">Wrap key</button>
+            <p>{{wKey}}</p> -->
 
-        <div id="activeclaims" class="tab-pane fade">
-            <!--Box to select claims -->
-            <div>
-                <h4>Select a Claim</h4>
-                <p>Selected State Id: {{id}}</p>
-                <div ng-repeat="info in unconsumedStates" class="list-group">
-                    <button ng-click="selectState(info.state)" class="list-group-item">{{info.state.data.claim.claimNumber}}</button>
-                </div>
+            <h3>Decrypt Key</h3>
+            <div class="form-group">
+                <p>encryptedKey
+                    <input type="text" ng-model="encryptedPkey">
+                </p>
+                <button type="button" class="btn btn-default" ng-click="testDecrypt()">Decrypt</button>
+                {{decryptedKey}}
             </div>
 
+        </div>
 
+        <div id="notifications" class="tab-pane fade">
+            <h2>Notifications</h2>
+            <div class="container-fluid" id="patientTable">
+                <button type="button" class="btn btn-default refreshBtn" ng-click="refresh">Refresh</button>
+                <table class="table table-striped" style="width: 70%;">
+                    <tr>
+                        <th>Time</th>
+                        <th>Message</th>
+                    </tr>
+                    <tr ng-repeat="row in notiArray">
+                        <td>{{row.time}}</td>
+                        <td>{{row.msg}}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div class="container-fluid">
-        <table class="table table-striped" style="width: 100%;">
-            <tr>
-                <th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>
-                <th>Options</th>
-            </tr>
-            <tr ng-repeat="row in myArray">
-                <td ng-repeat="column in row ">
-                    {{ column }}
-                </td>
-                <td><button type="button" class="btn btn-default" ng-click="editPatient($index)" ng-show="patientTab">Edit</button>
-                <button type="button" ng-click="getId($index)" class="btn btn-default" data-toggle="modal" data-target="#recordModal">+</button>
-                <button type="button" class="btn btn-default" ng-click="delete($index)">-</button></td>
-            </tr>
-        </table>
-    </div>
+    <hr />
 
     <div class="container-fluid">
 

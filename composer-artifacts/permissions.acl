@@ -1,0 +1,241 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+rule HealthProvidersSeeOwnHistoryOnly {
+    description: "Health providers should be able to see the history of their own transactions only"
+    participant(m): "nz.ac.auckland.HealthProvider"
+    operation: READ
+    resource(v): "org.hyperledger.composer.system.HistorianRecord"
+    condition: (v.participantInvoking.getIdentifier() != m.getIdentifier())
+    action: DENY
+}
+
+rule HealthProviderCannotSeeSystemTransactions {
+    description: "Health providers should be able to see some of the system transactions"
+    participant(m): "nz.ac.auckland.HealthProvider"
+    operation: READ
+    resource(v): "org.hyperledger.composer.system.HistorianRecord"
+    condition: ((v.transactionType == "org.hyperledger.composer.system.SetLogLevel") || 
+                (v.transactionType == "org.hyperledger.composer.system.AddParticipant") || 
+                (v.transactionType == "org.hyperledger.composer.system.IssueIdentity") || 
+                (v.transactionType == "org.hyperledger.composer.system.BindIdentity") || 
+                (v.transactionType == "org.hyperledger.composer.system.ActivateCurrentIdentity") || 
+                (v.transactionType == "org.hyperledger.composer.system.RevokeIdentity") || 
+                (v.transactionType == "org.hyperledger.composer.system.StartBusinessNetwork") || 
+                (v.transactionType == "org.hyperledger.composer.system.ResetBusinessNetwork"))
+    action: DENY
+}
+
+rule PatientCanCreateTransactions {
+    description: "Patient can create transactions"
+    participant: "nz.ac.auckland.Patient"
+    operation: CREATE
+    resource: "org.hyperledger.composer.system.HistorianRecord"
+    action: ALLOW
+}
+
+rule HealthProvidersCanOnlyViewSharedPatientKeys {
+    description: "Only allow health providers to view the encrypted patient keys that are shared with them"
+    participant(hp): "nz.ac.auckland.HealthProvider"
+    operation: READ
+    resource(pk): "nz.ac.auckland.PatientKey"
+    condition: (pk.healthProvider.getIdentifier() == hp.getIdentifier())
+    action: ALLOW
+}
+
+rule HealthProvidersCanUpdateThemselves {
+    description: "Only allow health providers to update themselves"
+    participant(t): "nz.ac.auckland.HealthProvider"
+    operation: UPDATE
+    resource(v): "nz.ac.auckland.HealthProvider"
+    condition: (v.getIdentifier() == t.getIdentifier())
+    action: ALLOW
+}
+
+rule HealthProvidersReadAccess {
+    description: "Health providers should be able to read all health providers"
+    participant: "nz.ac.auckland.HealthProvider"
+    operation: READ
+    resource: "nz.ac.auckland.HealthProvider"
+    action: ALLOW
+}
+
+rule HealthProvidersCanAccessPatientsThatSharedKey {
+    description: "Grand health providers access to patients that shared their key"
+    participant(hp): "nz.ac.auckland.HealthProvider"
+    operation: READ
+    resource(p): "nz.ac.auckland.Patient"
+    condition: (checkAccessToPatient(p,hp))
+    action: ALLOW
+}
+
+rule HealthProvidersCanOnlyAccessSharedPatientsRecords {
+    description: "Health providers can only access records from patients that shared their patient key"
+    participant(hp): "nz.ac.auckland.HealthProvider"
+    operation: READ,UPDATE,DELETE
+    resource(r) : "nz.ac.auckland.Record"
+    condition: (checkAccessToPatient(r.patient,hp))
+    action: ALLOW
+}
+
+rule HealthProvidersCanOnlyCreateRecordsForSharedPatients {
+    description: "Health providers can only create records for consented patients"
+    participant(hp): "nz.ac.auckland.HealthProvider"
+    operation: CREATE
+    resource(r) : "nz.ac.auckland.Record"
+    condition: ((checkAccessToPatient(r.patient,hp) && (r.healthProvider.getIdentifier() == hp.getIdentifier())))
+    action: ALLOW
+}
+
+rule HealthProvidersCanCreateRecordSharingRequests {
+    description: "Health providers can create record sharing request transactions"
+    participant(hp): "nz.ac.auckland.HealthProvider"
+    operation: ALL
+    resource(rrs) : "nz.ac.auckland.RequestRecordSharing"
+    condition: (rrs.healthProvider.getIdentifier() == hp.getIdentifier())
+    action: ALLOW
+}
+
+rule PatientsCanOnlyViewRecordSharingRequestedToThemselves {
+    description: "A patient should only be able to see record sharing requests for him/her"
+    participant(p) : "nz.ac.auckland.Patient"
+    operation: READ
+    resource(rrs) : "nz.ac.auckland.RequestRecordSharing"
+  	condition: (rrs.patient.getIdentifier() == p.getIdentifier())
+    action: ALLOW
+}
+
+rule PatientsCanRevokeTheirSharedKeys {
+    description: "A patient should be able to revoke the patient key shared with another HP"
+    participant(p) : "nz.ac.auckland.Patient"
+    operation: ALL
+    resource(rmrs) : "nz.ac.auckland.RevokeMedicalRecordsSharing"
+  	condition: (rmrs.patient.getIdentifier() == p.getIdentifier())
+    action: ALLOW
+}
+
+rule PatientsCanAccessOnlyTheirSharedKey {
+    description: "Patients should only be able to access their own shared patient keys"
+    participant(p): "nz.ac.auckland.Patient"
+    operation: ALL
+    resource(pk): "nz.ac.auckland.PatientKey"
+    condition: (pk.patient.getIdentifier() == p.getIdentifier())
+    action: ALLOW
+}
+
+rule PatientsEnableShareTheirKey {
+    description: "Enable patients to share their patient key"
+    participant(p) : "nz.ac.auckland.Patient"
+    operation: ALL
+    resource(sk) : "nz.ac.auckland.ShareKey"
+  	condition: (sk.patient.getIdentifier() == p.getIdentifier())
+    action: ALLOW
+}
+
+rule PatientsCanOnlyViewTheirOwnRecords {
+    description: "Patients can only read their own medical records"
+    participant(p): "nz.ac.auckland.Patient"
+    operation: READ
+    resource(r): "nz.ac.auckland.Record"
+    condition: (r.patient.getIdentifier() == p.getIdentifier())
+    action: ALLOW
+}
+
+rule PatientsCanOnlyViewHealthProviders {
+    description: "Patients can only read health provider data"
+    participant: "nz.ac.auckland.Patient"
+    operation: READ
+    resource: "nz.ac.auckland.HealthProvider"
+    action: ALLOW
+}
+
+rule PatientsCanOnlyAccessThemselves {
+    description: "Patients can only read their own patient data"
+    participant(p1): "nz.ac.auckland.Patient"
+    operation: READ, UPDATE
+    resource(p2): "nz.ac.auckland.Patient"
+    condition: (p2.getIdentifier() == p1.getIdentifier())
+    action: ALLOW
+}
+
+rule PatientReadTransactionAccess {
+    description: "Patients should have only read access to the asset registry"
+    participant: "nz.ac.auckland.Patient"
+    operation: READ
+    resource: "org.hyperledger.composer.system.TransactionRegistry"
+    action: ALLOW
+}
+
+rule PatientReadAssetAccess {
+    description: "Patients should have only read access to the asset registry"
+    participant: "nz.ac.auckland.Patient"
+    operation: READ
+    resource: "org.hyperledger.composer.system.AssetRegistry"
+    action: ALLOW
+}
+
+rule PatientReadParticipantAccess {
+    description: "Patients should have only read access to the participant registry"
+    participant: "nz.ac.auckland.Patient"
+    operation: READ
+    resource: "org.hyperledger.composer.system.ParticipantRegistry"
+    action: ALLOW
+}
+
+rule PatientCanUpdateParticipants {
+    description: "Patients should be able to update participants"
+    participant: "nz.ac.auckland.Patient"
+    operation: CREATE
+    resource: "org.hyperledger.composer.system.UpdateParticipant"
+    action: ALLOW
+}
+
+rule HealthProviderNoIdentityAccess {
+    description: "Health providers should not have access to the identities of other health providers"
+    participant: "nz.ac.auckland.HealthProvider"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.Identity"
+    action: DENY
+}
+
+rule HealthProviderFullAccess {
+    description: "Health providers should have access to other system resources"
+    participant: "nz.ac.auckland.HealthProvider"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule NetworkUserAdminUser {
+    description: "Allow network business admins full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule StandardUserNetworkAccess {
+    description: "Allow standard users to be able to connect to the business network as this requires read access"
+    participant: "org.hyperledger.composer.system.Participant"
+    operation: READ
+    resource: "org.hyperledger.composer.system.Network"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network admins full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}

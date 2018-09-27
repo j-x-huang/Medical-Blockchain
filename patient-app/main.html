@@ -1,0 +1,494 @@
+<!-- <head>
+    <link rel="stylesheet" type="text/css" href="css\modal.css">
+</head> -->
+<nav class="navbar">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand">MedBloc - Patient Portal</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a ng-click="dismiss()" ng-show="notiIcon">
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color: red" ;></span>
+                </a>
+            </li>
+            <li>
+                <a id="name">
+                    <span class="glyphicon glyphicon-user"></span> {{myArray.first}} {{myArray.last}}</a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="glyphicon glyphicon-log-out"></span> Log out</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Tab Nav Bar-->
+<ul class="nav nav-tabs">
+    <li class="active">
+        <a data-toggle="tab" href="#keys" target="_self">My Details</a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#records" ng-click="setTab('MyRecords')" target="_self">My Records</a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#notifications" target="_self">Notifications</a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#sharedKeys" ng-click="setTab('MySharedKeys')" target="_self">My Shared Keys</a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#healthProvider" ng-click="setTab('HealthProvider')" target="_self">Health Provider Directory</a>
+    </li>
+</ul>
+
+<!-- Tab Content -->
+<div id="content" class="tab-content">
+
+    <div id="keys" class="tab-pane fade in active">
+        <h1>My Details</h1>
+        <!-- <div class="container-fluid">
+                <p>Upload your Patient key:</p>
+                <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
+                <p>Upload your Private key</p>
+                <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
+                <p>Enter your id:</p>
+                <input type="text" ng-model="pid">
+                <button type="button" class="btn btn-default" ng-click="login()">Login</button>
+            </div> -->
+        <div class="container-fluid" id="patientTable">
+            <button type="button" class="btn btn-default refreshBtn" ng-click="login()">
+                <span class="glyphicon glyphicon-repeat"></span>
+            </button>
+
+            <table class="table table-striped" style="width: 100%;">
+                <tr>
+                    <th>ID</th>
+                    <th>Prefix</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+                <tr>
+                    <td>{{myArray.id}}</td>
+                    <td>{{myArray.prefix}}</td>
+                    <td>{{myArray.first}}</td>
+                    <td>{{myArray.last}}</td>
+                    <td>{{myArray.address}}</td>
+                    <td>
+                        <button type="button" class="btn btn-default" ng-click="editPatient()" ng-show="patientTab">Edit</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="records" class="tab-pane fade">
+        <h1>My Records</h1>
+        <div class="row">
+
+            <div class="col-sm-3">
+                <div class="container-fluid">
+                    <button type="button" class="btn btn-default refreshBtn" ng-click="getAllRecords()">
+                        <span class="glyphicon glyphicon-repeat"></span>
+                    </button>
+
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            Allergies
+                            <div class="material-switch pull-right">
+                                <input id="allergy" type="checkbox" ng-model="showAllergy" />
+                                <label for="allergy" class="label-danger"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Procedures
+                            <div class="material-switch pull-right">
+                                <input id="proc" type="checkbox" ng-model="showProc" />
+                                <label for="proc" class="label-warning"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Conditions
+                            <div class="material-switch pull-right">
+                                <input id="cond" type="checkbox" ng-model="showCond" />
+                                <label for="cond" class="label-info"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Immunizations
+                            <div class="material-switch pull-right">
+                                <input id="imm" type="checkbox" ng-model="showImm" />
+                                <label for="imm" class="label-success"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Observations
+                            <div class="material-switch pull-right">
+                                <input id="obs" type="checkbox" ng-model="showObs" />
+                                <label for="obs" class="label-primary"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Medications
+                            <div class="material-switch pull-right">
+                                <input id="med" type="checkbox" ng-model="showMed" />
+                                <label for="med" class="label-default"></label>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+
+            <div class="col-sm-9">
+
+                <div class="container-fluid">
+
+                    <md-card ng-repeat="records in allergy" ng-show="showAllergy">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <md-card-content>
+                            <hr style="border-top: 8px solid #f3cbca;">
+                            <div class="card-content-wrapper">
+                                <p class="header">Record date:</p>
+                                <p class="description">{{records.record_date}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record type:</p>
+                                <p class="description">Allergy</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record reason:</p>
+                                <p class="description">{{records.record_reasonDesc}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Health provider:</p>
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
+                                </p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">&nbsp;</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Start date:</p>
+                                <p class="description">{{records.allergy_start}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Stop date:</p>
+                                <p class="description">{{records.allergy_stop}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Description:</p>
+                                <p class="description">{{records.allergy_desc}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+
+                    <md-card ng-repeat="records in proc" ng-show="showProc">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <md-card-content>
+                            <hr style="border-top: 8px solid #fae6c9;">
+                            <div class="card-content-wrapper">
+                                <p class="header">Record date:</p>
+                                <p class="description">{{records.record_date}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record type:</p>
+                                <p class="description">Procedure</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record reason:</p>
+                                <p class="description">{{records.record_reasonDesc}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Health provider:</p>
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
+                                </p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">&nbsp;</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Procedure date:</p>
+                                <p class="description">{{records.procedure_date}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Description:</p>
+                                <p class="description">{{records.procedure_desc}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Reason:</p>
+                                <p class="description">{{records.procedure_reasonDesc}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+
+                    <md-card ng-repeat="records in imm" ng-show="showImm">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <md-card-content>
+                            <hr style="border-top: 8px solid #bee4c7;">
+                            <div class="card-content-wrapper">
+                                <p class="header">Record date:</p>
+                                <p class="description">{{records.record_date}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record type:</p>
+                                <p class="description">Immunization</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record reason:</p>
+                                <p class="description">{{records.record_reasonDesc}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Health provider:</p>
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
+                                </p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">&nbsp;</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Immunization date:</p>
+                                <p class="description">{{records.imm_date}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Description:</p>
+                                <p class="description">{{records.imm_desc}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+
+                    <md-card ng-repeat="records in cond" ng-show="showCond">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <md-card-content>
+                            <hr style="border-top: 8px solid #cdecf5;">
+                            <div class="card-content-wrapper">
+                                <p class="header">Record date:</p>
+                                <p class="description">{{records.record_date}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record type:</p>
+                                <p class="description">Condition</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record reason:</p>
+                                <p class="description">{{records.record_reasonDesc}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Health provider:</p>
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
+                                </p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">&nbsp;</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Start date:</p>
+                                <p class="description">{{records.cond_start}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Stop date:</p>
+                                <p class="description">{{records.cond_stop}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Description:</p>
+                                <p class="description">{{records.cond_desc}}</p>
+                            </div>
+
+                        </md-card-content>
+                    </md-card>
+
+                    <md-card ng-repeat="records in obs" ng-show="showObs">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <md-card-content>
+                            <hr style="border-top: 8px solid #c6dcef;">
+                            <div class="card-content-wrapper">
+                                <p class="header">Record date:</p>
+                                <p class="description">{{records.record_date}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record type:</p>
+                                <p class="description">Observation</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record reason:</p>
+                                <p class="description">{{records.record_reasonDesc}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Health provider:</p>
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
+                                </p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">&nbsp;</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Observation date:</p>
+                                <p class="description">{{records.obs_date}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Description:</p>
+                                <p class="description">{{records.obs_desc}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Value:</p>
+                                <p class="description">{{records.obs_value}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Units:</p>
+                                <p class="description">{{records.obs_units}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+
+                    <md-card ng-repeat="records in med" ng-show="showMed">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Record - {{records.id}}</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <md-card-content>
+                            <hr style="border-top: 8px solid lightgray;">
+                            <div class="card-content-wrapper">
+                                <p class="header">Record date:</p>
+                                <p class="description">{{records.record_date}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record type:</p>
+                                <p class="description">Medication</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Record reason:</p>
+                                <p class="description">{{records.record_reasonDesc}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Health provider:</p>
+                                <p class="description">{{records.healthProvider.substring(records.healthProvider.indexOf("#")+1, records.healthProvider.length);}}
+                                </p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">&nbsp;</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Start date:</p>
+                                <p class="description">{{records.medication_start}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Stop date:</p>
+                                <p class="description">{{records.medication_stop}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Description:</p>
+                                <p class="description">{{records.medication_desc}}</p>
+                            </div>
+                            <div class="card-content-wrapper">
+                                <p class="header">Reason:</p>
+                                <p class="description">{{records.medication_reasonDesc}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="notifications" class="tab-pane fade">
+        <h1>Notifications</h1>
+        <div class="container-fluid" id="notificationsTable">
+            <button type="button" class="btn btn-default refreshBtn" ng-click="refresh()">
+                <span class="glyphicon glyphicon-repeat"></span>
+            </button>
+            <table class="table table-striped" style="width: 100%;">
+                <tr>
+                    <th>HID</th>
+                    <th>Time</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+                <tr ng-repeat="row in notiTable">
+                    <td>{{row.hid}}</td>
+                    <td>{{row.time}}</td>
+                    <td>{{row.Description}}</td>
+                    <td>
+                        <button type="button" class="btn btn-default refreshBtn" ng-click="shareKey($index)">Share</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="sharedKeys" class="tab-pane fade">
+        <h1>My Shared Keys</h1>
+        <div class="container-fluid" id="notificationsTable">
+            <p>Share your patient key with:
+                <input type="text" ng-model="hid" />
+                <button type="button" class="btn btn-default" ng-click="shareKey()">Share</button>
+            </p>
+            <button type="button" class="btn btn-default refreshBtn" ng-click="viewKeys()">
+                <span class="glyphicon glyphicon-repeat"></span>
+            </button>
+            <table class="table table-striped" style="width: 100%;">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Options</th>
+                </tr>
+                <tr ng-repeat="row in hpArray">
+                    <td>{{row.id}}</td>
+                    <td>{{row.name}}</td>
+                    <td>{{row.phone}}</td>
+                    <td>{{row.address}}</td>
+                    <td>
+                        <button type="button" class="btn btn-default" ng-click="revokeKey($index)">Revoke</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="healthProvider" class="tab-pane fade">
+        <h2>Health Provider Directory</h2>
+
+        <div class="container-fluid" id="hpTable">
+            <button type="button" class="btn btn-default refreshBtn" ng-click="getHPs()"><span class="glyphicon glyphicon-repeat"></button>
+
+            <table class="table table-striped" style="width: 100%;">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                </tr>
+                <tr ng-repeat="row in hpDir">
+                    <td>{{row.id}}</td>
+                    <td>{{row.name}}</td>
+                    <td>{{row.phone}}</td>
+                    <td>{{row.address}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</div>

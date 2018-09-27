@@ -1,0 +1,143 @@
+<div>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand">MedBloc - Health Provider Portal</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a ng-click="dismiss()" ng-show="notiIcon">
+                        <span class="glyphicon glyphicon-exclamation-sign" style="color: red" ;></span>
+                    </a>
+                </li>
+                <li>
+                    <a id="name">
+                        <span class="glyphicon glyphicon-user"></span> {{hpArray.name}} </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="glyphicon glyphicon-log-out"></span> Log out</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Tab Nav Bar-->
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#home" target="_self">Home</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#patients" ng-click="setTab('Patient')" target="_self">Patients</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#req" target="_self">Request Sharing</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#pk" ng-click="setTab('PatientKey')" target="_self">Patient Keys</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#notifications" ng-click="setTab('Notifications')" target="_self">Notifications</a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div id="content" class="tab-content">
+
+        <div id="home" class="tab-pane fade in active">
+            <h1>My Identity</h1>
+
+            <div class="container-fluid" id="hpArray">
+                <button type="button" class="btn btn-default refreshBtn" ng-click="getMe()"><span class="glyphicon glyphicon-repeat"></span></button>
+
+                <table class="table table-striped" style="width: 100%;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                    </tr>
+                    <tr>
+                        <td>{{hpArray.id}}</td>
+                        <td>{{hpArray.name}}</td>
+                        <td>{{hpArray.phone}}</td>
+                        <td>{{hpArray.address}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="patients" class="tab-pane fade">
+            <h1>Patients</h1>
+            <div class="container-fluid" id="patientTable">
+                <button type="button" class="btn btn-default refreshBtn" ng-click="getPatients()"><span class="glyphicon glyphicon-repeat"></span></button>
+
+                <table class="table table-striped" style="width: 100%;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Prefix</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Options</th>
+                    </tr>
+                    <tr ng-repeat="row in myArray">
+                        <td>{{row.id}}</td>
+                        <td>{{row.prefix}}</td>
+                        <td>{{row.first}}</td>
+                        <td>{{row.last}}</td>
+                        <td>
+                            <button type="button" class="btn btn-default" ng-click="viewRecords($index)">View Records</button>
+                            <button type="button" ng-click="addRecord($index)" class="btn btn-default">+</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="req" class="tab-pane fade">
+            <h1>Request a key</h1>
+            <div class="form-group">
+                <p>Patient's ID
+                    <input type="text" ng-model="pid" style="width: 100px">
+                </p>
+            </div>
+            <button type="button" class="btn btn-default" ng-click="reqKey()">Submit</button>
+
+        </div>
+
+        <div id="pk" class="tab-pane fade">
+            <h2>Shared Patient Keys</h2>
+            <div class="container-fluid" id="patientTable">
+                <button type="button" class="btn btn-default refreshBtn" ng-click="getKeys()"><span class="glyphicon glyphicon-repeat"></span></button>
+                <table class="table table-striped" style="width: 50%;">
+                    <tr>
+                        <th>PID</th>
+                        <th>Patient Key</th>
+                    </tr>
+                    <tr ng-repeat="row in keyArray">
+                        <td>{{row.id}}</td>
+                        <td>{{row.key}}</td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
+        <div id="notifications" class="tab-pane fade">
+            <h2>Notifications</h2>
+            <div class="container-fluid" id="patientTable">
+                <button type="button" class="btn btn-default refreshBtn" ng-click="refresh"><span class="glyphicon glyphicon-repeat"></span></button>
+                <table class="table table-striped" style="width: 50%;">
+                    <tr>
+                        <th>Time</th>
+                        <th>Message</th>
+                    </tr>
+                    <tr ng-repeat="row in notiArray">
+                        <td>{{row.time}}</td>
+                        <td>{{row.msg}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
