@@ -17,7 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.2.0/ui-bootstrap-tpls.min.js"></script>
     <script src="http://bitwiseshiftleft.github.io/sjcl/sjcl.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
-    <script src="https://rawgit.com/j-x-huang/j-x-huang.github.io/master/endpoints.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/j-x-huang/Medical-Blockchain@v1.0.6/endpoints.js"></script>
     <script src="js/angular-module.js"></script>
     <script src="js/jquery.json-viewer.js"></script>
     <script src="js/jsencrypt/bin/jsencrypt.js"></script>
@@ -53,7 +53,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" onclick="var decrypted = symDecrypt('U2FsdGVkX1+7BOGI6SODxf0aQjzypAk9gPRjmisMB1M=','598veczqUe9A/12Ighb9AQ==')">&times;</button>
-                    <h4 class="modal-title">Add Health Provider</h4>
+                    <h4 class="modal-title">Add Healthcare Provider</h4>
                 </div>
                 <div class="modal-body">
                     <p>HID*:
@@ -91,12 +91,9 @@
                     <a href="#patient" data-toggle="tab" ng-click="setTab('Patient')">Patient</a>
                 </li>
                 <li>
-                    <a href="#healthProvider" data-toggle="tab" ng-click="setTab('HealthProvider')">Health Provider</a>
+                    <a href="#healthProvider" data-toggle="tab" ng-click="setTab('HealthProvider')">Healthcare Provider</a>
                 </li>
             </ul>
-        </li>
-        <li>
-            <a data-toggle="tab" href="#notifications">Notifications</a>
         </li>
         <li>
             <a data-toggle="tab" href="#transactions">Transactions</a>
@@ -137,10 +134,10 @@
             </div>
         </div>
         <div id="healthProvider" class="tab-pane fade">
-            <h1>Health Providers</h1>
+            <h1>Healthcare Providers</h1>
             <button type="button" class="btn btn-default refreshBtn" data-toggle="modal" data-target="#hpModal">Add Health
                 Provider</button>
-            <button type="button" class="btn btn-default refreshBtn" ng-click="getData('HealthProvider')">Get Health Providers</button>
+            <button type="button" class="btn btn-default refreshBtn" ng-click="getData('HealthProvider')">Get Healthcare Providers</button>
 
             <div class="container-fluid" id="hpTable">
 
@@ -182,23 +179,6 @@
                 {{decryptedKey}}
             </div>
 
-        </div>
-
-        <div id="notifications" class="tab-pane fade">
-            <h2>Notifications</h2>
-            <div class="container-fluid" id="patientTable">
-                <button type="button" class="btn btn-default refreshBtn" ng-click="refresh">Refresh</button>
-                <table class="table table-striped" style="width: 70%;">
-                    <tr>
-                        <th>Time</th>
-                        <th>Message</th>
-                    </tr>
-                    <tr ng-repeat="row in notiArray">
-                        <td>{{row.time}}</td>
-                        <td>{{row.msg}}</td>
-                    </tr>
-                </table>
-            </div>
         </div>
     </div>
 

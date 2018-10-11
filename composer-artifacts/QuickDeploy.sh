@@ -1,11 +1,12 @@
 #!/bin/bash
 
 echo "Tidying up old artifacts"
-./fabric-tools/stopFabric.sh
-./fabric-tools/tearDownFabric.sh
+export FABRIC_VERSION=hlfv12
+./fabric-dev-servers/stopFabric.sh
+./fabric-dev-servers/tearDownFabric.sh
 
-./fabric-tools/startFabric.sh
-./fabric-tools/createPeerAdminCard.sh
+./fabric-dev-servers/startFabric.sh
+./fabric-dev-servers/createPeerAdminCard.sh
 
 echo "Creating Archive"
 composer archive create -t dir -n .
