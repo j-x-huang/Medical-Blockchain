@@ -34,9 +34,6 @@
             <a data-toggle="tab" href="#req" target="_self">Request Sharing</a>
         </li>
         <li>
-            <a data-toggle="tab" href="#pk" ng-click="setTab('PatientKey')" target="_self">Patient Keys</a>
-        </li>
-        <li>
             <a data-toggle="tab" href="#notifications" ng-click="setTab('Notifications')" target="_self">Notifications</a>
         </li>
     </ul>
@@ -102,24 +99,6 @@
                 </p>
             </div>
             <button type="button" class="btn btn-default" ng-click="reqKey()">Submit</button>
-
-        </div>
-
-        <div id="pk" class="tab-pane fade">
-            <h2>Shared Patient Keys</h2>
-            <div class="container-fluid" id="patientTable">
-                <button type="button" class="btn btn-default refreshBtn" ng-click="getKeys()"><span class="glyphicon glyphicon-repeat"></span></button>
-                <table class="table table-striped" style="width: 50%;">
-                    <tr>
-                        <th>PID</th>
-                        <th>Patient Key</th>
-                    </tr>
-                    <tr ng-repeat="row in keyArray">
-                        <td>{{row.id}}</td>
-                        <td>{{row.key}}</td>
-                    </tr>
-                </table>
-            </div>
 
         </div>
 

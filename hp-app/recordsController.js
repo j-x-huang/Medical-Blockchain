@@ -16,6 +16,7 @@ app.controller("recordsController", [
     $scope.obs = [];
     $scope.proc = [];
 
+    // fetch all types of records from the blockchain for a specific patient
     getRecords(
       endpoint +
         "selectAllAllergyRecords?p=resource%3Anz.ac.auckland.Patient%23" +

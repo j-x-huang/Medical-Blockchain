@@ -28,6 +28,7 @@ app.controller('addRecordController', [
         $scope.submitRecord = function () {
 
             var recordForm = {}
+            // check for type of record selected, so it grabs info from the appropriate form on the html page.
             switch ($scope.selectedRecord.type) {
                 case 'Allergy':
                     recordForm = $scope.allergyForm
@@ -49,7 +50,7 @@ app.controller('addRecordController', [
                     break;
             }
             recordForm.id = uuidv4()
-            recordForm = Object.assign({}, $scope.recordForm, recordForm)
+            recordForm = Object.assign({}, $scope.recordForm, recordForm) //combine the record form with the specified record type form
             recordForm.$class = namespace + '.' + $scope.selectedRecord.type
             recordForm.patient = "resource:" + namespace + ".Patient#" + _id
             recordForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + hid
@@ -59,14 +60,13 @@ app.controller('addRecordController', [
     
             var endpoint = endpoint2 + 'selectPatientKeysByPatientID?p=resource%3Anz.ac.auckland.Patient%23' + _id;
     
-            //DUPLICATE
-            $http.get(endpoint).then(function (response) {
+            $http.get(endpoint).then(function (response) { //check if patient has shared their key with HP
                 console.log(response.data)
                 if (response.data.length === 0) {
                     alert("The patient has not shared a key with you")
                     return
                 }
-    
+                // if they shared their key, add the record to the blockchain
                 var pKeyBody = response.data[0]
                 var encryptedKey = pKeyBody.encryptedPatientKeyHPPublic
     
@@ -140,6 +140,9 @@ app.controller('addRecordController', [
     
         }
 
+        /**
+         * Generate uuid
+         */
         function uuidv4() {
             return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
               (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
