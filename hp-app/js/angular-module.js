@@ -11,6 +11,7 @@ var endpoint2 = HP_ENDPOINT + "queries/";
 var webport = HP_ENDPOINT.replace("/api/", "");
 webport = webport.replace("http", "ws");
 
+// Shared service
 app.service("myService", function() {
   return {
     privateKey: "",
@@ -50,6 +51,9 @@ app.config(function($routeProvider) {
 app.controller("loginCtrl", function($scope, $http, $location, myService) {
   $scope.id;
 
+  /**
+   * handles uploading of files such as patient or private-public key
+   */
   $scope.handleFiles = function(files) {
     var file = files[0];
     var reader = new FileReader();
@@ -76,6 +80,7 @@ app.controller("loginCtrl", function($scope, $http, $location, myService) {
     };
   };
 
+  // redirects to main screen
   $scope.login = function() {
     myService.id = $scope.id;
     var endpoint = apiBaseURL + "HealthProvider/" + myService.id;
@@ -120,7 +125,7 @@ app.controller("myCtrl", function(
 
   // ----- END FIELDS -----
 
-  // ----- CRUD -----
+  // ----- CRUD & TRANSACTIONS -----
   $scope.getPatients = function() {
     if (!isCredsProvided()) {
       return;
@@ -223,6 +228,8 @@ app.controller("myCtrl", function(
     _id = $scope.myArray[index].id;
     _records = $scope.myArray[index].records;
   };
+
+  // ----- END CRUD & TRANSACTIONS -----
 
   // ----- RESPONSE HANDLING -----
   /**

@@ -48,17 +48,8 @@
 
     <div id="keys" class="tab-pane fade in active">
         <h1>My Details</h1>
-        <!-- <div class="container-fluid">
-                <p>Upload your Patient key:</p>
-                <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
-                <p>Upload your Private key</p>
-                <input type="file" id="file" onchange="angular.element(this).scope().handleFiles(this.files)" />
-                <p>Enter your id:</p>
-                <input type="text" ng-model="pid">
-                <button type="button" class="btn btn-default" ng-click="login()">Login</button>
-            </div> -->
         <div class="container-fluid" id="patientTable">
-            <button type="button" class="btn btn-default refreshBtn" ng-click="login()">
+            <button type="button" class="btn btn-default refreshBtn" ng-click="getMe()">
                 <span class="glyphicon glyphicon-repeat"></span>
             </button>
 
