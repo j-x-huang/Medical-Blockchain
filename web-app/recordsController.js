@@ -12,7 +12,7 @@ app.controller('recordsController', [
         $scope.obs=[]
         $scope.proc=[]
 
-
+        // fetch all types of records from the blockchain for a specific patient
         getRecords(endpoint + "selectAllAllergyRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.allergy)
         getRecords(endpoint + "selectAllConditionRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.cond)
         getRecords(endpoint + "selectAllImmunizationRecords?p=resource%3Anz.ac.auckland.Patient%23" + patient.id, $scope.imm)
@@ -37,21 +37,22 @@ app.controller('recordsController', [
             }, _error);
         }
 
-        function _error(response) {
-            console.log(response)
-            $scope.close()
-            alert("Error: " + response.data.error.message);
-        }
-
         function decryptForm(form) {
             var keys = Object.keys(form)
     
             keys.forEach(function (key) {
-                if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
+                if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) { // do not decrypt non-encrypted fields
                     var decryptedData = symDecrypt(form[key], patientKey)
                     form[key] = decryptedData
                 }
             })
+        }
+
+        // error handling
+        function _error(response) {
+            console.log(response)
+            $scope.close()
+            alert("Error: " + response.data.error.message);
         }
 
         $scope.refresh = function () {

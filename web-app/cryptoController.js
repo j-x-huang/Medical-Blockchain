@@ -7,6 +7,7 @@ app.controller('cryptoController', [
   $scope.patientKey = patientKey;
   $scope.privateKey = privateKey;
 
+  // Forms download link for the patient key
   $scope.downloadSecret = function () {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent($scope.patientKey));
@@ -20,6 +21,7 @@ app.controller('cryptoController', [
     document.body.removeChild(element);
 }
 
+// Forms download link for the private key
 $scope.downloadPrivate = function () {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent($scope.privateKey));
