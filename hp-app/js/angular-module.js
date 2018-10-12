@@ -170,6 +170,7 @@ app.controller("myCtrl", function(
     }).then(_success, _error);
   };
 
+  // Get all patient keys
   $scope.getKeys = function() {
     if (!isCredsProvided()) {
       return;
@@ -199,28 +200,6 @@ app.controller("myCtrl", function(
         $scope.keyArray.push(keyOb);
       });
     }, _error);
-  };
-
-  $scope.addRecord = function(index) {
-    var id = $scope.myArray[index].id;
-
-    ModalService.showModal({
-      templateUrl: "./addRecordModal.html",
-      controller: "addRecordController",
-      preClose: modal => {
-        modal.element.modal("hide");
-      },
-      inputs: {
-        _id: id,
-        hid: $scope.hid,
-        privateKey: $scope.privateKey
-      }
-    }).then(function(modal) {
-      modal.element.modal();
-      modal.close.then(function(result) {
-        $(".modal-backdrop").remove();
-      });
-    });
   };
 
 
@@ -256,6 +235,28 @@ app.controller("myCtrl", function(
   // ------ END RESPONSE HANDLING ------
 
   // ------ MODALS ------
+  $scope.addRecord = function(index) {
+    var id = $scope.myArray[index].id;
+
+    ModalService.showModal({
+      templateUrl: "./addRecordModal.html",
+      controller: "addRecordController",
+      preClose: modal => {
+        modal.element.modal("hide");
+      },
+      inputs: {
+        _id: id,
+        hid: $scope.hid,
+        privateKey: $scope.privateKey
+      }
+    }).then(function(modal) {
+      modal.element.modal();
+      modal.close.then(function(result) {
+        $(".modal-backdrop").remove();
+      });
+    });
+  };
+
   $scope.viewRecords = function(index) {
     if (!isCredsProvided()) {
       return;
@@ -347,7 +348,7 @@ app.controller("myCtrl", function(
       $scope.notiIcon = true;
       $scope.notiArray.unshift(notification);
     }
-    $scope.$apply();
+    $scope.$apply(); // add message to table
   });
   // ----- END WEBSOCKETS -----
 

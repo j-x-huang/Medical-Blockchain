@@ -64,6 +64,7 @@ app.controller('addRecordController', [
                 console.log(response.data)
                 if (response.data.length === 0) {
                     alert("The patient has not shared a key with you")
+                    $scope.close()
                     return
                 }
                 // if they shared their key, add the record to the blockchain
