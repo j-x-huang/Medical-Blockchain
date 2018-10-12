@@ -21,7 +21,7 @@ rule HealthProvidersSeeOwnHistoryOnly {
 }
 
 rule HealthProviderCannotSeeSystemTransactions {
-    description: "Health providers should be able to see some of the system transactions"
+    description: "Health providers should not be able to see some of the system transactions"
     participant(m): "nz.ac.auckland.HealthProvider"
     operation: READ
     resource(v): "org.hyperledger.composer.system.HistorianRecord"
@@ -45,7 +45,7 @@ rule PatientCanCreateTransactions {
 }
 
 rule HealthProvidersCanOnlyViewSharedPatientKeys {
-    description: "Only allow health providers to view the encrypted patient keys that are shared with them"
+    description: "Only allow health providers to view patient keys that are shared with them"
     participant(hp): "nz.ac.auckland.HealthProvider"
     operation: READ
     resource(pk): "nz.ac.auckland.PatientKey"
@@ -63,7 +63,7 @@ rule HealthProvidersCanUpdateThemselves {
 }
 
 rule HealthProvidersReadAccess {
-    description: "Health providers should be able to read all health providers"
+    description: "Health providers should be able to read other health providers"
     participant: "nz.ac.auckland.HealthProvider"
     operation: READ
     resource: "nz.ac.auckland.HealthProvider"
@@ -71,7 +71,7 @@ rule HealthProvidersReadAccess {
 }
 
 rule HealthProvidersCanAccessPatientsThatSharedKey {
-    description: "Grand health providers access to patients that shared their key"
+    description: "Grant health providers read access to patients that shared their patient key (gave consent)"
     participant(hp): "nz.ac.auckland.HealthProvider"
     operation: READ
     resource(p): "nz.ac.auckland.Patient"
@@ -80,7 +80,7 @@ rule HealthProvidersCanAccessPatientsThatSharedKey {
 }
 
 rule HealthProvidersCanOnlyAccessSharedPatientsRecords {
-    description: "Health providers can only access records from patients that shared their patient key"
+    description: "Health providers can only access health records from patients that shared their patient key (gave consent)"
     participant(hp): "nz.ac.auckland.HealthProvider"
     operation: READ,UPDATE,DELETE
     resource(r) : "nz.ac.auckland.Record"
@@ -89,7 +89,7 @@ rule HealthProvidersCanOnlyAccessSharedPatientsRecords {
 }
 
 rule HealthProvidersCanOnlyCreateRecordsForSharedPatients {
-    description: "Health providers can only create records for consented patients"
+    description: "Health providers can only create records for consented patients using their own ID"
     participant(hp): "nz.ac.auckland.HealthProvider"
     operation: CREATE
     resource(r) : "nz.ac.auckland.Record"
@@ -107,7 +107,7 @@ rule HealthProvidersCanCreateRecordSharingRequests {
 }
 
 rule PatientsCanOnlyViewRecordSharingRequestedToThemselves {
-    description: "A patient should only be able to see record sharing requests for him/her"
+    description: "A patient should only be able to see record sharing requests for him"
     participant(p) : "nz.ac.auckland.Patient"
     operation: READ
     resource(rrs) : "nz.ac.auckland.RequestRecordSharing"
@@ -116,7 +116,7 @@ rule PatientsCanOnlyViewRecordSharingRequestedToThemselves {
 }
 
 rule PatientsCanRevokeTheirSharedKeys {
-    description: "A patient should be able to revoke the patient key shared with another HP"
+    description: "A patient should be able to revoke the patient key shared with another HP (revoke consent)"
     participant(p) : "nz.ac.auckland.Patient"
     operation: ALL
     resource(rmrs) : "nz.ac.auckland.RevokeMedicalRecordsSharing"
@@ -134,7 +134,7 @@ rule PatientsCanAccessOnlyTheirSharedKey {
 }
 
 rule PatientsEnableShareTheirKey {
-    description: "Enable patients to share their patient key"
+    description: "Patients should be able to share their patient key with healthcare providers (give consent)"
     participant(p) : "nz.ac.auckland.Patient"
     operation: ALL
     resource(sk) : "nz.ac.auckland.ShareKey"
@@ -143,7 +143,7 @@ rule PatientsEnableShareTheirKey {
 }
 
 rule PatientsCanOnlyViewTheirOwnRecords {
-    description: "Patients can only read their own medical records"
+    description: "Patients should only be able to read their own health records"
     participant(p): "nz.ac.auckland.Patient"
     operation: READ
     resource(r): "nz.ac.auckland.Record"
@@ -152,7 +152,7 @@ rule PatientsCanOnlyViewTheirOwnRecords {
 }
 
 rule PatientsCanOnlyViewHealthProviders {
-    description: "Patients can only read health provider data"
+    description: "Patients should only have read access to healthcare providers"
     participant: "nz.ac.auckland.Patient"
     operation: READ
     resource: "nz.ac.auckland.HealthProvider"
@@ -160,7 +160,7 @@ rule PatientsCanOnlyViewHealthProviders {
 }
 
 rule PatientsCanOnlyAccessThemselves {
-    description: "Patients can only read their own patient data"
+    description: "Patients can only read and update their own participant data"
     participant(p1): "nz.ac.auckland.Patient"
     operation: READ, UPDATE
     resource(p2): "nz.ac.auckland.Patient"
@@ -169,7 +169,7 @@ rule PatientsCanOnlyAccessThemselves {
 }
 
 rule PatientReadTransactionAccess {
-    description: "Patients should have only read access to the asset registry"
+    description: "Patients should have only read access to the transaction registry"
     participant: "nz.ac.auckland.Patient"
     operation: READ
     resource: "org.hyperledger.composer.system.TransactionRegistry"
@@ -201,7 +201,7 @@ rule PatientCanUpdateParticipants {
 }
 
 rule HealthProviderNoIdentityAccess {
-    description: "Health providers should not have access to the identities of other health providers"
+    description: "Health providers should not have access to the identities of the participants"
     participant: "nz.ac.auckland.HealthProvider"
     operation: ALL
     resource: "org.hyperledger.composer.system.Identity"
@@ -225,7 +225,7 @@ rule NetworkUserAdminUser {
 }
 
 rule StandardUserNetworkAccess {
-    description: "Allow standard users to be able to connect to the business network as this requires read access"
+    description: "Allow standard users to be able to connect to the business network"
     participant: "org.hyperledger.composer.system.Participant"
     operation: READ
     resource: "org.hyperledger.composer.system.Network"
