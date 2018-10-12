@@ -31,7 +31,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     $scope.wKey
 
     //----- End Fields ------
-    
+
     // view JSON data on screen
     $scope.viewData = function (data) {
 
@@ -73,7 +73,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         }, _error)
     }
 
-    // handles deletion either patients or HPs
+    // handles deletion for either patients or HPs
     $scope.delete = function (index) {
         var isConfirmed = confirm("Are you sure you want to delete this entity?")
 
@@ -309,7 +309,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     // ------ END ENCRYPTION HANDLING ------
 
 
-    // ----- Web socker and event handling logic -----
+    // ----- Web socket and event handling logic -----
     var ws = $websocket.$new(webport);
 
     ws.$on('$open', function () { // it listents for 'incoming event'
@@ -370,7 +370,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
         });
 
-        $scope.getPatients()
+    $scope.getPatients()
 
 
 })

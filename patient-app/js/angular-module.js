@@ -275,27 +275,6 @@ app.controller("myCtrl", function (
     _records = $scope.myArray[index].records;
   };
 
-  $scope.editPatient = function () {
-    var patientDetails = $scope.myArray;
-    ModalService.showModal({
-      templateUrl: "./patientModal.html",
-      controller: "PatientController",
-      preClose: modal => {
-        modal.element.modal("hide");
-      },
-      inputs: {
-        title: "A More Complex Example",
-        patient: patientDetails,
-        update: true
-      }
-    }).then(function (modal) {
-      modal.element.modal();
-      modal.close.then(function (result) {
-        $(".modal-backdrop").remove();
-      });
-    });
-  };
-
   $scope.getAllRecords = function () {
     if (!isCredsProvided()) {
       return;
@@ -369,6 +348,30 @@ app.controller("myCtrl", function (
   }
 
   // ------ END CRUD & TRANSACTIONS -----
+
+  // ------ MODALS -----
+  $scope.editPatient = function () {
+    var patientDetails = $scope.myArray;
+    ModalService.showModal({
+      templateUrl: "./patientModal.html",
+      controller: "PatientController",
+      preClose: modal => {
+        modal.element.modal("hide");
+      },
+      inputs: {
+        title: "A More Complex Example",
+        patient: patientDetails,
+        update: true
+      }
+    }).then(function (modal) {
+      modal.element.modal();
+      modal.close.then(function (result) {
+        $(".modal-backdrop").remove();
+      });
+    });
+  };
+
+  // ------ END MODALS -----
 
    // ----- RESPONSE HANDLING -----
   /**

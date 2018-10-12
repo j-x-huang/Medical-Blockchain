@@ -4,10 +4,6 @@ const_publicKey = '';
 const_privateKey = '';
 
 function loaded() {
-  //var buf = crypto.randomBytes(1024 / 8) // 128 bytes
-  //buf = new Uint32Array(new Uint8Array(buf).buffer)
-
-  //sjcl.random.addEntropy(buf, 1024, "crypto.randomBytes")
 
   sjcl.random.startCollectors();
 }
@@ -50,21 +46,6 @@ function kdf(password, salt){
 
 function symEncrypt(data, key){
 
-  /* console.log("Encrypting data: Data = " + data + " Key = " + key);
-
-   if (data === '') { return ''; }
-   if (key.length == 0) {
-     error("Need a key!");
-     return;
-   }
-
-  key = sjcl.codec.hex.toBits(key);
-
-   // Key must be in bit array
-   var result = sjcl.encrypt(key, data, {iv : iv, mode : "ccm"});
-
-   console.log(result);*/
-
    var encrypted = CryptoJS.AES.encrypt(data, key);
 
    console.log(encrypted);
@@ -74,27 +55,6 @@ function symEncrypt(data, key){
 
 
 function symDecrypt(encryptedData, key){
-
-   /* if (encryptedData.length === 0) { return ''; }
-   if (key.length == 0) {
-     error("Need a key!");
-     return;
-   }
-   if (iv.length === 0) {
-    error("Can't decrypt: need an IV!"); return;
-   }
-
-   key = sjcl.codec.hex.toBits(key);
-
-   key = new sjcl.cipher.aes(key);
-
-   initialisationVector = sjcl.codec.base64.toBits(iv);
-
-   encryptedData = sjcl.codec.base64.toBits(encryptedData);
-
-   var data = sjcl.codec.utf8String.fromBits(sjcl.mode.ccm.decrypt(key, encryptedData, initialisationVector));
-
-   console.log(data); */
 
    console.log(encryptedData);
 

@@ -270,7 +270,7 @@ app.controller("myCtrl", function(
       "selectPatientKeysByPatientID?p=resource%3Anz.ac.auckland.Patient%23" +
       patient.id;
 
-    
+    // fetch encrypted patient key from blockchain
     $http.get(endpoint).then(function(response) {
       console.log(response.data);
       if (response.data.length === 0) {
@@ -283,6 +283,7 @@ app.controller("myCtrl", function(
 
       patientKey = $scope.tryDecrypt(encryptedKey);
 
+      // open modal
       ModalService.showModal({
         templateUrl: "./recordsModal.html",
         controller: "recordsController",
