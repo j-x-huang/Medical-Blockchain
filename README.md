@@ -1,5 +1,4 @@
 ![MedBloc](images/MedBloc.png)
-# MedBloc
 
 _Blockchain for the New Zealand Healthcare System_
 [![Build Status](https://travis-ci.com/j-x-huang/Medical-Blockchain.svg?token=YzVSmKzp9FBFfxnUC5cF&branch=master)](https://travis-ci.com/j-x-huang/Medical-Blockchain)
@@ -7,7 +6,7 @@ _Blockchain for the New Zealand Healthcare System_
 
 ***
 In this document we will detail how to setup MedBloc.
-Further information on the repository structure and web apps can be found our the GitHub wiki.
+Further information on the repository structure and web apps can be found on our GitHub wiki.
 
 
 ## Setup Guide
@@ -45,7 +44,7 @@ tar -xvf fabric-dev-servers.tar.gz
 ``` 
 If you prefer to download a zip file, replace .tar.gz with .zip
  
-After downloading the tools run these commands to download the Hyperledger Fabric runtimes:
+After downloading the tools run these commands to download the Hyperledger Fabric runtime libraries:
 
 ```sh
 cd fabric-dev-servers
@@ -60,7 +59,7 @@ export FABRIC_VERSION=hlfv12
 ./startFabric.sh
 ./createPeerAdminCard.sh 
 ```
-It will also create a business network card called PeerAdmin. This will be used to generate participant identities on the network.
+This will also create a business network card called PeerAdmin, which will be used to generate participant identities on the network.
 
 To kill the network run 
 ```sh
@@ -69,7 +68,7 @@ docker rm $(docker ps -aq)
 docker rmi $(docker images dev-* -q)
 ```
 
-Further information about the installing Hyperledger Fabric and Composer can be found [here](https://hyperledger.github.io/composer/latest/installing/installing-index)
+Further information regarding the installation Hyperledger Fabric and Composer can be found [here](https://hyperledger.github.io/composer/latest/installing/installing-index)
 
 ## 2. Setting up a single organization Fabric network
 
@@ -77,25 +76,25 @@ This section shows how MedBloc can be deployed on a single organization, single 
  
 First, navigate to the composer-artifacts directory and run `./QuickDeploy.sh` to deploy the network
   
-The script will first remove any deployed Fabric containers running. It then starts a new Fabric network with 1 endorsing peer node, 1 certificate authority and 1 orderer node.
+This script will first remove any deployed Fabric containers running. It then starts a new Fabric network with 1 endorsing peer node, 1 certificate authority and 1 orderer node.
  
-After that, it compiles the BND files in composer-artifact into a .bna file. The naming scheme is `medical-network@[verison].bna`. Then it will install the BNA file on the blockchain network. A network admin card is generated (admin@medical-network), via the PeerAdmin business card, and is added as a participant on the network.
+After that, it compiles the BND files in composer-artifact into a .bna file. The naming scheme is `medical-network@[verison].bna`. Then it will install the BNA file on the Fabric network. A network admin card is generated (admin@medical-network), via the PeerAdmin business card, and is added as a participant on the network.
  
 The composer-cli tool will ping for the network admin on the network. A successful ping means that the network is running, and the admin identity has been correctly installed.
 
 Do not worry if other errors are showing. As long as the ping is successful, it means that the network has been correctly deployed.
 
-QuickUpgrade.sh, as the name implies, upgrades the current blockchain model. Before doing so, change the version number of the BND, by editing the attribute in the package.json file. Run `./QuickUpgrade.sh` to begin the process.
+QuickUpgrade.sh, as the name implies, upgrades the current blockchain model. Before doing so, change the version number of the BND, by editing the 'version' attribute in the package.json file. Run `./QuickUpgrade.sh` to begin the process.
 
-The script first compiles the BND files into a new .bna file. It then installs the BNA file on the network and redeploys the network. Afterwards, it will ping the network admin card again. A successful ping means that the network has correctly upgraded.
+This script first compiles the BND files into a new .bna file. It then installs the BNA file on the network and redeploys the network. Afterwards, it will ping the network admin card again. A successful ping means that the network has been correctly upgraded.
 
 Further information about deploying a single organization, single peer Fabric network can be found [here](https://hyperledger.github.io/composer/latest/tutorials/developer-tutorial)
 
 ## 3. Setting up a multi-organisation Fabric network
 
-This section gives a summary of how MedBloc can be deployed on a two organization Fabric network. The network has 4 endorsing peer nodes belonging to two separate organisations along with 1 orderer node and 1 certificate authority. This network was the network we deployed for the exhibition. The process of setting the network up is a complicated process ,so it is advised that you go through the details in the provided [link](https://hyperledger.github.io/composer/latest/tutorials/deploy-to-fabric-multi-org).
+This section gives a summary of how MedBloc can be deployed on a two organization Fabric network. The network has 4 endorsing peer nodes belonging to two separate organisations along with 1 orderer node and 1 certificate authority. This network was the network we deployed for the exhibition. The process of setting the network up is a complicated process, so it is advised that you go through the details in the provided in the [link](https://hyperledger.github.io/composer/latest/tutorials/deploy-to-fabric-multi-org). Remember to replace all occurences of "trade-network" with "medical-network" as they use a different network model in their tutorial.
 
-Before a multi-organisation Fabric network can be set up, if you have a previously installed Composer development environment, you will need to tear down the Hyperledger Fabric containers provided by the development environment first. 
+Before a multi-organisation Fabric network can be set up, if you have a previously installed Composer development environment, you will need to tear down the Hyperledger Fabric containers provided by the development environment. 
 
 The first step is to download the multi-organisation sample from https://github.com/mahoney1/fabric-samples.git and then download the platform binaries into the sample folder.  You then need to switch to the multi-org branch and go into the first-network sample. Inside the first-network folder, you can start the network by using the commands:
 
@@ -148,7 +147,7 @@ Flags:
 * -p: the port number to serve the REST API on.
 * -n: whether the REST API should use namespaces (nz.ac.auckland) or not. For the web app to interact with the REST API, we must not use any namespaces.
 
-Alternatively, you can just run “composer-rest-server,” and you will be presented with a step-by-step guide to installing the REST server.
+Alternatively, you can just run “composer-rest-server,” and you will be presented with a step-by-step guide on installing the REST server.
 
 Further detail on the composer-rest-server CLI can be found [here](https://hyperledger.github.io/composer/v0.19/integrating/getting-started-rest-api).
 
@@ -162,14 +161,14 @@ Healthcare Provider:
 
 `composer-rest-server -c [user]@medical-network -p 3001 -n never`
 
-For the web app to interact with the appropriate client apps, the port number for patients MUST be 3002, and the port number for healthcare providers MUST be 3001. Of course, you can instantiate more REST server and use different port numbers, but extra step will need to be taken if you wish to link the web app to the rest server. The identity (specified by -c) which the REST server is tied to must have already been imported on the network. See section 2.6 to see how to issue identities.
+For the web app to interact with the appropriate client apps, the port number for patients MUST be 3002, and the port number for healthcare providers MUST be 3001. Of course, you can instantiate more REST servers and use different port numbers, but extra steps will need to be taken if you wish to link the web app to the REST server. The identity (specified by -c) which the REST server is tied to must have already been imported on the network. See section 6 to learn how to issue identities.
 
 If you go on http://localhost:3000/explorer/ (after installing the REST server), you will be presented with a GUI showing all the exposed REST APIs. The exposed API correspond to the transactions which can be invoked on the smart-contracts. You may call each API directly from the GUI. However, it is recommended you interact with the blockchain through the web applications.
 
 ## 5. Settings up the Web Applications
-There are three types of web apps of maintained: admin app (called web app in our repository), patient app and hp app. Setting up each web app is performed the same.
+There are three types of web apps maintained: admin app (called web app in our repository), patient app and hp app. Setting up each web app is performed the same.
 
-Before running the web apps, please install http-server using this command
+Before running the web apps, please install http-server using this command:
 ```sh
 npm install -g http-server
 ```
@@ -182,12 +181,12 @@ Now navigate to any web app directory (which you have set a corresponding REST s
 
 After executing the command the terminal will show the web port it is deployed on. It is usually deployed on http:localhost:8080. However, if you have multiple web apps running it will go to port 8081, 8082 and so on. On a different terminal window, navigate to the other web app directories and use the same command to deploy the website.
 
-You can access the web app by going on the link. Please refer to the wiki for the web app usage guide.
+You can access the web app by going on the link. Please refer to the wiki for the web app walkthrough guide.
 
 ### Multiples web apps and client apps
 If you wish to deploy more than one of each type of app you must edit the code itself. First, duplicate the web app you wish to deploy by copying the folder and pasting it somewhere else. In the new web app folder, navigate to the angular-module.js file (within the js folder). At the very top of the file (line 1) add a variable called either ADMIN_ENDPOINT, HP_ENDPOINT, OR PATIENT_ENDPOINT. The variable name depends on the web-app you are deploying (i.e., if its an admin app, use ADMIN_ENDPOINT).
 
-The variable must specify the URL of the REST server as a string. So if I deployed a new admin REST server locally on port 3005, the variable should look like this:
+The variable must specify the URL of the REST server as a string. So if we deployed a new admin REST server on port 3005, the variable should look like this:
 
 ```
 ADMIN_ENDPOINT = “http://localhost:3005/api/”
@@ -210,7 +209,7 @@ Flags:
 
 More information on the flags can be found by typing `composer identity issue`.
 
-The above command will generate a joe.card file. The identity must be imported into the network before it can be used. The command to do so:
+The above command will generate a joe.card file. The identity must be imported into the network before it can be used. The command to do so is:
 
 ```sh
 composer card import -f joe.card
@@ -220,6 +219,13 @@ composer network ping -c jdoe@medical-network
 
 By pinging the card on the network, we can check if it has been successfully installed or not.
 
-With this card installed you may now deploy a REST server which carries of the identity of the given card, by following the process described in Section 4.
+With this card installed you may now deploy a REST server which carries of the identity of the given card by following the process described in Section 4.
+
+## 7. Issues
+We have tested that our setup guide works correctly as of 12/8/18. However, Hyperledger regularly makes updates to Composer and Fabric, so by the time you deploy MedBloc, our setup guide may no longer be valid. We recommend you follow the official documentation (linked in this README) if you are unable to deploy MedBloc.
+
+We have already experienced one issue related to Hyperledger's regular updates. Some time between our exhibition and the compendium due date, Hyperledger released a new update for Composer. This caused us to experience a bug where the Composer REST server would sometimes randomly shut down without any warning. If this happens to you, please start the REST server again and proceed as usual. 
+
+
 
 
