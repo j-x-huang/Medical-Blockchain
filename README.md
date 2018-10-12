@@ -221,7 +221,15 @@ By pinging the card on the network, we can check if it has been successfully ins
 
 With this card installed you may now deploy a REST server which carries of the identity of the given card by following the process described in Section 4.
 
-## 7. Issues
+## 7. Test Guide
+To run the unit tests open a new terminal and navigate to the ‘composer-artifacts’ directory, then run the command:
+
+```sh
+npm install
+npm test
+```
+
+## 8. Issues
 We have tested that our setup guide works correctly as of 12/8/18. However, Hyperledger regularly makes updates to Composer and Fabric, so by the time you deploy MedBloc, our setup guide may no longer be valid. We recommend you follow the official documentation (linked in this README) if you are unable to deploy MedBloc.
 
 We have already experienced one issue related to Hyperledger's regular updates. Some time between our exhibition and the compendium due date, Hyperledger released a new update for Composer. This caused us to experience a bug where the Composer REST server would sometimes randomly shut down without any warning. If this happens to you, please start the REST server again and proceed as usual. 
