@@ -6,7 +6,7 @@ _Blockchain for the New Zealand Healthcare System_
 
 ***
 In this document we will detail how to setup MedBloc.
-Further information on the repository structure and web apps can be found on our GitHub wiki.
+Further information on the repository structure and web apps can be found on our (GitHub wiki)(https://github.com/j-x-huang/Medical-Blockchain/wiki).
 
 
 ## Setup Guide
