@@ -210,7 +210,7 @@ Flags:
 
 More information on the flags can be found by typing `composer identity issue`.
 
-The above command will generate a joe.card file. The identity must be imported on the network before it can be used. The command to do so:
+The above command will generate a joe.card file. The identity must be imported into the network before it can be used. The command to do so:
 
 ```sh
 composer card import -f joe.card
