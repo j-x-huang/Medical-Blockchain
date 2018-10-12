@@ -25,6 +25,7 @@ app.controller('PatientController', [
         $scope.privateKey
         $scope.patientKey
         
+        // displays the patient details on the form in the html page.
         if (patient != null) {
             for (var key in patient) {
                 if ($scope.patientForm.hasOwnProperty(key)) {
@@ -40,7 +41,6 @@ app.controller('PatientController', [
             patientForm = Object.assign({}, $scope.patientForm)
             delete patientForm.id
             dateToString(patientForm)
-            encryptForm(patientForm)
             $http({
                 method: 'PUT',
                 url: endpoint,
@@ -86,20 +86,6 @@ app.controller('PatientController', [
                 }
             })
             console.log(form)
-        }
-
-        function encryptForm(form) {
-            // var keys = Object.keys(form)
-    
-            // keys.forEach(function (key) {
-            //     if (!(key == "$class" || key == "id")) {
-            //         var encryptedData = symEncrypt(form[key])
-            //         encryptedData = JSON.parse(encryptedData)
-            //         form[key] = encryptedData.ct
-            //     }
-    
-            // })
-            // console.log(form)
         }
 
         //  This close function doesn't need to use jQuery or bootstrap, because

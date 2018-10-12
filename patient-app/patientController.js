@@ -25,6 +25,7 @@ app.controller('PatientController', [
         $scope.privateKey
         $scope.patientKey
         
+        // displays the patient details on the form in the html page.
         if (patient != null) {
             for (var key in patient) {
                 if ($scope.patientForm.hasOwnProperty(key)) {

@@ -12,7 +12,8 @@ webport = webport.replace("http", "ws")
 
 var namespace = "nz.ac.auckland";
 
-app.service("myService", function() {
+// Shared Service
+app.service("myService", function () {
   return {
     patientKey: "",
     privateKey: "",
@@ -21,7 +22,8 @@ app.service("myService", function() {
   };
 });
 
-app.config(function($routeProvider) {
+// Router
+app.config(function ($routeProvider) {
   $routeProvider
     .when("/", {
       templateUrl: "login.html",
@@ -31,7 +33,7 @@ app.config(function($routeProvider) {
       templateUrl: "main.html",
       controller: "myCtrl",
       resolve: {
-        check: function(myService, $location) {
+        check: function (myService, $location) {
           console.log(myService.id);
           if (
             myService.patientKey === "" ||
@@ -48,15 +50,19 @@ app.config(function($routeProvider) {
     });
 });
 
-app.controller("loginCtrl", function($scope, $http, $location, myService) {
+// login controller
+app.controller("loginCtrl", function ($scope, $http, $location, myService) {
   $scope.id;
 
-  $scope.handleFiles = function(files) {
+  /**
+   * handles uploading of files such as patient or private-public key
+   */
+  $scope.handleFiles = function (files) {
     var file = files[0];
     var reader = new FileReader();
     reader.readAsBinaryString(file);
 
-    reader.onload = function() {
+    reader.onload = function () {
       var str = reader.result;
       console.log(file);
       console.log(file.type);
@@ -79,35 +85,35 @@ app.controller("loginCtrl", function($scope, $http, $location, myService) {
     };
   };
 
-  $scope.login = function() {
+  // redirects to main screen
+  $scope.login = function () {
     myService.id = $scope.id;
 
     var endpoint = apiBaseURL + "Patient/" + myService.id;
     $scope.endpoint = endpoint;
 
     $http.get(endpoint).then(
-      function(response) {
+      function (response) {
         myService.details = response.data;
         $location.path("/main");
       },
-      function(res) {
+      function (res) {
         alert("Patient does not exist");
       }
     );
   };
 });
 
-app.controller("myCtrl", function(
+// Main app controller
+app.controller("myCtrl", function (
   $scope,
   $http,
   $websocket,
   ModalService,
   myService
 ) {
-  console.log(myService.id);
-  console.log(myService.patientKey);
-  console.log(myService.privateKey);
 
+ // ----- FIELDS -----
   $scope.allergy = [];
   $scope.cond = [];
   $scope.imm = [];
@@ -136,27 +142,29 @@ app.controller("myCtrl", function(
   $scope.hpArray = [];
   $scope.hpDir = [];
   $scope.notiTable = [];
+ // ----- END FIELDS -----
 
-  $scope.login = function() {
+ // ----- CRUD & TRANSACTIONS -----
+  $scope.getMe = function () {
     var endpoint = apiBaseURL + "Patient/" + $scope.pid;
     $scope.endpoint = endpoint;
 
-    $http.get(endpoint).then(function(response) {
+    $http.get(endpoint).then(function (response) {
       $scope.myArray = response.data;
       _login = true;
     }, _error);
   };
 
-  $scope.getHPs = function() {
+  $scope.getHPs = function () {
     var endpoint = apiBaseURL + "HealthProvider"
     $scope.endpoint = endpoint
 
     $http.get(endpoint).then(function (response) {
-        $scope.hpDir = response.data
+      $scope.hpDir = response.data
     }, _error)
   }
 
-  $scope.shareKey = function(index) {
+  $scope.shareKey = function (index) {
     if (!isCredsProvided()) {
       return;
     }
@@ -173,11 +181,13 @@ app.controller("myCtrl", function(
     $scope.shareForm.healthProvider =
       "resource:" + namespace + ".HealthProvider#" + hid;
 
-    $http.get(apiBaseURL + "HealthProvider/" + hid).then(function(response) {
+    // Fetch HPs public key
+    $http.get(apiBaseURL + "HealthProvider/" + hid).then(function (response) {
       console.log(response.data);
 
       var hp = response.data;
 
+      // Encrypt patient key with their public key
       encryptedPatientKeyHPPublic = asymEncrypt(
         $scope.patientKey,
         hp.publicKey
@@ -199,7 +209,7 @@ app.controller("myCtrl", function(
     }, _error);
   };
 
-  $scope.viewKeys = function() {
+  $scope.viewKeys = function () {
     if (!isCredsProvided()) {
       return;
     }
@@ -211,25 +221,25 @@ app.controller("myCtrl", function(
       "selectPatientKeysByPatientID?p=resource%3Anz.ac.auckland.Patient%23" +
       $scope.pid;
 
-    $http.get(endpoint).then(function(response) {
+    $http.get(endpoint).then(function (response) {
       var hps = new Set();
 
-      response.data.forEach(function(data) {
+      response.data.forEach(function (data) {
         var hpLine = data.healthProvider.split("#");
         hpId = hpLine[1];
 
         hps.add(hpId);
       });
       console.log(hps);
-      hps.forEach(function(hp) {
-        $http.get(apiBaseURL + "HealthProvider/" + hp).then(function(response) {
+      hps.forEach(function (hp) {
+        $http.get(apiBaseURL + "HealthProvider/" + hp).then(function (response) {
           $scope.hpArray.push(response.data);
         }, _error);
       });
     }, _error);
   };
 
-  $scope.revokeKey = function(index) {
+  $scope.revokeKey = function (index) {
     var hid = $scope.hpArray[index].id;
 
     var endpoint = apiBaseURL + "RevokeMedicalRecordsSharing";
@@ -250,7 +260,7 @@ app.controller("myCtrl", function(
     }).then(_success(null, $scope.viewKeys), _error);
   };
 
-  $scope.setTab = function(tag) {
+  $scope.setTab = function (tag) {
     if (tag === "MyRecords") {
       $scope.getAllRecords();
     } else if (tag === "MySharedKeys") {
@@ -260,38 +270,12 @@ app.controller("myCtrl", function(
     }
   };
 
-  $scope.getId = function(index) {
+  $scope.getId = function (index) {
     _id = $scope.myArray[index].id;
     _records = $scope.myArray[index].records;
   };
-  /**
-   * Show response message in a pop-up dialog box
-   *
-   * @param response
-   * @private
-   */
-  function _success(response, callback) {
-    alert("Operation successful");
 
-    if (callback !== undefined) {
-      setTimeout(function() {
-        callback();
-      }, 2500);
-    }
-  }
-
-  /**
-   * Show error message in a pop-up dialog box
-   *
-   * @param response
-   * @private
-   */
-  function _error(response) {
-    console.log(response.data);
-    alert("Error: " + response.data.error.message);
-  }
-
-  $scope.editPatient = function() {
+  $scope.editPatient = function () {
     var patientDetails = $scope.myArray;
     ModalService.showModal({
       templateUrl: "./patientModal.html",
@@ -304,35 +288,15 @@ app.controller("myCtrl", function(
         patient: patientDetails,
         update: true
       }
-    }).then(function(modal) {
+    }).then(function (modal) {
       modal.element.modal();
-      modal.close.then(function(result) {
+      modal.close.then(function (result) {
         $(".modal-backdrop").remove();
       });
     });
   };
 
-  $scope.handleFiles = function(files) {
-    var file = files[0];
-    var reader = new FileReader();
-    reader.readAsBinaryString(file);
-
-    reader.onload = function() {
-      var str = reader.result;
-
-      if (file.type == "text/plain") {
-        $scope.patientKey = str;
-        alert("Patient key successfully submitted");
-      } else if (file.type == "application/x-x509-ca-cert") {
-        $scope.privateKey = str;
-        alert("Private key successfully submitted");
-      } else {
-        alert("Unable to read file");
-      }
-    };
-  };
-
-  $scope.getAllRecords = function() {
+  $scope.getAllRecords = function () {
     if (!isCredsProvided()) {
       return;
     }
@@ -341,47 +305,48 @@ app.controller("myCtrl", function(
 
     getRecords(
       endpoint2 +
-        "selectAllAllergyRecords?p=resource%3Anz.ac.auckland.Patient%23" +
-        $scope.pid,
+      "selectAllAllergyRecords?p=resource%3Anz.ac.auckland.Patient%23" +
+      $scope.pid,
       $scope.allergy
     );
     getRecords(
       endpoint2 +
-        "selectAllConditionRecords?p=resource%3Anz.ac.auckland.Patient%23" +
-        $scope.pid,
+      "selectAllConditionRecords?p=resource%3Anz.ac.auckland.Patient%23" +
+      $scope.pid,
       $scope.cond
     );
     getRecords(
       endpoint2 +
-        "selectAllImmunizationRecords?p=resource%3Anz.ac.auckland.Patient%23" +
-        $scope.pid,
+      "selectAllImmunizationRecords?p=resource%3Anz.ac.auckland.Patient%23" +
+      $scope.pid,
       $scope.imm
     );
     getRecords(
       endpoint2 +
-        "selectAllMedicationRecords?p=resource%3Anz.ac.auckland.Patient%23" +
-        $scope.pid,
+      "selectAllMedicationRecords?p=resource%3Anz.ac.auckland.Patient%23" +
+      $scope.pid,
       $scope.med
     );
     getRecords(
       endpoint2 +
-        "selectAllObservationRecords?p=resource%3Anz.ac.auckland.Patient%23" +
-        $scope.pid,
+      "selectAllObservationRecords?p=resource%3Anz.ac.auckland.Patient%23" +
+      $scope.pid,
       $scope.obs
     );
     getRecords(
       endpoint2 +
-        "selectAllProcedureRecords?p=resource%3Anz.ac.auckland.Patient%23" +
-        $scope.pid,
+      "selectAllProcedureRecords?p=resource%3Anz.ac.auckland.Patient%23" +
+      $scope.pid,
       $scope.proc
     );
   };
-
+  
+  // Get individual record types
   function getRecords(query, array) {
-    $http.get(query).then(function(response) {
+    $http.get(query).then(function (response) {
       var tempArray = response.data;
 
-      tempArray.forEach(function(form) {
+      tempArray.forEach(function (form) {
         decryptForm(form);
       });
 
@@ -403,10 +368,43 @@ app.controller("myCtrl", function(
     return;
   }
 
+  // ------ END CRUD & TRANSACTIONS -----
+
+   // ----- RESPONSE HANDLING -----
+  /**
+   * Show response message in a pop-up dialog box
+   *
+   * @param response
+   * @private
+   */
+  function _success(response, callback) {
+    alert("Operation successful");
+
+    if (callback !== undefined) {
+      setTimeout(function () {
+        callback();
+      }, 2500);
+    }
+  }
+
+  /**
+   * Show error message in a pop-up dialog box
+   *
+   * @param response
+   * @private
+   */
+  function _error(response) {
+    console.log(response.data);
+    alert("Error: " + response.data.error.message);
+  }
+
+  // ------ RESPONSE HANDLING -----
+
+  // ------ CRYPTOGRAPHY -----
   function decryptForm(form) {
     var keys = Object.keys(form);
 
-    keys.forEach(function(key) {
+    keys.forEach(function (key) {
       if (
         !(
           key == "$class" ||
@@ -421,12 +419,15 @@ app.controller("myCtrl", function(
     });
   }
 
+  // ----- END CRYPTOGRAPHY -----
+
+  // ----- WEB SOCKETS -----
   var ws = $websocket.$new(webport);
 
-  ws.$on("$open", function() {
+  ws.$on("$open", function () {
     // it listents for 'incoming event'
     console.log("WS Open");
-  }).$on("$message", function(data) {
+  }).$on("$message", function (data) {
     console.log(data);
     if (data.$class === "nz.ac.auckland.RequestRecordSharingNotification") {
       var hpLine = data.healthProvider.split("#");
@@ -460,8 +461,10 @@ app.controller("myCtrl", function(
     $scope.$apply()
 
   });
+  // ----- END WEB SOCKETS -----
 
-  $scope.dismiss = function() {
+  // ----- MISCELLANEOUS -----
+  $scope.dismiss = function () {
     $scope.notiIcon = false;
   }
   function isCredsProvided() {
@@ -472,7 +475,7 @@ app.controller("myCtrl", function(
     return true;
   }
 
-  $scope.refresh = function() {
+  $scope.refresh = function () {
     $scope.$apply()
   };
 });

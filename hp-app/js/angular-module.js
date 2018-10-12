@@ -11,6 +11,7 @@ var endpoint2 = HP_ENDPOINT + "queries/";
 var webport = HP_ENDPOINT.replace("/api/", "");
 webport = webport.replace("http", "ws");
 
+// Shared service
 app.service("myService", function() {
   return {
     privateKey: "",
@@ -19,6 +20,7 @@ app.service("myService", function() {
   };
 });
 
+// Router
 app.config(function($routeProvider) {
   $routeProvider
     .when("/", {
@@ -45,9 +47,13 @@ app.config(function($routeProvider) {
     });
 });
 
+// Login Controller
 app.controller("loginCtrl", function($scope, $http, $location, myService) {
   $scope.id;
 
+  /**
+   * handles uploading of files such as patient or private-public key
+   */
   $scope.handleFiles = function(files) {
     var file = files[0];
     var reader = new FileReader();
@@ -74,6 +80,7 @@ app.controller("loginCtrl", function($scope, $http, $location, myService) {
     };
   };
 
+  // redirects to main screen
   $scope.login = function() {
     myService.id = $scope.id;
     var endpoint = apiBaseURL + "HealthProvider/" + myService.id;
@@ -90,6 +97,7 @@ app.controller("loginCtrl", function($scope, $http, $location, myService) {
   };
 });
 
+// Main app controller
 app.controller("myCtrl", function(
   $scope,
   $http,
@@ -97,10 +105,8 @@ app.controller("myCtrl", function(
   ModalService,
   myService
 ) {
-  console.log(myService.id);
-  console.log(myService.privateKey);
-  console.log(myService.details);
 
+  // ------ Fields -----
   $scope.hid = myService.id;
   $scope.hpArray = myService.details;
   $scope.keyArray = [];
@@ -117,6 +123,9 @@ app.controller("myCtrl", function(
 
   $scope.myArray = [];
 
+  // ----- END FIELDS -----
+
+  // ----- CRUD & TRANSACTIONS -----
   $scope.getPatients = function() {
     if (!isCredsProvided()) {
       return;
@@ -214,19 +223,15 @@ app.controller("myCtrl", function(
     });
   };
 
-  $scope.setTab = function(tag) {
-    if (tag === "Patient") {
-      $scope.getPatients();
-    } else if (tag === "PatientKey") {
-      $scope.getKeys();
-    }
-  };
 
   $scope.getId = function(index) {
     _id = $scope.myArray[index].id;
     _records = $scope.myArray[index].records;
   };
 
+  // ----- END CRUD & TRANSACTIONS -----
+
+  // ----- RESPONSE HANDLING -----
   /**
    * Show response message in a pop-up dialog box
    *
@@ -248,6 +253,9 @@ app.controller("myCtrl", function(
     alert("Error: " + response.data.error.message);
   }
 
+  // ------ END RESPONSE HANDLING ------
+
+  // ------ MODALS ------
   $scope.viewRecords = function(index) {
     if (!isCredsProvided()) {
       return;
@@ -261,7 +269,7 @@ app.controller("myCtrl", function(
       "selectPatientKeysByPatientID?p=resource%3Anz.ac.auckland.Patient%23" +
       patient.id;
 
-    //DUPLICATE
+    
     $http.get(endpoint).then(function(response) {
       console.log(response.data);
       if (response.data.length === 0) {
@@ -294,14 +302,8 @@ app.controller("myCtrl", function(
     }, _error);
   };
 
-  function isCredsProvided() {
-    if (!_login) {
-      alert("Credentials not fully supplied");
-      return false;
-    }
-    return true;
-  }
-
+  // ------ END MODALS ------
+  // ------ WEB SOCKETS ------
   var ws = $websocket.$new(webport);
 
   ws.$on("$open", function() {
@@ -347,6 +349,17 @@ app.controller("myCtrl", function(
     }
     $scope.$apply();
   });
+  // ----- END WEBSOCKETS -----
+
+
+ // ----- MISCELLANEOUS ------
+  function isCredsProvided() {
+    if (!_login) {
+      alert("Credentials not fully supplied");
+      return false;
+    }
+    return true;
+  }
 
   $scope.tryDecrypt = function(encryptedPkey) {
     return asymDecrypt(encryptedPkey, $scope.privateKey);
@@ -355,6 +368,14 @@ app.controller("myCtrl", function(
   $scope.keyPress = function(value) {
     if (value.keyCode == 42) {
       ModalService.closeModals(null, 500);
+    }
+  };
+
+  $scope.setTab = function(tag) {
+    if (tag === "Patient") {
+      $scope.getPatients();
+    } else if (tag === "PatientKey") {
+      $scope.getKeys();
     }
   };
 

@@ -4,6 +4,7 @@
 *.card
 
 fabric-tools/
+fabric-dev-servers/
 
 alice/
 bob/

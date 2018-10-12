@@ -6,6 +6,7 @@ webport = webport.replace("http", "ws")
 
 app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
+    // ----- Fields ------
     $scope.healthProviderForm = {
         $class: "nz.ac.auckland.HealthProvider",
         id: "",
@@ -21,14 +22,24 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
     $scope.privateKey
 
     $scope.myArray = []
+    $scope.notiArray = []
 
+    $scope.encryptedPkey
+    $scope.decryptedKey
 
+    $scope.hppub
+    $scope.wKey
+
+    //----- End Fields ------
+    
+    // view JSON data on screen
     $scope.viewData = function (data) {
 
         $('#json-renderer').jsonViewer(data, { collapsed: true });
 
     }
 
+    // ------ CRUD functions -------
     $scope.submitHP = function () {
         var endpoint = apiBaseURL + "HealthProvider"
 
@@ -62,6 +73,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         }, _error)
     }
 
+    // handles deletion either patients or HPs
     $scope.delete = function (index) {
         var isConfirmed = confirm("Are you sure you want to delete this entity?")
 
@@ -72,7 +84,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
 
             var endpoint = apiBaseURL + tag + "/" + id
 
-            $http.delete(endpoint).then(function(response) {
+            $http.delete(endpoint).then(function (response) {
                 $scope.viewData(response.data);
                 alert("Operation successful");
                 $scope.getPatients()
@@ -83,6 +95,7 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         }
     }
 
+    // Fetchs data (patient or hp depending on tag) and puts in my Array.
     $scope.getData = function (tag) {
         var endpoint = apiBaseURL + tag
         $scope.endpoint = endpoint
@@ -103,33 +116,15 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
         }
     }
 
+    // Get ID of participant in the table row which was clicked on
     $scope.getId = function (index) {
         _id = $scope.myArray[index].id
         _records = $scope.myArray[index].records
     }
 
-    /**
-     * Show response message in a pop-up dialog box
-     *
-     * @param response
-     * @private
-     */
-    function _success(response) {
-        $scope.viewData(response.data);
-        alert("Operation successful")
-    }
+    // ------ END CRUD FUNCTIONS ------
 
-    /**
-     * Show error message in a pop-up dialog box
-     *
-     * @param response
-     * @private
-     */
-    function _error(response) {
-        console.log(response)
-        alert("Error: " + response.data.error.message);
-    }
-
+    // ----- MODALS -------
     $scope.addPatient = function () {
         ModalService.showModal({
             templateUrl: "./patientModal.html",
@@ -192,9 +187,9 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
             }
         }).then(function (modal) {
             modal.element.modal();
-            modal.close.then(function(result) {
+            modal.close.then(function (result) {
                 $('.modal-backdrop').remove()
-              });
+            });
 
         });
 
@@ -214,9 +209,9 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
             }
         }).then(function (modal) {
             modal.element.modal();
-            modal.close.then(function(result) {
+            modal.close.then(function (result) {
                 $('.modal-backdrop').remove()
-              });
+            });
         });
 
     }
@@ -234,117 +229,148 @@ app.controller('myCtrl', function ($scope, $http, $websocket, ModalService) {
             }
         }).then(function (modal) {
             modal.element.modal();
-            modal.close.then(function(result) {
+            modal.close.then(function (result) {
                 $('.modal-backdrop').remove()
-              });
+            });
         });
 
     }
 
+    // ----- END MODALS -------
+
+    // ----- RESPONSE HANDLING -----
+    /**
+     * Show response message in a pop-up dialog box
+     *
+     * @param response
+     * @private
+     */
+    function _success(response) {
+        $scope.viewData(response.data);
+        alert("Operation successful")
+    }
+
+    /**
+     * Show error message in a pop-up dialog box
+     *
+     * @param response
+     * @private
+     */
+    function _error(response) {
+        console.log(response)
+        alert("Error: " + response.data.error.message);
+    }
+
+    // ----- END RESPONSE HANDLING -------
+
+    /**
+     * handles uploading of files such as patient or private-public key
+     */
     $scope.handleFiles = function (files) {
         var file = files[0]
         var reader = new FileReader();
         reader.readAsBinaryString(file);
 
-        reader.onload=function(){
+        reader.onload = function () {
             var str = reader.result
 
-            if (file.type == "text/plain") {
+            if (file.type == "text/plain") { // if patient key
                 $scope.patientKey = str
-            } else if (file.type == "application/x-x509-ca-cert") {
+            } else if (file.type == "application/x-x509-ca-cert") { // if private key
                 $scope.privateKey = str
             } else {
                 error("Unable to read file")
             }
         }
     }
-    
-    $scope.encryptedPkey
-    $scope.decryptedKey
 
-    $scope.testDecrypt = function() {
+
+    // ------ ENCRYPTION HANDLING -----
+    $scope.testDecrypt = function () {
         console.log($scope.encryptedPkey)
         console.log($scope.privateKey)
         $scope.decryptedKey = asymDecrypt($scope.encryptedPkey, $scope.privateKey)
 
     }
 
-    $scope.makeKey = function() {
+    $scope.makeKey = function () {
         $scope.patientKey = generateRandomKey()
     }
 
-    $scope.hppub
-    $scope.wKey
 
-    $scope.wrapKey = function() {
+    $scope.wrapKey = function () {
         $scope.wKey = asymEncrypt(
             $scope.patientKey,
             $scope.hppub
-          );
+        );
 
     }
-    $scope.getPatients()
 
-    $scope.notiArray = []
+    // ------ END ENCRYPTION HANDLING ------
 
+
+    // ----- Web socker and event handling logic -----
     var ws = $websocket.$new(webport);
 
     ws.$on('$open', function () { // it listents for 'incoming event'
         console.log("WS Open");
     })
-    .$on('$message', function (data) {
-        console.log(data)
-        if (data.$class === "nz.ac.auckland.ShareKeyNotification") {
-            var hpLine = data.healthProvider.split('#')
-            var hpId = hpLine[1];
+        .$on('$message', function (data) {
+            console.log(data)
+            if (data.$class === "nz.ac.auckland.ShareKeyNotification") {
+                var hpLine = data.healthProvider.split('#')
+                var hpId = hpLine[1];
 
-            var pLine = data.patient.split('#')
-            var pId = pLine[1]
+                var pLine = data.patient.split('#')
+                var pId = pLine[1]
 
-            var timestamp = new Date(data.timestamp);
+                var timestamp = new Date(data.timestamp);
 
-            var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
+                var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
 
-            var notification = {
-                time: timeString,
-                msg: "Patient #" + pId + " has shared their key with HP #" + hpId
+                var notification = {
+                    time: timeString,
+                    msg: "Patient #" + pId + " has shared their key with HP #" + hpId
+                }
+                $scope.notiArray.unshift(notification)
+            } else if (data.$class === "nz.ac.auckland.RevokeMedicalRecordsSharingNotification") {
+                var pLine = data.patient.split('#')
+                var pId = pLine[1]
+
+                var hpLine = data.healthProvider.split('#')
+                var hpId = hpLine[1]
+
+                var timestamp = new Date(data.timestamp);
+
+                var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
+                var notification = {
+                    time: timeString,
+                    msg: "Patient #" + pId + " stopped sharing their key with HP #" + hpId
+                }
+                $scope.notiArray.unshift(notification)
+
+            } else if (data.$class === "nz.ac.auckland.RequestRecordSharingNotification") {
+                var hpLine = data.healthProvider.split('#')
+                var hpId = hpLine[1];
+
+                var pLine = data.patient.split('#')
+                var pId = pLine[1]
+
+                var timestamp = new Date(data.timestamp);
+
+                var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
+
+                var notification = {
+                    time: timeString,
+                    msg: "HP #" + hpId + " has requested a key from Patient #" + pId
+                }
+                $scope.notiArray.unshift(notification)
+
             }
-            $scope.notiArray.unshift(notification)
-        } else if (data.$class === "nz.ac.auckland.RevokeMedicalRecordsSharingNotification") {
-            var pLine = data.patient.split('#')
-            var pId = pLine[1]
 
-            var hpLine = data.healthProvider.split('#')
-            var hpId = hpLine[1]
+        });
 
-            var timestamp = new Date(data.timestamp);
+        $scope.getPatients()
 
-            var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
-            var notification = {
-                time: timeString,
-                msg: "Patient #" + pId + " stopped sharing their key with HP #" + hpId
-            }
-            $scope.notiArray.unshift(notification)
-
-        } else if (data.$class === "nz.ac.auckland.RequestRecordSharingNotification") {
-            var hpLine = data.healthProvider.split('#')
-            var hpId = hpLine[1];
-
-            var pLine = data.patient.split('#')
-            var pId = pLine[1]
-
-            var timestamp = new Date(data.timestamp);
-
-            var timeString = timestamp.toLocaleDateString('en-GB') + " @ " + timestamp.toLocaleTimeString('en-GB');
-
-            var notification = {
-                time: timeString,
-                msg: "HP #" + hpId + " has requested a key from Patient #" + pId
-            }
-            $scope.notiArray.unshift(notification)
-
-        }
-
-    });
 
 })

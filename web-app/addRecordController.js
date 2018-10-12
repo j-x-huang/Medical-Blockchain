@@ -26,8 +26,10 @@ app.controller('addRecordController', [
         $scope.selectedRecord = {}
         $scope.types = ["Allergy", "Procedure", "Observation", "Medication", "Immunization", "Condition"]
 
+
         $scope.submitRecord = function () {
             var recordForm = {}
+            // check for type of record selected, so it grabs info from the appropriate form on the html page.
             switch ($scope.selectedRecord.type) {
                 case 'Allergy':
                     recordForm = $scope.allergyForm
@@ -48,7 +50,7 @@ app.controller('addRecordController', [
                     recordForm = $scope.medicationForm
                     break;
             }
-            recordForm = Object.assign({}, $scope.recordForm, recordForm)
+            recordForm = Object.assign({}, $scope.recordForm, recordForm) //combine the record form with the specified record type form
             recordForm.$class = namespace + '.' + $scope.selectedRecord.type
             recordForm.patient = "resource:" + namespace + ".Patient#" + _id
             recordForm.healthProvider = "resource:" + namespace + ".HealthProvider#" + recordForm.healthProvider
@@ -96,7 +98,7 @@ app.controller('addRecordController', [
             var keys = Object.keys(form)
     
             keys.forEach(function (key) {
-                if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) {
+                if (!(key == "$class" || key == "id" || key == "patient" || key == "healthProvider")) { //do not encrypt these fields
                     var encryptedData = symEncrypt(form[key], patientKey)
                     form[key] = encryptedData.toString()
                 }
