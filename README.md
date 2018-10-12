@@ -19,7 +19,7 @@ The following requirements must be met before installing the Hyperledger develop
 * Docker Engine: Version 17.03 or higher
 * Docker-Compose: Version 1.8 or higher
 * Node: 8.9 or higher (version 9 is not supported)
-* npm: v5.x
+* npm: v5.x or higher
 * git: 2.9.x or higher
 * Python: 2.7.x
 * VSCode (recommended but not required)
