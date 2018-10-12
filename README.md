@@ -1,10 +1,14 @@
+![MedBloc](images/MedBloc.png)
 # MedBloc
-[![Build Status](https://travis-ci.com/j-x-huang/Medical-Blockchain.svg?token=YzVSmKzp9FBFfxnUC5cF&branch=master)](https://travis-ci.com/j-x-huang/Medical-Blockchain)
 
 _Blockchain for the New Zealand Healthcare System_
+[![Build Status](https://travis-ci.com/j-x-huang/Medical-Blockchain.svg?token=YzVSmKzp9FBFfxnUC5cF&branch=master)](https://travis-ci.com/j-x-huang/Medical-Blockchain)
+
+
 ***
 In this document we will detail how to setup MedBloc.
 Further information on the repository structure and web apps can be found our the GitHub wiki.
+
 
 ## Setup Guide
 
