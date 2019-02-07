@@ -1,0 +1,31 @@
+---
+test:
+  name: Composer Performance test
+  description: medical-network-64kb
+  clients:
+    type: local
+    number: 1
+  rounds:
+  - label: medical-network
+    txNumber:
+    - 500
+    trim: 0
+    rateControl:
+    - type: fixed-rate
+      opts:
+        tps: 10
+    arguments:
+      testAssets: 500
+    callback: benchmark/composer/composer-samples/medical-network.js
+monitor:
+  type:
+  - docker
+  - process
+  docker:
+    name:
+    - all
+  process:
+  - command: node
+    arguments: bench-client.js
+    multiOutput: avg
+  interval: 1
