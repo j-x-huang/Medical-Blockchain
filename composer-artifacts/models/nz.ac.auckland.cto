@@ -108,6 +108,10 @@ asset PatientKey identified by id{
   o String encryptedPatientKeyHPPublic
 }
 
+transaction AddAllergy {
+  o Allergy allergy
+}
+
 transaction RequestRecordSharing {
   --> Patient patient
   --> HealthProvider healthProvider

@@ -86,6 +86,18 @@ async function shareAKey(shareKey) {
 }
 
 /**
+ * This is the transaction function for the AddAllergy transaction.
+ *
+ * @param {nz.ac.auckland.AddAllergy} allergyTx -
+ * @transaction
+ */
+async function addAllergy(allergyTx) {
+  let assetRegistry = await getAssetRegistry('nz.ac.auckland.Allergy');
+
+  await assetRegistry.add(allergyTx.allergy);
+}
+
+/**
  * This is the transaction function for the RevokeMedicalRecordsSharing transaction.
  * It revokes a patient's consent given to a healthcare provider.
  *
