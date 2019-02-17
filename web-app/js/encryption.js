@@ -48,7 +48,7 @@ function symEncrypt(data, key){
 
    var encrypted = CryptoJS.AES.encrypt(data, key);
 
-   console.log(encrypted);
+   //console.log(encrypted);
 
    return encrypted;
 }
@@ -56,15 +56,15 @@ function symEncrypt(data, key){
 
 function symDecrypt(encryptedData, key){
 
-   console.log(encryptedData);
+   //console.log(encryptedData);
 
    var decrypted = CryptoJS.AES.decrypt(encryptedData, key);
 
-   console.log("Decrypted binary: " + decrypted);
+   //console.log("Decrypted binary: " + decrypted);
 
    decrypted = decrypted.toString(CryptoJS.enc.Utf8);
 
-   console.log("Decrypted data: " + decrypted);
+   //console.log("Decrypted data: " + decrypted);
 
    return decrypted;
 }

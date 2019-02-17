@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>MedBloc - Admin Portal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="js/benchmarking.js"></script>
+    <script src="js/encryption.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+
+</head>
+<body style="background-color: black; color:whitesmoke;">
+    <h2>Symmetric Benchmark</h2>
+    <form>
+        Iterations:<br>
+        <input type="text" name="Iterations1" id="iterations1"><br>
+    </form>
+    <button type="button" onclick="handleClickSym()">Start</button>
+    <p>Total Encryption Time: <span id="symEncTime"></span></p>
+    <p>Encryption time per record: <span id="symEncTimePer"></span></p>
+    <p>Total Decryption Time: <span id="symDecTime"></span></p>
+    <p>Decryption time per record: <span id="symDecTimePer"></span></p>
+    <br>
+    <h2>Asymmetric Benchmark</h2>
+    <button type="button">Start</button>
+    <p>Time: </p>
+
+</body>
+</html>
