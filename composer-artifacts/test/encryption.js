@@ -1,4 +1,3 @@
-"use strict";
 var sjcl = require("sjcl");
 var CryptoJS = require("crypto-js");
 var JSEncrypt = require("node-jsencrypt");

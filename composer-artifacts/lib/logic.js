@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-"use strict";
-/**
+ /**
  * Write your transction processor functions here
  */
 

@@ -50,7 +50,8 @@
       "quotes": "off",
       "no-unused-vars": "off",
       "no-undef": "off",
-      "indent": "off"
+      "indent": "off",
+      "require-atomic-updates": "off"
     },
     "parserOptions": {
       "sourceType": "module",
