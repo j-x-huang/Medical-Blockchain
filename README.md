@@ -11,7 +11,7 @@ Further information on the repository structure and web apps can be found on our
 
 *** UPDATE - 2019 ***
 
-_Please check our conference paper on MedBloc, presented at IEEE Trustcom 2019._
+_Please check our conference paper on MedBloc, presented at [IEEE Trustcom 2019](https://ieeexplore.ieee.org/abstract/document/8887337/)._ 
 
 ## Setup Guide
 
